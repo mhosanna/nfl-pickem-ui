@@ -3,9 +3,37 @@ type Query {
   players: [Player!]!
 }
 type Mutation {
-  post(name: String!): Player!
+  createPlayer(name: String!): Player!
+  updatePlayer(id: String!, name: String!): Player!
+  deletePlayer(id: String!): Player!
 }
 type Player {
   id: ID!
   name: String!
+}
+type Team {
+  id: ID!
+  name: String!
+  city: String!
+  gameHomeTeam: Game
+  gameAwayTeam: Game
+}
+type Game {
+  id: ID!
+  week: String!
+  homeTeam: Team!
+  awayTeam: Team!
+  spread: Int!
+  hasWinner: Team
+}
+type Pick {
+  id: ID!
+  player: Player!
+  game: Game!
+  team: Team
+}
+type Season {
+  id: ID!
+  games: [Game]!
+  champion: Player
 }

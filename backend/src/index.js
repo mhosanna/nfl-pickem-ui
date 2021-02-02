@@ -2,26 +2,14 @@ const { ApolloServer } = require("apollo-server");
 const { PrismaClient } = require("@prisma/client");
 const fs = require("fs");
 const path = require("path");
+const Query = require("./resolvers/Query");
+const Mutation = require("./resolvers/Mutation");
 
 const prisma = new PrismaClient();
 
 const resolvers = {
-  Query: {
-    info: () => `This is the API of the NFL Pickem League Website`,
-    players: async (parent, args, context) => {
-      return context.prisma.player.findMany();
-    },
-  },
-  Mutation: {
-    post: (parent, args, context) => {
-      const newPlayer = context.prisma.player.create({
-        data: {
-          name: args.name,
-        },
-      });
-      return newPlayer;
-    },
-  },
+  Query,
+  Mutation,
 };
 
 const server = new ApolloServer({

@@ -15,3 +15,40 @@ model Player {
   createdAt   DateTime  @default(now())
   name        String
 }
+
+model Team {
+  id            String    @id @default(cuid())
+  name          String
+  city          String
+  gameHomeTeam  Game? @relation("HomeTeamInGame")
+  gameAwayTeam  Game? @relation("AwayTeamInGame")
+}
+
+model Game {
+  id          String    @id @default(cuid())
+  season      Season    @relation(fields: [seasonId], references: [id])
+  seasonId    String
+  week        String
+  homeTeam    Team      @relation("HomeTeamInGame", fields: [homeTeamId], references: [id])
+  homeTeamId  String
+  awayTeam    Team      @relation("AwayTeamInGame", fields: [awayTeamId], references: [id])
+  awayTeamId  String
+  spread      Int
+  hasWinner   Team?
+}
+
+model Pick {
+  id          String    @id @default(cuid())
+  player      Player    @relation(fields: [playerId], references: [id])
+  playerId    String
+  team        Team      @relation(fields: [teamId], references: [id])
+  teamId      String
+  game        Game      @relation(fields: [gameId], references: [id])
+  gameId      String
+}
+
+model Season {
+  id          String    @id @default(cuid())
+  games       Game[]
+  champion    Player?
+}
