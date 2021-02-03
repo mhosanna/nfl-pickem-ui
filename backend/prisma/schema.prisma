@@ -14,14 +14,16 @@ model Player {
   id          String    @id @default(cuid())
   createdAt   DateTime  @default(now())
   name        String
+  picks       Pick[]    @relation("PlayerPick")
 }
 
 model Team {
   id            String    @id @default(cuid())
   name          String
   city          String
-  gameHomeTeam  Game? @relation("HomeTeamInGame")
-  gameAwayTeam  Game? @relation("AwayTeamInGame")
+  homeGames     Game[]  @relation("HomeTeamInGame")
+  awayGames     Game[]  @relation("AwayTeamInGame")
+  wonGames      Game[]  @relation("WinnerInGame")
 }
 
 model Game {
@@ -34,12 +36,13 @@ model Game {
   awayTeam    Team      @relation("AwayTeamInGame", fields: [awayTeamId], references: [id])
   awayTeamId  String
   spread      Int
-  hasWinner   Team?
+  hasWinner   Team?      @relation("WinnerInGame", fields: [hasWinnerId], references: [id])
+  hasWinnerId String?
 }
 
 model Pick {
   id          String    @id @default(cuid())
-  player      Player    @relation(fields: [playerId], references: [id])
+  player      Player    @relation("PlayerPick", fields: [playerId], references: [id])
   playerId    String
   team        Team      @relation(fields: [teamId], references: [id])
   teamId      String
@@ -49,6 +52,6 @@ model Pick {
 
 model Season {
   id          String    @id @default(cuid())
-  games       Game[]
+  year        String
   champion    Player?
 }

@@ -1,11 +1,25 @@
 type Query {
   info: String!
   players: [Player!]!
+  games: [Game!]!
+  teams: [Team!]!
+  seasons: [Season!]!
 }
 type Mutation {
   createPlayer(name: String!): Player!
   updatePlayer(id: String!, name: String!): Player!
   deletePlayer(id: String!): Player!
+  createGame(
+    week: String!
+    homeId: String!
+    awayId: String!
+    spread: Int!
+    seasonId: String!
+  ): Game!
+  deleteGame(id: String!): Game!
+  createTeam(name: String!, city: String!): Team!
+  createSeason(year: String!): Season!
+  deleteSeason(id: String!): Season!
 }
 type Player {
   id: ID!
@@ -15,12 +29,11 @@ type Team {
   id: ID!
   name: String!
   city: String!
-  gameHomeTeam: Game
-  gameAwayTeam: Game
 }
 type Game {
   id: ID!
   week: String!
+  season: Season!
   homeTeam: Team!
   awayTeam: Team!
   spread: Int!
@@ -34,6 +47,6 @@ type Pick {
 }
 type Season {
   id: ID!
-  games: [Game]!
+  year: String!
   champion: Player
 }
