@@ -35,7 +35,7 @@ model Game {
   homeTeamId  String
   awayTeam    Team      @relation("AwayTeamInGame", fields: [awayTeamId], references: [id])
   awayTeamId  String
-  spread      Int
+  spread      Float
   hasWinner   Team?      @relation("WinnerInGame", fields: [hasWinnerId], references: [id])
   hasWinnerId String?
 }

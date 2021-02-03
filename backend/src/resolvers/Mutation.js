@@ -59,6 +59,16 @@ async function deleteSeason(parent, args, context, info) {
   });
 }
 
+async function createPick(parent, args, context, info) {
+  return await context.prisma.pick.create({
+    data: {
+      playerId: args.player,
+      gameId: args.game,
+      teamId: args.team,
+    },
+  });
+}
+
 module.exports = {
   createPlayer,
   updatePlayer,
@@ -68,4 +78,5 @@ module.exports = {
   createTeam,
   createSeason,
   deleteSeason,
+  createPick,
 };

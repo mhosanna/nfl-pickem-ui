@@ -13,13 +13,14 @@ type Mutation {
     week: String!
     homeId: String!
     awayId: String!
-    spread: Int!
+    spread: Float!
     seasonId: String!
   ): Game!
   deleteGame(id: String!): Game!
   createTeam(name: String!, city: String!): Team!
   createSeason(year: String!): Season!
   deleteSeason(id: String!): Season!
+  createPick(player: String!, game: String!, team: String!): Pick!
 }
 type Player {
   id: ID!
@@ -36,7 +37,7 @@ type Game {
   season: Season!
   homeTeam: Team!
   awayTeam: Team!
-  spread: Int!
+  spread: Float!
   hasWinner: Team
 }
 type Pick {
