@@ -15,6 +15,7 @@ model Player {
   createdAt   DateTime  @default(now())
   name        String
   picks       Pick[]    @relation("PlayerPick")
+  correctPicks  Int     @default(0)
 }
 
 model Team {
@@ -53,5 +54,5 @@ model Pick {
 model Season {
   id          String    @id @default(cuid())
   year        String
-  champion    Player?
+  players     Player[]
 }
