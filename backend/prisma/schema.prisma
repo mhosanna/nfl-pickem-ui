@@ -11,47 +11,63 @@ generator client {
 }
 
 model Player {
-  id          String    @id @default(cuid())
-  createdAt   DateTime  @default(now())
-  name        String
-  picks       Pick[]    @relation("PlayerPick")
+  id        Int    @default(autoincrement()) @id
+  name      String @unique
+
+  // Relation Fields
+  picks     Pick[]
 }
 
 model Team {
-  id            String    @id @default(cuid())
-  name          String
-  city          String
-  homeGames     Game[]  @relation("HomeTeamInGame")
-  awayGames     Game[]  @relation("AwayTeamInGame")
-  wonGames      Game[]  @relation("WinnerInGame")
+  id        Int    @default(autoincrement()) @id
+  name      String @unique
+  city      String
+
+  // Relation Fields
+  games   GameTeam[]
+  picked   Pick[]
 }
 
 model Game {
-  id          String    @id @default(cuid())
-  season      Season    @relation(fields: [seasonId], references: [id])
-  seasonId    String
-  week        String
-  homeTeam    Team      @relation("HomeTeamInGame", fields: [homeTeamId], references: [id])
-  homeTeamId  String
-  awayTeam    Team      @relation("AwayTeamInGame", fields: [awayTeamId], references: [id])
-  awayTeamId  String
-  spread      Float
-  hasWinner   Team?      @relation("WinnerInGame", fields: [hasWinnerId], references: [id])
-  hasWinnerId String?
+  id          Int    @default(autoincrement()) @id
+  season      Int
+  week        Int
+  spread      Float?
+
+   // Relation Fields
+  winnerId    Int?
+  winner      Team?       @relation(fields: [winnerId], references: [id])
+  teams       GameTeam[]
+  picks       Pick[]
+}
+
+model GameTeam {
+  field       TeamField
+
+  // Relation Fields
+  teamId      Int
+  team        Team  @relation(fields: [teamId], references: [id])
+  gameId      Int
+  game        Game  @relation(fields: [gameId], references: [id])
+
+  @@id([teamId, gameId])
 }
 
 model Pick {
-  id          String    @id @default(cuid())
-  player      Player    @relation("PlayerPick", fields: [playerId], references: [id])
-  playerId    String
+  id          Int    @default(autoincrement()) @id
+  correct     Boolean?
+
+  // Relation Fields
+  player      Player    @relation(fields: [playerId], references: [id])
+  playerId    Int
   team        Team      @relation(fields: [teamId], references: [id])
-  teamId      String
+  teamId      Int
   game        Game      @relation(fields: [gameId], references: [id])
-  gameId      String
+  gameId      Int
 }
 
-model Season {
-  id          String    @id @default(cuid())
-  year        String
-  champion    Player?
+
+enum TeamField {
+  HOME
+  AWAY
 }
