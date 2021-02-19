@@ -54,7 +54,6 @@ model GameTeam {
 }
 
 model Pick {
-  id          Int    @default(autoincrement()) @id
   correct     Boolean?
 
   // Relation Fields
@@ -64,6 +63,8 @@ model Pick {
   teamId      Int
   game        Game      @relation(fields: [gameId], references: [id])
   gameId      Int
+
+  @@unique([playerId, gameId])
 }
 
 

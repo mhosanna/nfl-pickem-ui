@@ -11,7 +11,7 @@ type Query {
 
 type Mutation {
   createGame(data: GameCreateInput!): Game!
-  makePick(data: PickMakeInput!): Pick!
+  makePick(playerId: Int!, gameId: Int!, teamId: Int!): Pick!
 }
 
 input PickMakeInput {
@@ -114,7 +114,22 @@ export const resolvers = {
     makePick: (_parent: any, args: any, ctx: Context) => {
       // if playerid and gameid belong to a pick, update it.
       // Otherwise create it
-      return ctx.prisma.pick.create(args);
+      return ctx.prisma.pick.upsert({
+        where: {
+          playerId_gameId: {
+            playerId: args.playerId,
+            gameId: args.gameId,
+          },
+        },
+        create: {
+          gameId: args.gameId,
+          playerId: args.playerId,
+          teamId: args.teamId,
+        },
+        update: {
+          teamId: args.teamId,
+        },
+      });
     },
   },
   Player: {
@@ -130,21 +145,36 @@ export const resolvers = {
     player: (parent: any, _args: any, ctx: Context) => {
       return ctx.prisma.pick
         .findUnique({
-          where: { id: parent.id },
+          where: {
+            playerId_gameId: {
+              gameId: parent.gameId,
+              playerId: parent.playerId,
+            },
+          },
         })
         .player();
     },
     game: (parent: any, _args: any, ctx: Context) => {
       return ctx.prisma.pick
         .findUnique({
-          where: { id: parent.id },
+          where: {
+            playerId_gameId: {
+              gameId: parent.gameId,
+              playerId: parent.playerId,
+            },
+          },
         })
         .game();
     },
     team: (parent: any, _args: any, ctx: Context) => {
       return ctx.prisma.pick
         .findUnique({
-          where: { id: parent.id },
+          where: {
+            playerId_gameId: {
+              gameId: parent.gameId,
+              playerId: parent.playerId,
+            },
+          },
         })
         .team();
     },
