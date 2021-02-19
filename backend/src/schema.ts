@@ -10,8 +10,11 @@ type Query {
   }
 
 type Mutation {
+  addPlayer(name: String!): Player!
+  removePlayer(playerId: Int!): Int!
   createGame(data: GameCreateInput!): Game!
   updateGame(gameId: Int!, spread: Float!, week: Int!): Game!
+  deleteGame(gameId: Int!): Int!
   makePick(playerId: Int!, gameId: Int!, teamId: Int!): Pick!
 }
 
@@ -109,6 +112,30 @@ export const resolvers = {
     },
   },
   Mutation: {
+    addPlayer: (_parent: any, args: any, ctx: Context) => {
+      return ctx.prisma.player.create({
+        data: {
+          name: args.name,
+        },
+      });
+    },
+    removePlayer: async (_parent: any, args: any, ctx: Context) => {
+      const deletePicks = ctx.prisma.pick.deleteMany({
+        where: {
+          playerId: args.playerId,
+        },
+      });
+      const deletePlayer = ctx.prisma.player.delete({
+        where: {
+          id: args.playerId,
+        },
+      });
+      const [, deletedPlayer] = await ctx.prisma.$transaction([
+        deletePicks,
+        deletePlayer,
+      ]);
+      return deletedPlayer.id;
+    },
     createGame: (_parent: any, args: any, ctx: Context) => {
       return ctx.prisma.game.create(args);
     },
@@ -122,6 +149,32 @@ export const resolvers = {
           week: args.week,
         },
       });
+    },
+    deleteGame: async (_parent: any, args: any, ctx: Context) => {
+      const deletePicks = ctx.prisma.pick.deleteMany({
+        where: {
+          gameId: args.gameId,
+        },
+      });
+      const deleteMatchups = ctx.prisma.gameTeam.deleteMany({
+        where: {
+          gameId: args.gameId,
+        },
+      });
+      const deleteGame = ctx.prisma.game.delete({
+        where: {
+          id: args.gameId,
+        },
+        select: {
+          id: true,
+        },
+      });
+      const [, , deletedGame] = await ctx.prisma.$transaction([
+        deletePicks,
+        deleteMatchups,
+        deleteGame,
+      ]);
+      return deletedGame.id;
     },
     makePick: (_parent: any, args: any, ctx: Context) => {
       // if playerid and gameid belong to a pick, update it.
