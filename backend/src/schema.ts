@@ -11,6 +11,7 @@ type Query {
 
 type Mutation {
   createGame(data: GameCreateInput!): Game!
+  updateGame(gameId: Int!, spread: Float!, week: Int!): Game!
   makePick(playerId: Int!, gameId: Int!, teamId: Int!): Pick!
 }
 
@@ -110,6 +111,17 @@ export const resolvers = {
   Mutation: {
     createGame: (_parent: any, args: any, ctx: Context) => {
       return ctx.prisma.game.create(args);
+    },
+    updateGame: (_parent: any, args: any, ctx: Context) => {
+      return ctx.prisma.game.update({
+        where: {
+          id: args.gameId,
+        },
+        data: {
+          spread: args.spread,
+          week: args.week,
+        },
+      });
     },
     makePick: (_parent: any, args: any, ctx: Context) => {
       // if playerid and gameid belong to a pick, update it.
