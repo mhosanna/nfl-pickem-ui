@@ -6,10 +6,23 @@ type Query {
     players: [Player]
     games: [Game]
     picks: [Pick]
+    gamesBySeasonWeek(where: GameWhereWeekInput): [Game!]!
   }
 
 type Mutation {
   createGame(data: GameCreateInput!): Game!
+  makePick(data: PickMakeInput!): Pick!
+}
+
+input PickMakeInput {
+  gameId: Int!
+  playerId: Int!
+  teamId: Int!
+}
+
+input GameWhereWeekInput {
+  week: Int!
+  season: Int!
 }
 
 input GameCreateInput {
@@ -86,10 +99,22 @@ export const resolvers = {
     picks: (_parent: any, _args: any, ctx: Context) => {
       return ctx.prisma.pick.findMany({});
     },
+    gamesBySeasonWeek: (_parent: any, args: any, ctx: Context) => {
+      return ctx.prisma.game.findMany({
+        where: {
+          AND: [{ week: args.where.week }, { season: args.where.season }],
+        },
+      });
+    },
   },
   Mutation: {
     createGame: (_parent: any, args: any, ctx: Context) => {
       return ctx.prisma.game.create(args);
+    },
+    makePick: (_parent: any, args: any, ctx: Context) => {
+      // if playerid and gameid belong to a pick, update it.
+      // Otherwise create it
+      return ctx.prisma.pick.create(args);
     },
   },
   Player: {
