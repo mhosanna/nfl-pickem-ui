@@ -16,6 +16,7 @@ type Mutation {
   updateGame(gameId: Int!, spread: Float!, week: Int!): Game!
   deleteGame(gameId: Int!): Int!
   makePick(playerId: Int!, gameId: Int!, teamId: Int!): Pick!
+  addGameWinner(gameId: Int!, winnerId: Int!): Game!
 }
 
 input PickMakeInput {
@@ -195,6 +196,37 @@ export const resolvers = {
           teamId: args.teamId,
         },
       });
+    },
+    addGameWinner: async (_parent: any, args: any, ctx: Context) => {
+      //set winner in game winnerId = args.teamId
+      const game = await ctx.prisma.game.update({
+        where: {
+          id: args.gameId,
+        },
+        data: {
+          winnerId: args.winnerId,
+        },
+      });
+      //find all picks where gameId = args.gameId
+      const correctPicks = await ctx.prisma.pick.updateMany({
+        where: {
+          AND: [{ gameId: args.gameId }, { teamId: args.winnerId }],
+        },
+        data: {
+          correct: true,
+        },
+      });
+
+      const incorrectPicks = await ctx.prisma.pick.updateMany({
+        where: {
+          AND: [{ gameId: args.gameId }, { teamId: { not: args.winnerId } }],
+        },
+        data: {
+          correct: false,
+        },
+      });
+
+      return game;
     },
   },
   Player: {
