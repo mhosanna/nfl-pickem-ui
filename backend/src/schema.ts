@@ -10,13 +10,22 @@ type Query {
   }
 
 type Mutation {
-  addPlayer(name: String!): Player!
-  removePlayer(playerId: Int!): Int!
+  addPlayer(name: String!): PlayerPayload!
+  removePlayer(playerId: Int!): PlayerPayload!
   createGame(data: GameCreateInput!): Game!
-  updateGame(gameId: Int!, spread: Float!, week: Int!): Game!
-  deleteGame(gameId: Int!): Int!
-  makePick(playerId: Int!, gameId: Int!, teamId: Int!): Pick!
-  addGameWinner(gameId: Int!, winnerId: Int!): Game!
+  updateGame(gameId: Int!, spread: Float!, week: Int!): GamePayload!
+  deleteGame(gameId: Int!): GamePayload!
+  makePick(playerId: Int!, gameId: Int!, teamId: Int!): PickPayload!
+  addGameWinner(gameId: Int!, winnerId: Int!): GamePayload!
+}
+
+union PlayerPayload = Player | Error
+union GamePayload = Game | Error
+union PickPayload = Pick | Error
+
+type Error {
+  message: String!
+  path: String!
 }
 
 input PickMakeInput {
@@ -114,14 +123,46 @@ export const resolvers = {
     },
   },
   Mutation: {
-    addPlayer: (_parent: any, args: any, ctx: Context) => {
-      return ctx.prisma.player.create({
-        data: {
-          name: args.name,
-        },
+    addPlayer: async (_parent: any, args: any, ctx: Context) => {
+      if (args.name.trim() === "") {
+        return {
+          __typename: "Error",
+          message: `Player name must contain at least one alphanumeric character`,
+          path: "name",
+        };
+      }
+      const playerRecord = await ctx.prisma.player.findUnique({
+        where: { name: args.name },
       });
+      if (playerRecord) {
+        return {
+          __typename: "Error",
+          message: `The player with the name ${args.name} already exists.`,
+          path: "name",
+        };
+      } else {
+        const newPlayer = await ctx.prisma.player.create({
+          data: {
+            name: args.name,
+          },
+        });
+        return {
+          __typename: "Player",
+          ...newPlayer,
+        };
+      }
     },
     removePlayer: async (_parent: any, args: any, ctx: Context) => {
+      const playerRecord = await ctx.prisma.player.findUnique({
+        where: { id: args.playerId },
+      });
+      if (!playerRecord) {
+        return {
+          __typename: "Error",
+          message: `Player with id ${args.playerId} does not exist`,
+          path: "playerId",
+        };
+      }
       const deletePicks = ctx.prisma.pick.deleteMany({
         where: {
           playerId: args.playerId,
@@ -136,13 +177,26 @@ export const resolvers = {
         deletePicks,
         deletePlayer,
       ]);
-      return deletedPlayer.id;
+      return {
+        __typename: "Player",
+        ...deletedPlayer,
+      };
     },
     createGame: (_parent: any, args: any, ctx: Context) => {
       return ctx.prisma.game.create(args);
     },
-    updateGame: (_parent: any, args: any, ctx: Context) => {
-      return ctx.prisma.game.update({
+    updateGame: async (_parent: any, args: any, ctx: Context) => {
+      const gameRecord = await ctx.prisma.game.findUnique({
+        where: { id: args.gameId },
+      });
+      if (!gameRecord) {
+        return {
+          __typename: "Error",
+          message: `Game with id ${args.gameId} does not exist`,
+          path: "gameId",
+        };
+      }
+      const updatedGame = await ctx.prisma.game.update({
         where: {
           id: args.gameId,
         },
@@ -151,8 +205,29 @@ export const resolvers = {
           week: args.week,
         },
       });
+      return {
+        __typename: "Game",
+        ...updatedGame,
+      };
     },
     deleteGame: async (_parent: any, args: any, ctx: Context) => {
+      const gameRecord = await ctx.prisma.game.findUnique({
+        where: { id: args.gameId },
+      });
+      if (!gameRecord) {
+        return {
+          __typename: "Error",
+          message: `Game with id ${args.gameId} does not exist`,
+          path: "gameId",
+        };
+      }
+      if (gameRecord.winnerId) {
+        return {
+          __typename: "Error",
+          message: `Cannot delete a game after winner has been set`,
+          path: "gameId",
+        };
+      }
       const deletePicks = ctx.prisma.pick.deleteMany({
         where: {
           gameId: args.gameId,
@@ -176,11 +251,39 @@ export const resolvers = {
         deleteMatchups,
         deleteGame,
       ]);
-      return deletedGame.id;
+      return {
+        __typename: "Game",
+        ...deletedGame,
+      };
     },
-    makePick: (_parent: any, args: any, ctx: Context) => {
-      //TODO: Check if winner exists, if so return.
-      return ctx.prisma.pick.upsert({
+    makePick: async (_parent: any, args: any, ctx: Context) => {
+      const gameRecord = await ctx.prisma.game.findUnique({
+        where: { id: args.gameId },
+        include: { teams: true },
+      });
+      if (!gameRecord) {
+        return {
+          __typename: "Error",
+          message: `Game with id ${args.gameId} does not exist`,
+          path: "gameId",
+        };
+      }
+      if (gameRecord.winnerId) {
+        return {
+          __typename: "Error",
+          message: `Cannot make pick after game winner has been set`,
+          path: "gameId",
+        };
+      }
+      const found = gameRecord.teams.some((el) => el.teamId === args.teamId);
+      if (!found) {
+        return {
+          __typename: "Error",
+          message: `Must pick team playing in the game`,
+          path: "teamId",
+        };
+      }
+      const madePick = await ctx.prisma.pick.upsert({
         where: {
           playerId_gameId: {
             playerId: args.playerId,
@@ -196,9 +299,31 @@ export const resolvers = {
           teamId: args.teamId,
         },
       });
+      return {
+        __typename: "Pick",
+        ...madePick,
+      };
     },
     addGameWinner: async (_parent: any, args: any, ctx: Context) => {
-      //set winner in game winnerId = args.teamId
+      const gameRecord = await ctx.prisma.game.findUnique({
+        where: { id: args.gameId },
+        include: { teams: true },
+      });
+      if (!gameRecord) {
+        return {
+          __typename: "Error",
+          message: `Game with id ${args.gameId} does not exist`,
+          path: "gameId",
+        };
+      }
+      const found = gameRecord.teams.some((el) => el.teamId === args.winnerId);
+      if (!found) {
+        return {
+          __typename: "Error",
+          message: `Must set winning team to team playing in the game`,
+          path: "teamId",
+        };
+      }
       const game = await ctx.prisma.game.update({
         where: {
           id: args.gameId,
@@ -249,7 +374,43 @@ export const resolvers = {
         });
       }
 
-      return game;
+      return {
+        __typename: "Game",
+        ...game,
+      };
+    },
+  },
+  PlayerPayload: {
+    __resolveType(obj: any, _context: any, _info: any) {
+      if (obj.name) {
+        return "Player";
+      }
+      if (obj.message) {
+        return "Error";
+      }
+      return null;
+    },
+  },
+  GamePayload: {
+    __resolveType(obj: any, _context: any, _info: any) {
+      if (obj.id) {
+        return "Game";
+      }
+      if (obj.message) {
+        return "Error";
+      }
+      return null;
+    },
+  },
+  PickPayload: {
+    __resolveType(obj: any, _context: any, _info: any) {
+      if (obj.gameId) {
+        return "Pick";
+      }
+      if (obj.message) {
+        return "Error";
+      }
+      return null;
     },
   },
   Player: {
