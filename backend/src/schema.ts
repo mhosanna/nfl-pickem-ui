@@ -50,6 +50,7 @@ type Player {
     id: ID!
     name: String!
     picks: [Pick]
+    totalPicksCorrect: Int!
 }
 
 type Team {
@@ -178,8 +179,7 @@ export const resolvers = {
       return deletedGame.id;
     },
     makePick: (_parent: any, args: any, ctx: Context) => {
-      // if playerid and gameid belong to a pick, update it.
-      // Otherwise create it
+      //TODO: Check if winner exists, if so return.
       return ctx.prisma.pick.upsert({
         where: {
           playerId_gameId: {
@@ -208,7 +208,7 @@ export const resolvers = {
         },
       });
       //find all picks where gameId = args.gameId
-      const correctPicks = await ctx.prisma.pick.updateMany({
+      await ctx.prisma.pick.updateMany({
         where: {
           AND: [{ gameId: args.gameId }, { teamId: args.winnerId }],
         },
@@ -217,7 +217,7 @@ export const resolvers = {
         },
       });
 
-      const incorrectPicks = await ctx.prisma.pick.updateMany({
+      await ctx.prisma.pick.updateMany({
         where: {
           AND: [{ gameId: args.gameId }, { teamId: { not: args.winnerId } }],
         },
@@ -225,6 +225,29 @@ export const resolvers = {
           correct: false,
         },
       });
+
+      const correctPicksCount = await ctx.prisma.pick.groupBy({
+        by: ["playerId"],
+        where: {
+          correct: {
+            equals: true,
+          },
+        },
+        count: {
+          correct: true,
+        },
+      });
+
+      const allPlayers = await ctx.prisma.player.findMany({});
+
+      for (const player of allPlayers) {
+        let p = correctPicksCount.find((p) => p.playerId === player.id);
+        let totalCorrect = p?.count.correct;
+        await ctx.prisma.player.update({
+          where: { id: player.id },
+          data: { totalPicksCorrect: totalCorrect ? totalCorrect : 0 },
+        });
+      }
 
       return game;
     },
