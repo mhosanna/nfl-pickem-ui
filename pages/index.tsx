@@ -3,23 +3,48 @@ import { Heading, Box } from "@primer/components";
 import gql from "graphql-tag";
 
 const PLAYERS_QUERY = gql`
-  query USER_ORDERS_QUERY($orderBy: PlayerOrderByInput) {
-    players(orderBy: $orderBy) {
-      id
-      name
-      totalPicksCorrect
+  query PLAYERS_QUERY($season: Int) {
+    players(season: $season) {
+      player {
+        id
+        name
+      }
+      correctPicks
+    }
+  }
+`;
+
+const GAMES_PLAYED_QUERY = gql`
+  query GAMES_PLAYED_QUERY($filter: GamesInput) {
+    games(filter: $filter) {
+      totalPlayedGames
     }
   }
 `;
 
 export default function LeaderBoard() {
-  const { data, error, loading } = useQuery(PLAYERS_QUERY, {
-    variables: { orderBy: { totalPicksCorrect: "desc" } },
+  const {
+    data: playersInfo,
+    error: playersQueryError,
+    loading: playersQueryLoading,
+  } = useQuery(PLAYERS_QUERY, {
+    variables: { season: 2018 },
   });
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error</p>;
+  const {
+    data: gamesInfo,
+    error: gamesQueryError,
+    loading: gamesQueryLoading,
+  } = useQuery(GAMES_PLAYED_QUERY, {
+    variables: { season: 2018 },
+  });
+  if (playersQueryLoading || gamesQueryLoading) return <p>Loading...</p>;
+  if (playersQueryError || gamesQueryError) return <p>Error</p>;
 
-  const { players } = data;
+  const { players } = playersInfo;
+  var playersToRender = [...players];
+  playersToRender.sort((a, b) => b.correctPicks - a.correctPicks);
+
+  console.log(gamesInfo);
 
   return (
     <div>
@@ -27,12 +52,14 @@ export default function LeaderBoard() {
         Leader Board
       </Heading>
       <div>
-        {players.map((player, idx) => {
+        {playersToRender.map((playerInfo, idx) => {
           return (
-            <Box key={player.id} bg="blue.0" p={4} mt={2}>
+            <Box key={playerInfo.player.id} bg="blue.0" p={4} mt={2}>
               <Box>{idx + 1}</Box>
-              <Box>{player.name}</Box>
-              <Box>{player.totalPicksCorrect}</Box>
+              <Box>{playerInfo.player.name}</Box>
+              <Box>
+                {playerInfo.correctPicks} / {gamesInfo.games.totalPlayedGames}
+              </Box>
             </Box>
           );
         })}

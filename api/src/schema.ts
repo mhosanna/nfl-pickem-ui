@@ -4,9 +4,8 @@ export const typeDefs = `
 type Query {
     teams: [Team!]!
     players(season: Int): [PlayerInfo]
-    games(filter: SeasonInput): Games!
+    games(filter: GamesInput): Games!
     picks: [Pick]
-    gamesBySeasonWeek(where: GameWhereWeekInput): [Game!]!
   }
 
 type Mutation {
@@ -24,18 +23,9 @@ type PlayerInfo {
   correctPicks: Int
 }
 
-input SeasonInput {
-  season: Int
-}
-
-input PlayerOrderByInput {
-  name: Sort
-  totalPicksCorrect: Sort
-}
-
-enum Sort {
-  asc
-  desc
+input GamesInput {
+  season: Int,
+  week: Int
 }
 
 union PlayerPayload = Player | Error
@@ -51,11 +41,6 @@ input PickMakeInput {
   gameId: Int!
   playerId: Int!
   teamId: Int!
-}
-
-input GameWhereWeekInput {
-  week: Int!
-  season: Int!
 }
 
 input GameCreateInput {
@@ -89,7 +74,8 @@ type Team {
 
 type Games {
   games: [Game!]!
-  count: Int!
+  totalGames: Int!
+  totalPlayedGames: Int!
 }
 
 type Game {
@@ -180,25 +166,27 @@ export const resolvers = {
     games: async (_parent: any, args: any, ctx: Context) => {
       const where = args.filter
         ? {
-            season: args.filter.season,
+            AND: [{ week: args.filter.week }, { season: args.filter.season }],
           }
         : {};
 
       const games = await ctx.prisma.game.findMany({
         where,
       });
-      const count = await ctx.prisma.game.count();
-      return { games, count };
+      const totalGames = await ctx.prisma.game.count({
+        where,
+      });
+      const gamesWithWinners = await ctx.prisma.game.count({
+        where,
+        select: {
+          winnerId: true,
+        },
+      });
+      const totalPlayedGames = gamesWithWinners.winnerId;
+      return { games, totalGames, totalPlayedGames };
     },
     picks: (_parent: any, _args: any, ctx: Context) => {
       return ctx.prisma.pick.findMany({});
-    },
-    gamesBySeasonWeek: (_parent: any, args: any, ctx: Context) => {
-      return ctx.prisma.game.findMany({
-        where: {
-          AND: [{ week: args.where.week }, { season: args.where.season }],
-        },
-      });
     },
   },
   Mutation: {
