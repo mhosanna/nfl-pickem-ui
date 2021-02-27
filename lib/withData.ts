@@ -28,11 +28,11 @@ const httpLink = createHttpLink({
   fetch,
 });
 
-function createClient({ ctx, headers, initialState }) {
+function createClient({ initialState }) {
   return new ApolloClient({
     link: ApolloLink.from([errorLink, httpLink]),
     cache: new InMemoryCache().restore(initialState || {}),
   });
 }
 
-export default withApollo(createClient as any);
+export default withApollo(createClient as any, { getDataFromTree });

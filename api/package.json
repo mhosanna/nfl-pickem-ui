@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn ./src/index.ts",
     "seed": "ts-node ./src/seed.ts",
-    "migrate:save": "prisma migrate --experimental save",
+    "migrate:save": "prisma migrate dev --preview-feature",
     "migrate:up": "prisma migrate --experimental up --auto-approve --create-db",
     "prisma:generate": "prisma generate"
   },

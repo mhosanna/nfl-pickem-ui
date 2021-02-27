@@ -3,8 +3,8 @@ import { Context } from "./context";
 export const typeDefs = `
 type Query {
     teams: [Team!]!
-    players: [Player]
-    games: [Game]
+    players(season: Int): [PlayerInfo]
+    games(filter: SeasonInput): Games!
     picks: [Pick]
     gamesBySeasonWeek(where: GameWhereWeekInput): [Game!]!
   }
@@ -17,6 +17,25 @@ type Mutation {
   deleteGame(gameId: Int!): GamePayload!
   makePick(playerId: Int!, gameId: Int!, teamId: Int!): PickPayload!
   addGameWinner(gameId: Int!, winnerId: Int!): GamePayload!
+}
+
+type PlayerInfo {
+  player: Player!
+  correctPicks: Int
+}
+
+input SeasonInput {
+  season: Int
+}
+
+input PlayerOrderByInput {
+  name: Sort
+  totalPicksCorrect: Sort
+}
+
+enum Sort {
+  asc
+  desc
 }
 
 union PlayerPayload = Player | Error
@@ -59,7 +78,6 @@ type Player {
     id: ID!
     name: String!
     picks: [Pick]
-    totalPicksCorrect: Int!
 }
 
 type Team {
@@ -67,6 +85,11 @@ type Team {
     name: String!
     city: String!
     games: [GameTeam]
+}
+
+type Games {
+  games: [Game!]!
+  count: Int!
 }
 
 type Game {
@@ -105,11 +128,67 @@ export const resolvers = {
     teams: (_parent: any, _args: any, ctx: Context) => {
       return ctx.prisma.team.findMany({});
     },
-    players: (_parent: any, _args: any, ctx: Context) => {
-      return ctx.prisma.player.findMany({});
+    players: async (_parent: any, args: any, ctx: Context) => {
+      const playersThisSeason = await ctx.prisma.player.findMany({
+        where: {
+          picks: {
+            some: {
+              game: {
+                season: {
+                  equals: args.season,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      const correctPicksCount = await ctx.prisma.pick.groupBy({
+        by: ["playerId"],
+        where: {
+          AND: [
+            {
+              game: {
+                season: args.season,
+              },
+            },
+            {
+              correct: {
+                equals: true,
+              },
+            },
+          ],
+        },
+        count: {
+          correct: true,
+        },
+      });
+
+      const playerInfo = playersThisSeason.map((p) => {
+        let indexOfPlayer = correctPicksCount.findIndex(
+          (x) => x.playerId == p.id
+        );
+        return {
+          player: p,
+          correctPicks: correctPicksCount[indexOfPlayer]
+            ? correctPicksCount[indexOfPlayer].count.correct
+            : 0,
+        };
+      });
+      return playerInfo;
     },
-    games: (_parent: any, _args: any, ctx: Context) => {
-      return ctx.prisma.game.findMany({});
+    games: async (_parent: any, args: any, ctx: Context) => {
+      const where = args.filter
+        ? {
+            season: args.filter.season,
+          }
+        : {};
+
+      const games = await ctx.prisma.game.findMany({
+        where,
+      });
+      const count = await ctx.prisma.game.count();
+      return { games, count };
     },
     picks: (_parent: any, _args: any, ctx: Context) => {
       return ctx.prisma.pick.findMany({});
@@ -363,16 +442,16 @@ export const resolvers = {
         },
       });
 
-      const allPlayers = await ctx.prisma.player.findMany({});
+      // const allPlayers = await ctx.prisma.player.findMany({});
 
-      for (const player of allPlayers) {
-        let p = correctPicksCount.find((p) => p.playerId === player.id);
-        let totalCorrect = p?.count.correct;
-        await ctx.prisma.player.update({
-          where: { id: player.id },
-          data: { totalPicksCorrect: totalCorrect ? totalCorrect : 0 },
-        });
-      }
+      // for (const player of allPlayers) {
+      //   let p = correctPicksCount.find((p) => p.playerId === player.id);
+      //   let totalCorrect = p?.count.correct;
+      //   await ctx.prisma.player.update({
+      //     where: { id: player.id },
+      //     data: { totalPicksCorrect: totalCorrect ? totalCorrect : 0 },
+      //   });
+      // }
 
       return {
         __typename: "Game",
