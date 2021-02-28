@@ -2,7 +2,6 @@ import type { AppProps, AppContext } from "next/app";
 import { ApolloProvider, ApolloClient } from "@apollo/client";
 import Page from "./components/Page";
 import withData from "../lib/withData";
-import "../styles/globals.css";
 
 interface Props extends AppProps {
   apollo: ApolloClient<{}>;
