@@ -1,5 +1,7 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
+import LeaderBoardStyles from "./styles/LeaderboardStyles";
+import TableStyles from "./styles/Table";
 
 const PLAYERS_QUERY = gql`
   query PLAYERS_QUERY($season: Int) {
@@ -48,20 +50,30 @@ export default function LeaderBoard() {
   const totalPlayedGames = games.totalPlayedGames;
 
   return (
-    <div>
+    <LeaderBoardStyles>
       <h1>Leader Board</h1>
-
-      {playersToRender.map((playerInfo, idx) => {
-        return (
-          <div key={playerInfo.player.id}>
-            <span>{idx + 1}</span>
-            <span>{playerInfo.player.name}</span>
-            <span>
-              {playerInfo.correctPicks} / {totalPlayedGames}
-            </span>
-          </div>
-        );
-      })}
-    </div>
+      <TableStyles>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>Record</th>
+          </tr>
+        </thead>
+        <tbody>
+          {playersToRender.map((playerInfo, idx) => {
+            return (
+              <tr key={playerInfo.player.id}>
+                <td>{idx + 1}</td>
+                <td>{playerInfo.player.name}</td>
+                <td>
+                  {playerInfo.correctPicks} / {totalPlayedGames}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </TableStyles>
+    </LeaderBoardStyles>
   );
 }

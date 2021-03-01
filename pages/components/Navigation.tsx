@@ -32,9 +32,12 @@ const Navigation = styled.nav`
       grid-template-rows: min-content;
       max-height: 0;
       overflow: hidden;
+      transition: all 0.7s;
     }
     .menu-list {
-      display: block;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      align-items: end;
       padding: 15px;
       background-color: var(--blue);
       color: var(--offWhite);
@@ -46,7 +49,6 @@ const Navigation = styled.nav`
     .menu-list.expanded ~ .menu-links {
       display: grid;
       max-height: 500px;
-      transform: rotateX(0);
     }
 
     .menu-list .close {
@@ -55,7 +57,6 @@ const Navigation = styled.nav`
 
     .menu-list.expanded .close {
       display: inline-block;
-      padding-right: 10px;
     }
 
     .menu-list.expanded .open {
@@ -75,7 +76,7 @@ export default function Nav() {
       >
         <span className="open">☰</span>
         <span className="close">×</span>
-        Menu
+        <span>Menu</span>
       </button>
       <div className="menu-links">
         <Link href="/">Leader Board</Link>
