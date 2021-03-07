@@ -1,6 +1,5 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import LeaderBoardStyles from "./styles/LeaderboardStyles";
 import TableStyles from "./styles/Table";
 
 const PLAYERS_QUERY = gql`
@@ -50,7 +49,7 @@ export default function LeaderBoard() {
   const totalPlayedGames = games.totalPlayedGames;
 
   return (
-    <LeaderBoardStyles>
+    <>
       <h1>Leader Board</h1>
       <TableStyles>
         <thead>
@@ -74,6 +73,6 @@ export default function LeaderBoard() {
           })}
         </tbody>
       </TableStyles>
-    </LeaderBoardStyles>
+    </>
   );
 }

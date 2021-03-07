@@ -6,6 +6,9 @@ const TableStyles = styled.table`
   border: 1px solid var(--offWhite);
   thead {
     font-size: 10px;
+    background-color: var(--blue);
+    color: white;
+    text-align: left;
   }
   td,
   th {
@@ -16,11 +19,6 @@ const TableStyles = styled.table`
     &:last-child {
       border-right: none;
       width: 150px;
-    }
-  }
-  tr {
-    &:hover {
-      background: var(--offWhite);
     }
   }
 `;

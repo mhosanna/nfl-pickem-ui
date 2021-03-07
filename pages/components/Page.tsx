@@ -84,6 +84,9 @@ const LayoutStyles = styled.div`
 const PageStyles = styled.div`
   max-width: var(--maxWidth);
   padding: 2rem;
+  h1 {
+    font-size: 55px;
+  }
 `;
 
 export default function Page({ children }) {
