@@ -1,13 +1,19 @@
+import {
+  ApolloProvider,
+  ApolloClient,
+  NormalizedCacheObject,
+} from "@apollo/client";
 import type { AppProps, AppContext } from "next/app";
-import { ApolloProvider, ApolloClient } from "@apollo/client";
+import { NextPageContext } from "next";
 import Page from "./components/Page";
 import withData from "../lib/withData";
 
-interface Props extends AppProps {
-  apollo: ApolloClient<{}>;
-}
+type ApolloProps = {
+  apollo: ApolloClient<any>;
+};
+type ApolloAppProps = ApolloProps & AppProps;
 
-function MyApp({ Component, pageProps, apollo }: Props) {
+function MyApp({ Component, pageProps, apollo }: ApolloAppProps) {
   return (
     <ApolloProvider client={apollo}>
       <Page>
@@ -16,5 +22,16 @@ function MyApp({ Component, pageProps, apollo }: Props) {
     </ApolloProvider>
   );
 }
+
+type MyAppProps = AppContext & NextPageContext;
+
+MyApp.getInitialProps = async function ({ Component, ctx }: MyAppProps) {
+  let pageProps: { query?: NextPageContext["query"] } = {};
+  if (Component.getInitialProps) {
+    pageProps = await Component.getInitialProps(ctx);
+  }
+  pageProps.query = ctx.query;
+  return { pageProps };
+};
 
 export default withData(MyApp);

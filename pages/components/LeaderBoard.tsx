@@ -3,21 +3,18 @@ import gql from "graphql-tag";
 import TableStyles from "./styles/Table";
 
 const PLAYERS_QUERY = gql`
-  query PLAYERS_QUERY($season: Int) {
-    players(season: $season) {
-      player {
-        id
-        name
-      }
-      correctPicks
+  query GET_PLAYERS_BY_SEASON($season: String!) {
+    allPlayers(where: { picks_some: { game: { season: $season } } }) {
+      id
+      name
     }
   }
 `;
 
 const GAMES_PLAYED_QUERY = gql`
-  query GAMES_PLAYED_QUERY($filter: GamesInput) {
-    games(filter: $filter) {
-      totalPlayedGames
+  query GET_ALL_PLAYED_GAMES_BY_SEASON($season: String) {
+    allGames(where: { AND: [{ season: $season }, { winner_is_null: false }] }) {
+      id
     }
   }
 `;
@@ -28,25 +25,27 @@ export default function LeaderBoard() {
     error: playersQueryError,
     loading: playersQueryLoading,
   } = useQuery(PLAYERS_QUERY, {
-    variables: { season: 2018 },
+    variables: { season: "2020" },
   });
   const {
     data: gamesInfo,
     error: gamesQueryError,
     loading: gamesQueryLoading,
   } = useQuery(GAMES_PLAYED_QUERY, {
-    variables: { season: 2018 },
+    variables: { season: "2020" },
   });
 
   if (playersQueryLoading || gamesQueryLoading) return <p>Loading...</p>;
   if (playersQueryError || gamesQueryError) return <p>Error</p>;
 
-  const { players } = playersInfo;
-  var playersToRender = [...players];
-  playersToRender.sort((a, b) => b.correctPicks - a.correctPicks);
+  const { allPlayers } = playersInfo;
+  // var playersToRender = [...players];
+  // playersToRender.sort((a, b) => b.correctPicks - a.correctPicks);
 
-  const { games } = gamesInfo;
-  const totalPlayedGames = games.totalPlayedGames;
+  const { allGames } = gamesInfo;
+  const totalPlayedGames = allGames.length;
+
+  console.log({ totalPlayedGames });
 
   return (
     <>
@@ -56,18 +55,14 @@ export default function LeaderBoard() {
           <tr>
             <th>Rank</th>
             <th>Player</th>
-            <th>Record</th>
           </tr>
         </thead>
         <tbody>
-          {playersToRender.map((playerInfo, idx) => {
+          {allPlayers.map((player, idx) => {
             return (
-              <tr key={playerInfo.player.id}>
+              <tr key={player.id}>
                 <td>{idx + 1}</td>
-                <td>{playerInfo.player.name}</td>
-                <td>
-                  {playerInfo.correctPicks} / {totalPlayedGames}
-                </td>
+                <td>{player.name}</td>
               </tr>
             );
           })}
