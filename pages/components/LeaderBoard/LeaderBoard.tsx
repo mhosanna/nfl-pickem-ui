@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import TableStyles from "./styles/Table";
+import TableStyles from "../styles/Table";
 
 const PLAYERS_QUERY = gql`
   query GET_PLAYERS_BY_SEASON($season: String!) {

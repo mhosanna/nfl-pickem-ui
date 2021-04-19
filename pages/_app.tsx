@@ -5,8 +5,9 @@ import {
 } from "@apollo/client";
 import type { AppProps, AppContext } from "next/app";
 import { NextPageContext } from "next";
-import Page from "./components/Page";
+import Page from "./components/PageShell";
 import withData from "../lib/withData";
+import GlobalStyles from "./components/GlobalStyles/GlobalStyles";
 
 type ApolloProps = {
   apollo: ApolloClient<any>;
@@ -16,6 +17,7 @@ type ApolloAppProps = ApolloProps & AppProps;
 function MyApp({ Component, pageProps, apollo }: ApolloAppProps) {
   return (
     <ApolloProvider client={apollo}>
+      <GlobalStyles />
       <Page>
         <Component {...pageProps} />
       </Page>
