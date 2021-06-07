@@ -1,53 +1,59 @@
-import React from "react";
-import { ReactElementLike } from "prop-types";
-import { NextPage } from "next";
-import Link from "next/link";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import styled from "styled-components";
-
-interface Props {
-  href: string;
-  children: ReactElementLike;
-}
+import NavLink from "../Navigation-Link";
 
 const NavigationStyles = styled.nav``;
 
-const NavLink = styled.a<{ active?: boolean }>``;
+const LogoFlourish = styled.div`
+  position: relative;
+  height: 4rem;
+  width: 18rem;
+  background: var(--secondary);
+  transform: rotate(-12.59deg);
+  border-radius: 3px;
+`;
 
-const ActiveLink: NextPage<Props> = ({ children, href }) => {
-  const router = useRouter();
-  const child = React.Children.only(children);
+const Logo = styled.h1`
+  font-family: var(--logo-font);
+  font-weight: 400;
+  font-size: 3.6rem;
+  width: fit-content;
+  padding: 0 0 77px 90px;
 
-  return (
-    <Link href={href} passHref>
-      {React.cloneElement(child, { active: router.pathname === href })}
-    </Link>
-  );
-};
+  ::after {
+    content: "!";
+    font-family: var(--logo-font);
+    font-weight: 400;
+    font-size: 4.8rem;
+    line-height: 6rem;
+    position: absolute;
+  }
+`;
+
+const NavLinks = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+  min-width: 320px;
+`;
 
 export default function Navigation() {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
 
   return (
     <NavigationStyles>
-      <div className="menu-links">
-        <ActiveLink href="/">
-          <NavLink>Leaderboard</NavLink>
-        </ActiveLink>
-        <ActiveLink href="/picks">
-          <NavLink>My Picks</NavLink>
-        </ActiveLink>
-        <ActiveLink href="/game-results">
-          <NavLink>Game Results</NavLink>
-        </ActiveLink>
-        <ActiveLink href="/manage-games">
-          <NavLink>Manage Games</NavLink>
-        </ActiveLink>
-        <ActiveLink href="/manage-league">
-          <NavLink>Manage League</NavLink>
-        </ActiveLink>
-      </div>
+      <Logo>Pick’em</Logo>
+      <NavLinks>
+        <NavLink linkName="Leaderboard" href="/" icon="TrendingUp" />
+        <NavLink linkName="My Picks" href="/picks" icon="CheckSquare" />
+        <NavLink linkName="Game Results" href="/game-results" icon="Star" />
+        <NavLink linkName="Manage Games" href="/manage-games" icon="Tv" />
+        <NavLink
+          linkName="Manage League"
+          href="/manage-league"
+          icon="Settings"
+        />
+      </NavLinks>
     </NavigationStyles>
   );
 }
