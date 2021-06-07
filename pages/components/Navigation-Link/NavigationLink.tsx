@@ -39,7 +39,6 @@ const ActiveLink: NextPage<Props> = ({ children, href }) => {
 };
 
 export default function NavLink({ linkName, href, icon }) {
-  console.log({ icon });
   return (
     <ActiveLink href={href}>
       <StyledLink>
