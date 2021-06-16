@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Navigation from "../Navigation";
+import Spacer from "../Spacer";
 
 const AppWrapper = styled.div`
   display: flex;
@@ -8,7 +9,7 @@ const AppWrapper = styled.div`
 const NavWrapper = styled.div`
   flex: 1;
   height: 100vh;
-  padding: 30px 0px;
+  padding: 40px 0px;
   background-color: var(--background);
 `;
 
@@ -16,7 +17,7 @@ const InnerStyles = styled.div`
   flex: 3;
   height: 100vh;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0px 5rem;
 `;
 
 export default function PageShell({ children }) {
@@ -25,7 +26,10 @@ export default function PageShell({ children }) {
       <NavWrapper>
         <Navigation />
       </NavWrapper>
-      <InnerStyles>{children}</InnerStyles>
+      <InnerStyles>
+        <Spacer size={48} />
+        {children}
+      </InnerStyles>
     </AppWrapper>
   );
 }

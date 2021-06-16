@@ -19,12 +19,15 @@ const StyledLink = styled.a<{ active?: boolean }>`
   font-size: 1.8rem;
   text-decoration: none;
   color: var(--black);
-  width: 175px;
+  width: 200px;
   padding-left: ${(props) => (props.active ? "55px" : "59px")};
   background-color: ${(props) => (props.active ? "white" : "inherit")};
   border-left: ${(props) =>
     props.active ? "4px solid var(--primary)" : "inherit"};
-  border-radius: ${(props) => (props.active ? "0px 15px 15px 0px" : "inherit")};
+  border-radius: 0px 15px 15px 0px;
+  &:hover {
+    background-color: white;
+  }
 `;
 
 const ActiveLink: NextPage<Props> = ({ children, href }) => {

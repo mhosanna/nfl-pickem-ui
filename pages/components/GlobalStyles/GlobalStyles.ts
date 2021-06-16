@@ -31,6 +31,12 @@ const GlobalStyles = createGlobalStyle`
     font-weight: 800;
     font-style: normal;
   }
+  @font-face {
+    font-family: 'Jost';
+    src: url('/fonts/Jost-VariableFont_wght.ttf') format("truetype");
+    font-weight: 400;
+    font-style: normal;
+  }
 /* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
    License: none (public domain)
@@ -82,16 +88,26 @@ html, body {
 }
 html {
     --primary: #D91FBB;
-    --secondary: rgba(112, 255, 223, 1);;
+    --secondary: rgba(112, 255, 223, 1);
     --background: #F3F6F8;
     --black: #202224;
     --offWhite: #ededed;
+    --gray50: hsl(0deg 0% 95%);
+    --gray300: hsl(0deg 0% 75%);
+    --gray500: hsl(0deg 0% 50%);
+    --gray700: hsl(0deg 0% 40%);
+    --transparentGray15: hsl(0deg 0% 50% / 0.15);
+    --transparentGray35: hsl(0deg 0% 50% / 0.35);
+    --grey: #888888;
+    --gray: #888888;
     --bold: 800;
     --medium: 600;
     --normal: 500;
     --maxWidth: 1000px;
     --bs: 0 12px 24px 0 rgba(0,0,0,0.09);
     --logo-font: 'Lobster', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    --header-font: 'Jost', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     --body-font: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";

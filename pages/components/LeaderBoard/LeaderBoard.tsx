@@ -11,7 +11,7 @@ const PLAYERS_QUERY = gql`
   }
 `;
 
-const GAMES_PLAYED_QUERY = gql`
+export const GAMES_PLAYED_QUERY = gql`
   query GET_ALL_PLAYED_GAMES_BY_SEASON($season: String) {
     allGames(where: { AND: [{ season: $season }, { winner_is_null: false }] }) {
       id
@@ -45,11 +45,8 @@ export default function LeaderBoard() {
   const { allGames } = gamesInfo;
   const totalPlayedGames = allGames.length;
 
-  console.log({ totalPlayedGames });
-
   return (
     <>
-      <h1>Leader Board</h1>
       <TableStyles>
         <thead>
           <tr>
