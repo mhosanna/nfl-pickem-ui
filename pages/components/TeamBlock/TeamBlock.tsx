@@ -1,5 +1,36 @@
 import styled from "styled-components";
 
+export default function TeamBlock({
+  id,
+  name,
+  city,
+  field,
+  isWinner = false,
+  isPicked = false,
+  makePick,
+}) {
+  let Component;
+  let WinFlag;
+  if (field === "home") {
+    Component = HomeBlock;
+    WinFlag = HomeFlag;
+  } else if (field === "away") {
+    Component = AwayBlock;
+    WinFlag = AwayFlag;
+  } else {
+    throw new Error(`Unrecognized Team Field: ${field}`);
+  }
+  return (
+    <>
+      <Component isPicked={isPicked} onClick={() => makePick(id)}>
+        {isWinner && <WinFlag>Game Winner</WinFlag>}
+        <span style={{ fontWeight: "bold" }}>{city}</span>
+        <span>{name}</span>
+      </Component>
+    </>
+  );
+}
+
 const BlockBase = styled.button`
   border: none;
   width: 50%;
@@ -14,6 +45,7 @@ const BlockBase = styled.button`
   flex-direction: column;
   justify-content: center;
   gap: 8px;
+  position: relative;
 `;
 
 const HomeBlock = styled(BlockBase)`
@@ -24,27 +56,20 @@ const AwayBlock = styled(BlockBase)`
   padding-left: 100px;
 `;
 
-export default function TeamBlock({
-  id,
-  name,
-  city,
-  field,
-  isWinner = false,
-  isPicked = false,
-  makePick,
-}) {
-  let Component;
-  if (field === "home") {
-    Component = HomeBlock;
-  } else if (field === "away") {
-    Component = AwayBlock;
-  } else {
-    throw new Error(`Unrecognized Team Field: ${field}`);
-  }
-  return (
-    <Component isPicked={isPicked} onClick={() => makePick(id)}>
-      <span style={{ fontWeight: "bold" }}>{city}</span>
-      <span>{name}</span>
-    </Component>
-  );
-}
+const FlagBase = styled.div`
+  position: absolute;
+  background-color: var(--primary);
+  padding: 5px 12px;
+  font-size: 1.2rem;
+  border-radius: 50px;
+  color: white;
+`;
+
+const HomeFlag = styled(FlagBase)`
+  top: -12px;
+  left: -10px;
+`;
+const AwayFlag = styled(FlagBase)`
+  top: -12px;
+  right: -10px;
+`;

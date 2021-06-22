@@ -33,7 +33,6 @@ const pickFragment = gql`
     }
     game {
       id
-      ...GameFragment
     }
     picked {
       id
@@ -52,23 +51,18 @@ const PLAYERS_QUERY = gql`
   }
 `;
 
-const GAMES_BY_SEASON_QUERY = gql`
-  query GET_ALL_GAMES_BY_SEASON($season: String) {
-    allGames(where: { season: $season }) {
+const WEEKS_BY_SEASON_QUERY = gql`
+  query GET_ALL_WEEKS_BY_SEASON($season: String) {
+    allWeeks(where: { season: $season }, orderBy: { id: desc }) {
       id
-      week
-    }
-  }
-`;
-
-const GET_ALL_GAMES_BY_SEASON_AND_WEEK = gql`
-  query GET_ALL_GAMES_BY_SEASON_AND_WEEK($season: String, $week: Int) {
-    allGames(where: { season: $season, week: $week }) {
-      id
-      ...GameFragment
-      picks {
+      label
+      games {
         id
-        ...PickFragment
+        ...GameFragment
+        picks {
+          id
+          ...PickFragment
+        }
       }
     }
   }
@@ -106,50 +100,48 @@ export default function Picks() {
     variables: { id: playerId }, //hard code player id for now
   });
   const {
-    data: gamesInfo,
-    error: gamesQueryError,
-    loading: gamesQueryLoading,
-  } = useQuery(GAMES_BY_SEASON_QUERY, {
+    data: weeksInfo,
+    error: weeksQueryError,
+    loading: weeksQueryLoading,
+  } = useQuery(WEEKS_BY_SEASON_QUERY, {
     variables: { season: "2020" },
   });
 
-  if (playersQueryLoading || gamesQueryLoading) return <p>Loading...</p>;
-  if (playersQueryError || gamesQueryError) return <p>Error</p>;
+  if (playersQueryLoading || weeksQueryLoading) return <p>Loading...</p>;
+  if (playersQueryError || weeksQueryError) return <p>Error</p>;
 
   const { Player } = playersInfo;
-  const { allGames } = gamesInfo;
-
-  //get all weeks available to make picks for
-  const availableWeeks = allGames
-    .map((game) => {
-      return game.week.toString();
-    })
-    .filter((x, i, a) => a.indexOf(x) === i) //get unique week values
-    .sort((a, b) => {
-      return b - a; //sort weeks from newest to oldest
-    });
+  const { allWeeks } = weeksInfo;
 
   return (
     <div>
-      <PickWrapper availableWeeks={availableWeeks} playerId={playerId} />
+      <PickWrapper availableWeeks={allWeeks} playerId={playerId} />
     </div>
   );
 }
 
 const PickWrapper = ({ availableWeeks, playerId }) => {
+  const [dropdownLabel, setDropdownLabel] = React.useState(
+    availableWeeks[0]?.label
+  ); //what if null?
   const [selectedWeek, setSelectedWeek] = React.useState(availableWeeks[0]);
+
+  React.useEffect(() => {
+    const week = availableWeeks.filter((week) => week.label === dropdownLabel);
+    setSelectedWeek(week[0]);
+  }, [dropdownLabel, availableWeeks]);
 
   return (
     <div>
       <Select
         label="Select a Week"
-        value={selectedWeek}
-        onChange={(ev) => setSelectedWeek(ev.target.value)}
+        value={dropdownLabel}
+        onChange={(ev) => setDropdownLabel(ev.target.value)}
       >
         {availableWeeks.map((week) => {
           return (
-            <option key={week} value={week}>
-              Week {week}
+            <option key={week.id} value={week.label}>
+              {week.label}
             </option>
           );
         })}
@@ -161,20 +153,13 @@ const PickWrapper = ({ availableWeeks, playerId }) => {
 };
 
 function GamesList({ playerId, selectedWeek }) {
-  const { data, error, loading } = useQuery(GET_ALL_GAMES_BY_SEASON_AND_WEEK, {
-    variables: { season: "2020", week: parseInt(selectedWeek) },
-  });
+  const allGames = selectedWeek.games;
 
-  if (error) {
-    return <p>Error</p>;
-  }
-  if (!data || loading) {
-    return <p>Loading...</p>;
-  }
+  if (allGames.length === 0) return <div>No Games Found</div>;
 
   return (
     <div>
-      {data.allGames.map((game) => {
+      {allGames.map((game) => {
         return <Game key={game.id} game={game} playerId={playerId} />;
       })}
     </div>
@@ -189,7 +174,7 @@ function Game({ game, playerId }) {
   const makePick = (gameId, playerId) => async (teamId) => {
     pick({
       variables: { player: playerId, game: gameId, team: teamId },
-      refetchQueries: [{ query: GET_ALL_GAMES_BY_SEASON_AND_WEEK }],
+      refetchQueries: [{ query: WEEKS_BY_SEASON_QUERY }],
     });
   };
 
@@ -208,6 +193,7 @@ function Game({ game, playerId }) {
           name={game.homeTeam.name}
           city={game.homeTeam.city}
           field="home"
+          isWinner={game.homeTeam.id === game.winner?.id}
           isPicked={
             game.homeTeam.id === playersPick[0]?.picked?.id ? true : false
           }
@@ -218,6 +204,7 @@ function Game({ game, playerId }) {
           name={game.awayTeam.name}
           city={game.awayTeam.city}
           field="away"
+          isWinner={game.awayTeam.id === game.winner?.id}
           isPicked={
             game.awayTeam.id === playersPick[0]?.picked?.id ? true : false
           }
