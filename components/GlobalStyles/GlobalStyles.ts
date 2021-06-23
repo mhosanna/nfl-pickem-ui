@@ -100,6 +100,7 @@ html {
     --transparentGray35: hsl(0deg 0% 50% / 0.35);
     --grey: #888888;
     --gray: #888888;
+    --warning: hsla(0, 100%, 55%, 0.80);
     --bold: 800;
     --medium: 600;
     --normal: 500;
