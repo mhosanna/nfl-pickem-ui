@@ -1,5 +1,5 @@
-import PageHeading from "./components/PageHeading";
-import Picks from "./components/Picks";
+import PageHeading from "../components/PageHeading";
+import Picks from "../components/Picks";
 
 export default function PicksPage() {
   return (

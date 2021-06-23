@@ -1,7 +1,7 @@
-import PageHeading from "./components/PageHeading";
-import Breadcrumbs from "./components/Breadcrumbs";
-import ManageWeeks from "./components/ManageWeeks";
-import Spacer from "./components/Spacer";
+import PageHeading from "../components/PageHeading";
+import Breadcrumbs from "../components/Breadcrumbs";
+import ManageWeeks from "../components/ManageWeeks";
+import Spacer from "../components/Spacer";
 
 export default function ManageGamesPage() {
   return (

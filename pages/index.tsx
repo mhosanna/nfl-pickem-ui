@@ -1,5 +1,5 @@
-import LeaderBoard from "./components/LeaderBoard";
-import PageHeading from "./components/PageHeading";
+import LeaderBoard from "../components/LeaderBoard";
+import PageHeading from "../components/PageHeading";
 
 export default function HomePage() {
   return (

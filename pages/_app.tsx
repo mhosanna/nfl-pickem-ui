@@ -5,9 +5,9 @@ import {
 } from "@apollo/client";
 import type { AppProps, AppContext } from "next/app";
 import { NextPageContext } from "next";
-import Page from "./components/PageShell";
+import Page from "../components/PageShell";
 import withData from "../lib/withData";
-import GlobalStyles from "./components/GlobalStyles/GlobalStyles";
+import GlobalStyles from "../components/GlobalStyles/GlobalStyles";
 
 type ApolloProps = {
   apollo: ApolloClient<any>;
