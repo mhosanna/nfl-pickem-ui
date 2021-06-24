@@ -1,47 +1,38 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { useForm, SubmitHandler } from "react-hook-form";
 import gql from "graphql-tag";
 import styled from "styled-components";
 import { string_to_slug } from "../../utils/slugify";
 
 type Inputs = {
-  weekLabel: string;
+
 };
 
-const CREATE_WEEK_MUTATION = gql`
-  mutation CREATE_WEEK_BY_SEASON(
-    $label: String
-    $slug: String
-    $season: String
-  ) {
-    createWeek(data: { label: $label, slug: $slug, season: $season }) {
+const CREATE_GAME_MUTATION = gql`
+  mutation CREATE_GAME_BY_WEEK($label: String, $slug: String, $season: String) {
+    createGame(data: { slug: $slug, season: $season }) {
       id
-      label
       slug
-      season
     }
   }
 `;
 
-export default function NewWeekForm({ setOpenModal }) {
-  const [createWeek] = useMutation(CREATE_WEEK_MUTATION, {
-    update(cache, { data: { createWeek } }) {
+export default function NewGameForm({ setOpenModal }) {
+  const [createGame] = useMutation(CREATE_GAME_MUTATION, {
+    update(cache, { data: { createGame } }) {
       cache.modify({
         fields: {
-          allWeeks(existingWeeks = []) {
-            const newWeekRef = cache.writeFragment({
-              data: createWeek,
+          allGames(existingGames = []) {
+            const newGameRef = cache.writeFragment({
+              data: createGame,
               fragment: gql`
-                fragment NewWeek on allWeeks {
+                fragment NewGame on allGames {
                   id
-                  label
                   slug
-                  season
-                  gamesCount
                 }
               `,
             });
-            return [...existingWeeks, newWeekRef];
+            return [...existingGames, newGameRef];
           },
         },
       });
@@ -54,10 +45,9 @@ export default function NewWeekForm({ setOpenModal }) {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    createWeek({
+    createGame({
       variables: {
-        label: data.weekLabel,
-        slug: string_to_slug(data.weekLabel),
+        slug: string_to_slug(""),
         season: "2020",
       },
     });
@@ -65,7 +55,7 @@ export default function NewWeekForm({ setOpenModal }) {
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <InputWrapper>
+      {/* <InputWrapper>
         <label>Week Label</label>
         <Input
           placeholder="Ex. Week 1"
@@ -74,8 +64,8 @@ export default function NewWeekForm({ setOpenModal }) {
         {errors.weekLabel && (
           <ValidationError>Week label cannot be blank</ValidationError>
         )}
-      </InputWrapper>
-      <Button type="submit">Create Week</Button>
+      </InputWrapper> */}
+      <Button type="submit">Create Game</Button>
     </form>
   );
 }

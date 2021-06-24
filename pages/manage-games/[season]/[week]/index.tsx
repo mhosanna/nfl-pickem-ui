@@ -3,7 +3,7 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import PageHeading from "../../../../components/PageHeading";
 import Breadcrumbs from "../../../../components/Breadcrumbs";
-import ManageWeeks from "../../../../components/ManageWeeks";
+import ManageGames from "../../../../components/ManageGames";
 import Spacer from "../../../../components/Spacer";
 
 const GET_WEEK_BY_SLUG_QUERY = gql`
@@ -41,6 +41,7 @@ export default function manageGames() {
         </Breadcrumbs.Crumb>
       </Breadcrumbs>
       <Spacer size={14} />
+      <ManageGames />
     </>
   );
 }

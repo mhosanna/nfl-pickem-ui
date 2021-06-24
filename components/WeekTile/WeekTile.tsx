@@ -2,7 +2,6 @@ import { useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import gql from "graphql-tag";
 import styled from "styled-components";
-import { string_to_slug } from "../../utils/slugify";
 
 const SEASON = "2020";
 
