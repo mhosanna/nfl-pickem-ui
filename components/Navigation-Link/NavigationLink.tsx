@@ -31,12 +31,12 @@ const StyledLink = styled.a<{ active?: boolean }>`
 `;
 
 const ActiveLink: NextPage<Props> = ({ children, href }) => {
-  const router = useRouter();
+  const { asPath } = useRouter();
   const child = React.Children.only(children);
 
   return (
     <Link href={href} passHref>
-      {React.cloneElement(child, { active: router.pathname === href })}
+      {React.cloneElement(child, { active: asPath === href })}
     </Link>
   );
 };

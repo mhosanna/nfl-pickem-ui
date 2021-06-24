@@ -37,9 +37,9 @@ const NavLinks = styled.div`
   min-width: 320px;
 `;
 
-export default function Navigation() {
-  const [openMobileMenu, setOpenMobileMenu] = useState(false);
+const SEASON = "2021";
 
+export default function Navigation() {
   return (
     <NavigationStyles>
       <Logo>Pick’em</Logo>
@@ -47,7 +47,11 @@ export default function Navigation() {
         <NavLink linkName="Leaderboard" href="/" icon="TrendingUp" />
         <NavLink linkName="My Picks" href="/picks" icon="CheckSquare" />
         <NavLink linkName="Game Results" href="/game-results" icon="Star" />
-        <NavLink linkName="Manage Games" href="/manage-games" icon="Tv" />
+        <NavLink
+          linkName="Manage Games"
+          href={`/manage-games/${SEASON}`}
+          icon="Tv"
+        />
         <NavLink
           linkName="Manage League"
           href="/manage-league"
