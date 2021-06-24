@@ -3,16 +3,22 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import gql from "graphql-tag";
 import styled from "styled-components";
 import { GET_WEEKS_BY_SEASON_QUERY } from "../WeekTile";
+import { string_to_slug } from "../../utils/slugify";
 
 type Inputs = {
   weekLabel: string;
 };
 
 const CREATE_WEEK_MUTATION = gql`
-  mutation CREATE_WEEK_BY_SEASON($label: String, $season: String) {
-    createWeek(data: { label: $label, season: $season }) {
+  mutation CREATE_WEEK_BY_SEASON(
+    $label: String
+    $slug: String
+    $season: String
+  ) {
+    createWeek(data: { label: $label, slug: $slug, season: $season }) {
       id
       label
+      slug
       season
     }
   }
@@ -30,6 +36,7 @@ export default function NewWeekForm({ setOpenModal }) {
                 fragment NewWeek on allWeeks {
                   id
                   label
+                  slug
                   season
                   gamesCount
                 }
@@ -49,7 +56,11 @@ export default function NewWeekForm({ setOpenModal }) {
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     createWeek({
-      variables: { label: data.weekLabel, season: "2020" },
+      variables: {
+        label: data.weekLabel,
+        slug: string_to_slug(data.weekLabel),
+        season: "2020",
+      },
     });
     setOpenModal(false);
   };

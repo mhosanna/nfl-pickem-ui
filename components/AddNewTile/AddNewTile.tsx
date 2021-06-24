@@ -25,4 +25,7 @@ const StyledTile = styled.button`
     color: var(--gray700);
     border: 1px dashed var(--gray700);
   }
+  &:focus {
+    color: var(--gray700);
+  }
 `;

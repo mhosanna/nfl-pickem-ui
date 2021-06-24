@@ -89,7 +89,8 @@ html, body {
 html {
     --primary: #D91FBB;
     --secondary: rgba(112, 255, 223, 1);
-    --background: #F3F6F8;
+    --background: hsla(204, 26%, 96%, 1);
+    --backgroundHover: hsla(204, 26%, 89%, 1);
     --black: #202224;
     --offWhite: #ededed;
     --gray50: hsl(0deg 0% 95%);

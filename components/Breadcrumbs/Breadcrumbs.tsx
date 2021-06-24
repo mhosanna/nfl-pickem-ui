@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Link from "next/link";
 
 const Breadcrumbs = ({ children }) => {
   return <Wrapper>{children}</Wrapper>;
@@ -7,7 +8,9 @@ const Breadcrumbs = ({ children }) => {
 Breadcrumbs.Crumb = ({ href, children }) => {
   return (
     <CrumbWrapper>
-      <CrumbLink href={href}>{children}</CrumbLink>
+      <Link href={href} passHref>
+        <CrumbLink>{children}</CrumbLink>
+      </Link>
     </CrumbWrapper>
   );
 };

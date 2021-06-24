@@ -4,13 +4,14 @@ import gql from "graphql-tag";
 import styled from "styled-components";
 import { string_to_slug } from "../../utils/slugify";
 
-const SEASON = "2021";
+const SEASON = "2020";
 
 const GET_WEEKS_BY_SEASON_QUERY = gql`
   query GET_WEEKS_BY_SEASON($season: String) {
     allWeeks(where: { season: $season }) {
       id
       label
+      slug
       season
       gamesCount
     }
@@ -41,7 +42,10 @@ export function WeekTiles() {
             onClick={() => {
               router.push({
                 pathname: "/manage-games/[season]/[week]",
-                query: { season: SEASON, week: string_to_slug(week.label) },
+                query: {
+                  season: SEASON,
+                  week: week.slug,
+                },
               });
             }}
           >
@@ -60,7 +64,7 @@ const WeekListWrapper = styled.div`
   flex-wrap: wrap;
 `;
 
-const WeekTile = styled.article`
+const WeekTile = styled.button`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -70,6 +74,10 @@ const WeekTile = styled.article`
   background-color: var(--background);
   border: 2px solid var(--black);
   border-radius: 5px;
+  &:hover,
+  &:focus {
+    background-color: var(--backgroundHover);
+  }
 `;
 
 const WeekLabel = styled.p`

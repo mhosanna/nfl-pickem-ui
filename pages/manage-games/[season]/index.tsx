@@ -3,7 +3,7 @@ import Breadcrumbs from "../../../components/Breadcrumbs";
 import ManageWeeks from "../../../components/ManageWeeks";
 import Spacer from "../../../components/Spacer";
 
-const SEASON = "2021";
+const SEASON = "2020";
 
 export default function ManageGamesPage() {
   return (
