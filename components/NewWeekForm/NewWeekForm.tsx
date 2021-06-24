@@ -2,13 +2,14 @@ import { useMutation, useQuery } from "@apollo/client";
 import { useForm, SubmitHandler } from "react-hook-form";
 import gql from "graphql-tag";
 import styled from "styled-components";
+import { GET_WEEKS_BY_SEASON_QUERY } from "../WeekTile";
 
 type Inputs = {
   weekLabel: string;
 };
 
 const CREATE_WEEK_MUTATION = gql`
-  query CREATE_WEEK_BY_SEASON($season: String, $label: String) {
+  mutation CREATE_WEEK_BY_SEASON($label: String, $season: String) {
     createWeek(data: { label: $label, season: $season }) {
       id
       label
@@ -17,13 +18,21 @@ const CREATE_WEEK_MUTATION = gql`
   }
 `;
 
-export default function NewWeekForm() {
+export default function NewWeekForm({ setOpenModal }) {
+  const [createWeek] = useMutation(CREATE_WEEK_MUTATION);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    createWeek({
+      variables: { label: data.weekLabel, season: "2020" },
+      //TODO: Figure out how to add new week to cache
+    });
+    setOpenModal(false);
+  };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <InputWrapper>

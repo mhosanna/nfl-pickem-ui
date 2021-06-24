@@ -19,7 +19,7 @@ const StyledTile = styled.button`
   background-color: white;
   border: 1px dashed var(--gray300);
   border-radius: 5px;
-  width: 200px;
+  width: 175px;
   height: 80px;
   &:hover {
     color: var(--gray700);
