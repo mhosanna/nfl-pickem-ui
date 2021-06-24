@@ -19,7 +19,28 @@ const CREATE_WEEK_MUTATION = gql`
 `;
 
 export default function NewWeekForm({ setOpenModal }) {
-  const [createWeek] = useMutation(CREATE_WEEK_MUTATION);
+  const [createWeek] = useMutation(CREATE_WEEK_MUTATION, {
+    update(cache, { data: { createWeek } }) {
+      cache.modify({
+        fields: {
+          allWeeks(existingWeeks = []) {
+            const newWeekRef = cache.writeFragment({
+              data: createWeek,
+              fragment: gql`
+                fragment NewWeek on allWeeks {
+                  id
+                  label
+                  season
+                  gamesCount
+                }
+              `,
+            });
+            return [...existingWeeks, newWeekRef];
+          },
+        },
+      });
+    },
+  });
   const {
     register,
     handleSubmit,
@@ -29,7 +50,6 @@ export default function NewWeekForm({ setOpenModal }) {
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     createWeek({
       variables: { label: data.weekLabel, season: "2020" },
-      //TODO: Figure out how to add new week to cache
     });
     setOpenModal(false);
   };

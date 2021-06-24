@@ -1,6 +1,10 @@
 import { useMutation, useQuery } from "@apollo/client";
+import { useRouter } from "next/router";
 import gql from "graphql-tag";
 import styled from "styled-components";
+import { string_to_slug } from "../../utils/slugify";
+
+const SEASON = "2021";
 
 const GET_WEEKS_BY_SEASON_QUERY = gql`
   query GET_WEEKS_BY_SEASON($season: String) {
@@ -14,6 +18,7 @@ const GET_WEEKS_BY_SEASON_QUERY = gql`
 `;
 
 export function WeekTiles() {
+  const router = useRouter();
   const {
     data: weeksInfo,
     error: weeksQueryError,
@@ -31,7 +36,15 @@ export function WeekTiles() {
     <WeekListWrapper>
       {allWeeks.map((week) => {
         return (
-          <WeekTile key={week.id}>
+          <WeekTile
+            key={week.id}
+            onClick={() => {
+              router.push({
+                pathname: "/manage-games/[season]/[week]",
+                query: { season: SEASON, week: string_to_slug(week.label) },
+              });
+            }}
+          >
             <WeekLabel>{week.label}</WeekLabel>
             <WeekGameCount>{week.gamesCount} games</WeekGameCount>
           </WeekTile>

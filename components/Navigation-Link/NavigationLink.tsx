@@ -36,7 +36,9 @@ const ActiveLink: NextPage<Props> = ({ children, href }) => {
 
   return (
     <Link href={href} passHref>
-      {React.cloneElement(child, { active: asPath === href })}
+      {React.cloneElement(child, {
+        active: `/${asPath.split("/")[1]}` === `/${href.split("/")[1]}`,
+      })}
     </Link>
   );
 };
