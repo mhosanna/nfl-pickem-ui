@@ -1,17 +1,38 @@
 import PageHeading from "../../../components/PageHeading";
 import Breadcrumbs from "../../../components/Breadcrumbs";
 import ManageWeeks from "../../../components/ManageWeeks";
+import { GET_WEEKS_BY_SEASON_QUERY } from "../../../components/WeekTile";
 import Spacer from "../../../components/Spacer";
+import { initializeApollo, addApolloState } from "../../../lib/withData";
+import { season } from "../../../config";
 
-const SEASON = "2020";
+export async function getStaticPaths() {
+  return {
+    paths: [{ params: { season } }],
+    fallback: false,
+  };
+}
 
-export default function ManageGamesPage() {
+export async function getStaticProps({ params }) {
+  const apolloClient = initializeApollo();
+
+  await apolloClient.query({
+    query: GET_WEEKS_BY_SEASON_QUERY,
+    variables: { season: params.season },
+  });
+
+  return addApolloState(apolloClient, {
+    props: {},
+  });
+}
+
+export default function ManageWeeksPage() {
   return (
     <>
-      <PageHeading heading="Manage Games" season={SEASON} />
+      <PageHeading heading="Manage Games" season={season} />
       <Breadcrumbs>
-        <Breadcrumbs.Crumb href={`/manage-games/${SEASON}`}>
-          {SEASON} Season
+        <Breadcrumbs.Crumb href={`/manage-games/${season}`}>
+          {season} Season
         </Breadcrumbs.Crumb>
       </Breadcrumbs>
       <Spacer size={14} />

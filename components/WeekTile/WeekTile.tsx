@@ -2,8 +2,26 @@ import { useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import gql from "graphql-tag";
 import styled from "styled-components";
+import { useSeason } from "../../lib/seasonContext";
 
-const SEASON = "2020";
+const gameFragment = gql`
+  fragment GameFragment on Game {
+    homeTeam {
+      id
+      name
+      city
+    }
+    awayTeam {
+      id
+      name
+      city
+    }
+    spread
+    winner {
+      id
+    }
+  }
+`;
 
 const GET_WEEKS_BY_SEASON_QUERY = gql`
   query GET_WEEKS_BY_SEASON($season: String) {
@@ -13,18 +31,25 @@ const GET_WEEKS_BY_SEASON_QUERY = gql`
       slug
       season
       gamesCount
+      games {
+        id
+        slug
+        ...GameFragment
+      }
     }
   }
+  ${gameFragment}
 `;
 
 export function WeekTiles() {
   const router = useRouter();
+  const { season } = useSeason();
   const {
     data: weeksInfo,
     error: weeksQueryError,
     loading: weeksQueryLoading,
   } = useQuery(GET_WEEKS_BY_SEASON_QUERY, {
-    variables: { season: "2020" }, //hard code season for now
+    variables: { season },
   });
 
   if (weeksQueryLoading) return <p>Loading...</p>;
@@ -42,7 +67,7 @@ export function WeekTiles() {
               router.push({
                 pathname: "/manage-games/[season]/[week]",
                 query: {
-                  season: SEASON,
+                  season,
                   week: week.slug,
                 },
               });

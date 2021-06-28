@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import NavLink from "../Navigation-Link";
+import { season } from "../../config";
 
 const NavigationStyles = styled.nav``;
 
@@ -37,8 +38,6 @@ const NavLinks = styled.div`
   min-width: 320px;
 `;
 
-const SEASON = "2021";
-
 export default function Navigation() {
   return (
     <NavigationStyles>
@@ -49,7 +48,7 @@ export default function Navigation() {
         <NavLink linkName="Game Results" href="/game-results" icon="Star" />
         <NavLink
           linkName="Manage Games"
-          href={`/manage-games/${SEASON}`}
+          href={`/manage-games/${season}`}
           icon="Tv"
         />
         <NavLink

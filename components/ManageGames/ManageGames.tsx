@@ -2,7 +2,7 @@ import React from "react";
 import AddNewTile from "../AddNewTile";
 import Spacer from "../Spacer";
 import Modal from "../Modal";
-import GameTiles from "../GameTiles";
+import { GameTiles } from "../GameTiles";
 import NewGameForm from "../NewGameForm";
 
 export default function ManageGames() {
