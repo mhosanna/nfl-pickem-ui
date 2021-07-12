@@ -1,12 +1,13 @@
-import { useMutation } from "@apollo/client";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import gql from "graphql-tag";
 import styled from "styled-components";
+import TeamsComboBox from "../TeamsComboBox";
+
 import { string_to_slug } from "../../utils/slugify";
 
-type Inputs = {
-
-};
+type Inputs = {};
 
 const CREATE_GAME_MUTATION = gql`
   mutation CREATE_GAME_BY_WEEK($label: String, $slug: String, $season: String) {
@@ -16,8 +17,36 @@ const CREATE_GAME_MUTATION = gql`
     }
   }
 `;
+const GET_ALL_TEAMS = gql`
+  query GET_ALL_TEAMS {
+    allTeams {
+      city
+      name
+    }
+  }
+`;
 
 export default function NewGameForm({ setOpenModal }) {
+  const { data, error, loading } = useQuery(GET_ALL_TEAMS);
+  const [allItems, setAllItems] = useState([]);
+  const [inputItems, setInputItems] = useState([]);
+
+  useEffect(() => {
+    if (data) {
+      const { allTeams } = data;
+      setAllItems(allTeams);
+      setInputItems(allTeams);
+    }
+  }, [data]);
+
+  const itemToString = (item) => (item ? item.city + " " + item.name : "");
+
+  const {
+    handleSubmit,
+    formState: { errors },
+    control,
+  } = useForm<Inputs>();
+
   const [createGame] = useMutation(CREATE_GAME_MUTATION, {
     update(cache, { data: { createGame } }) {
       cache.modify({
@@ -38,32 +67,41 @@ export default function NewGameForm({ setOpenModal }) {
       });
     },
   });
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    createGame({
-      variables: {
-        slug: string_to_slug(""),
-        season: "2020",
-      },
-    });
-    setOpenModal(false);
+    console.log({ data });
+    // createGame({
+    //   variables: {
+    //     slug: string_to_slug(""),
+    //     season: "2020",
+    //   },
+    // });
+    // setOpenModal(false);
   };
+
+  if (error) return `Error! ${error.message}`;
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {/* <InputWrapper>
-        <label>Week Label</label>
-        <Input
-          placeholder="Ex. Week 1"
-          {...register("weekLabel", { required: true })}
-        />
-        {errors.weekLabel && (
-          <ValidationError>Week label cannot be blank</ValidationError>
+      <Controller
+        control={control}
+        name="homeTeam"
+        render={({ ...field }) => (
+          <TeamsComboBox
+            {...field}
+            allItems={allItems}
+            inputItems={inputItems}
+            setInputItems={setInputItems}
+            itemToString={itemToString}
+            label="Home Team"
+            teamsLoading={loading}
+          />
         )}
+        rules={{
+          required: true,
+        }}
+      />
+      {/* <InputWrapper>
       </InputWrapper> */}
       <Button type="submit">Create Game</Button>
     </form>
