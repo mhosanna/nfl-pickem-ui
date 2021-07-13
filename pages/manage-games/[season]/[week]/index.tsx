@@ -83,7 +83,7 @@ export default function ManageGamesPage() {
         </Breadcrumbs.Crumb>
       </Breadcrumbs>
       <Spacer size={14} />
-      <ManageGames />
+      <ManageGames week={weekData} season={season} />
     </>
   );
 }

@@ -5,7 +5,7 @@ import Modal from "../Modal";
 import { GameTiles } from "../GameTiles";
 import NewGameForm from "../NewGameForm";
 
-export default function ManageGames() {
+export default function ManageGames({ week, season }) {
   const [openModal, setOpenModal] = React.useState(false);
 
   return (
@@ -22,7 +22,7 @@ export default function ManageGames() {
         isOpen={openModal}
         handleDismiss={() => setOpenModal(false)}
       >
-        <NewGameForm setOpenModal={setOpenModal} />
+        <NewGameForm setOpenModal={setOpenModal} week={week} season={season} />
       </Modal>
     </>
   );

@@ -5,7 +5,7 @@ import Icon from "../Icon";
 
 const TeamsComboBox = ({
   onChange,
-  ref,
+  inputRef,
   allItems,
   inputItems,
   setInputItems,
@@ -38,7 +38,7 @@ const TeamsComboBox = ({
       <div>
         <Label {...getLabelProps()}>{label}</Label>
         <InputWrapper>
-          <Input {...getInputProps({ ref, isOpen })} />
+          <Input {...getInputProps({ inputRef, isOpen })} />
           {selectedItem ? (
             <ControllerButton
               onClick={clearSelection}
@@ -112,7 +112,7 @@ const ControllerButton = styled.button`
 
 const Menu = styled.ul`
   position: absolute;
-  width: 76.5%;
+  width: 86%;
   max-height: 30rem;
   background-color: white;
   overflow-x: hidden;
