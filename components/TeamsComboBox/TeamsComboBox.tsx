@@ -1,7 +1,46 @@
-import React from "react";
+import { useState, useEffect } from "react";
+import { useQuery } from "@apollo/client";
 import Downshift from "downshift";
+import gql from "graphql-tag";
 import styled from "styled-components";
 import Icon from "../Icon";
+
+const GET_ALL_TEAMS = gql`
+  query GET_ALL_TEAMS {
+    allTeams {
+      id
+      city
+      name
+    }
+  }
+`;
+
+export default function TeamComboBoxWrapper(props) {
+  const { data, error, loading } = useQuery(GET_ALL_TEAMS);
+  const [allItems, setAllItems] = useState([]);
+  const [inputItems, setInputItems] = useState([]);
+
+  useEffect(() => {
+    if (data) {
+      const { allTeams } = data;
+      setAllItems(allTeams);
+      setInputItems(allTeams);
+    }
+  }, [data]);
+
+  const itemToString = (item) => (item ? item.city + " " + item.name : "");
+
+  return (
+    <TeamsComboBox
+      {...props}
+      allItems={allItems}
+      inputItems={inputItems}
+      setInputItems={setInputItems}
+      itemToString={itemToString}
+      teamsLoading={loading}
+    />
+  );
+}
 
 const TeamsComboBox = ({
   onChange,
@@ -15,7 +54,7 @@ const TeamsComboBox = ({
 }) => (
   <Downshift
     onChange={onChange}
-    itemToString={(item) => (item ? item.city + " " + item.name : "")}
+    itemToString={itemToString}
     onInputValueChange={(inputValue) => {
       setInputItems(
         allItems.filter((item) =>
@@ -37,7 +76,7 @@ const TeamsComboBox = ({
     }) => (
       <div>
         <Label {...getLabelProps()}>{label}</Label>
-        <InputWrapper>
+        <ComboBoxWrapper>
           <Input {...getInputProps({ inputRef, isOpen })} />
           {selectedItem ? (
             <ControllerButton
@@ -51,42 +90,42 @@ const TeamsComboBox = ({
               <Icon name={`${isOpen ? "ChevronUp" : "ChevronDown"}`} />
             </ControllerButton>
           )}
-        </InputWrapper>
-        <Menu {...getMenuProps()}>
-          {isOpen && teamsLoading ? (
-            <Item>...Loading</Item>
-          ) : (
-            isOpen &&
-            inputItems.map((item, index) => (
-              <Item
-                {...getItemProps({
-                  item,
-                  index,
-                  style: {
-                    backgroundColor:
-                      highlightedIndex === index ? "var(--gray50)" : "white",
-                  },
-                })}
-                key={`${item}${index}`}
-              >
-                {itemToString(item)}
-              </Item>
-            ))
-          )}
-        </Menu>
+          <Menu {...getMenuProps()}>
+            {isOpen && teamsLoading ? (
+              <Item>...Loading</Item>
+            ) : (
+              isOpen &&
+              inputItems.map((item, index) => (
+                <Item
+                  {...getItemProps({
+                    item,
+                    index,
+                    style: {
+                      backgroundColor:
+                        highlightedIndex === index ? "var(--gray50)" : "white",
+                    },
+                  })}
+                  key={`${item}${index}`}
+                >
+                  {itemToString(item)}
+                </Item>
+              ))
+            )}
+          </Menu>
+        </ComboBoxWrapper>
       </div>
     )}
   </Downshift>
 );
 
+const ComboBoxWrapper = styled.div`
+  position: relative;
+  width: 95%;
+`;
+
 const Label = styled.label`
   display: block;
   font-weight: bold;
-`;
-
-const InputWrapper = styled.div`
-  position: relative;
-  width: 80%;
 `;
 
 const Input = styled.input`
@@ -112,7 +151,7 @@ const ControllerButton = styled.button`
 
 const Menu = styled.ul`
   position: absolute;
-  width: 86%;
+  width: 100%;
   max-height: 30rem;
   background-color: white;
   overflow-x: hidden;
@@ -130,5 +169,3 @@ const Item = styled.li`
   cursor: pointer;
   padding: 6px 12px;
 `;
-
-export default TeamsComboBox;

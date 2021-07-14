@@ -1,14 +1,11 @@
-import React from "react";
-import AddNewTile from "../AddNewTile";
-import Spacer from "../Spacer";
-import Modal from "../Modal";
-import { GameTiles } from "../GameTiles";
+import { useState, useEffect } from "react";
+import { useQuery } from "@apollo/client";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import gql from "graphql-tag";
 import styled from "styled-components";
-import { useMutation } from "@apollo/client";
-import { string_to_slug } from "../../utils/slugify";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import PageTitle from "../PageTItle";
 import TeamsComboBox from "../TeamsComboBox";
+import Spacer from "../Spacer";
 
 type Team = {
   __typeName: string;
@@ -23,92 +20,25 @@ type Inputs = {
   spread: string;
 };
 
-const CREATE_GAME_MUTATION = gql`
-  mutation CREATE_GAME_BY_WEEK(
-    $season: String
-    $slug: String
-    $week: ID!
-    $homeTeamId: ID!
-    $awayTeamId: ID!
-    $spread: Float
-  ) {
-    createGame(
-      data: {
-        season: $season
-        slug: $slug
-        week: { connect: { id: $week } }
-        homeTeam: { connect: { id: $homeTeamId } }
-        awayTeam: { connect: { id: $awayTeamId } }
-        spread: $spread
-      }
-    ) {
-      id
-      slug
-    }
-  }
-`;
-
-export default function ManageGames({ week, season }) {
-  const [openModal, setOpenModal] = React.useState(false);
-
-  const [createGame] = useMutation(CREATE_GAME_MUTATION, {
-    update(cache, { data: { createGame } }) {
-      cache.modify({
-        fields: {
-          allGames(existingGames = []) {
-            const newGameRef = cache.writeFragment({
-              data: createGame,
-              fragment: gql`
-                fragment NewGame on allGames {
-                  id
-                  slug
-                }
-              `,
-            });
-            return [...existingGames, newGameRef];
-          },
-        },
-      });
-    },
-  });
-
-  function SubmitNewGame(data: Inputs) {
-    const slug = string_to_slug(data.homeTeam.name + " " + data.awayTeam.name);
-
-    createGame({
-      variables: {
-        season,
-        slug,
-        week: week.id,
-        homeTeamId: data.homeTeam.id,
-        awayTeamId: data.awayTeam.id,
-        spread: parseFloat(data.spread),
-      },
-    });
-    setOpenModal(false);
-  }
-
+export default function EditGame({ game }) {
+  const pageTitle =
+    game.homeTeam.city +
+    " " +
+    game.homeTeam.name +
+    "  vs " +
+    game.awayTeam.city +
+    " " +
+    game.awayTeam.name;
   return (
     <>
-      <AddNewTile
-        label="Add New Game"
-        icon="Plus"
-        onClick={() => setOpenModal(true)}
-      />
-      <Spacer size={28} />
-      <GameTiles />
-      <Modal
-        title="Add a New Game"
-        isOpen={openModal}
-        handleDismiss={() => setOpenModal(false)}
-      >
-        <NewGameForm handleSubmitGame={SubmitNewGame}></NewGameForm>
-      </Modal>
+      <PageTitle title={pageTitle} />
+      <Spacer size={32} />
+      <EditGameForm />
     </>
   );
 }
 
-function NewGameForm({ handleSubmitGame }) {
+function EditGameForm() {
   const {
     handleSubmit,
     formState: { errors },
@@ -116,10 +46,9 @@ function NewGameForm({ handleSubmitGame }) {
     register,
   } = useForm<Inputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = (data: Inputs) => {
-    handleSubmitGame(data);
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    console.log({ data });
   };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FormFields control={control} register={register} errors={errors} />
@@ -129,7 +58,7 @@ function NewGameForm({ handleSubmitGame }) {
 
 function FormFields({ control, register, errors }) {
   return (
-    <>
+    <Wrapper>
       <HomeTeamInput>
         <Controller
           control={control}
@@ -176,10 +105,14 @@ function FormFields({ control, register, errors }) {
         )}
       </AwayTeamInput>
       <Button type="submit">Create Game</Button>
-    </>
+    </Wrapper>
   );
 }
-
+const Wrapper = styled.div`
+  width: 600px;
+  border: 2px solid var(--black);
+  padding: 16px;
+`;
 const HomeTeamInput = styled.div`
   position: relative;
   z-index: 2;

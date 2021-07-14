@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { useForm, SubmitHandler } from "react-hook-form";
 import gql from "graphql-tag";
 import styled from "styled-components";

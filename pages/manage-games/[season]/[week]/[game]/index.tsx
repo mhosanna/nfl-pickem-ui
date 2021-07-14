@@ -9,6 +9,7 @@ import Spacer from "../../../../../components/Spacer";
 import { GET_WEEKS_BY_SEASON_QUERY } from "../../../../../components/WeekTile";
 import { GET_GAMES_BY_WEEK_SLUG } from "../../../../../components/GameTiles";
 import { season } from "../../../../../config";
+import EditGame from "../../../../../components/EditGame";
 
 const GET_WEEK_BY_SLUG_QUERY = gql`
   query GET_WEEK_BY_SLUG_QUERY($slug: String, $season: String) {
@@ -27,10 +28,12 @@ const GET_GAME_BY_SLUG_QUERY = gql`
       slug
       homeTeam {
         name
+        city
         abbreviation
       }
       awayTeam {
         name
+        city
         abbreviation
       }
       spread
@@ -124,6 +127,7 @@ export default function ManageGamePage() {
         </Breadcrumbs.Crumb>
       </Breadcrumbs>
       <Spacer size={14} />
+      <EditGame game={games} />
     </>
   );
 }
