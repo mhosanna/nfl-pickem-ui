@@ -27,16 +27,24 @@ const GET_GAME_BY_SLUG_QUERY = gql`
       id
       slug
       homeTeam {
+        id
         name
         city
         abbreviation
       }
       awayTeam {
+        id
         name
         city
         abbreviation
       }
       spread
+      winner {
+        id
+        name
+        city
+        abbreviation
+      }
     }
   }
 `;

@@ -51,10 +51,13 @@ const TeamsComboBox = ({
   itemToString,
   label,
   teamsLoading,
+  initialTeam = null,
 }) => (
   <Downshift
+    id="team-dropdown"
     onChange={onChange}
     itemToString={itemToString}
+    initialSelectedItem={initialTeam}
     onInputValueChange={(inputValue) => {
       setInputItems(
         allItems.filter((item) =>
