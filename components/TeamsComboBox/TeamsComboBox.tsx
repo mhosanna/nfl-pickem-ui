@@ -45,6 +45,7 @@ export default function TeamComboBoxWrapper(props) {
 const TeamsComboBox = ({
   onChange,
   inputRef,
+  disabled = false,
   allItems,
   inputItems,
   setInputItems,
@@ -80,9 +81,10 @@ const TeamsComboBox = ({
       <div>
         <Label {...getLabelProps()}>{label}</Label>
         <ComboBoxWrapper>
-          <Input {...getInputProps({ inputRef, isOpen })} />
+          <Input {...getInputProps({ inputRef, isOpen, disabled })} />
           {selectedItem ? (
             <ControllerButton
+              disabled={disabled}
               onClick={clearSelection}
               aria-label="clear selection"
             >
@@ -103,6 +105,7 @@ const TeamsComboBox = ({
                   {...getItemProps({
                     item,
                     index,
+                    disabled,
                     style: {
                       backgroundColor:
                         highlightedIndex === index ? "var(--gray50)" : "white",
@@ -138,7 +141,8 @@ const Input = styled.input`
   word-wrap: break-word;
   min-height: 1.8rem;
   padding: 1rem;
-  color: rgba(0, 0, 0, 0.87);
+  color: ${(props) =>
+    props.disabled ? "var(--gray500)" : "rgba(0, 0, 0, 0.87)"};
   border: 2px solid var(--black);
   border-radius: ${(props) => (props.isOpen ? "3px 3px 0px 0px" : "3px")};
 `;
@@ -149,7 +153,7 @@ const ControllerButton = styled.button`
   position: absolute;
   right: -12px;
   top: 10px;
-  cursor: pointer;
+  cursor: ${(props) => (props.disabled ? "inherit" : "pointer")};
 `;
 
 const Menu = styled.ul`

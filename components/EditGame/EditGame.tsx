@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import styled from "styled-components";
 import * as yup from "yup";
@@ -82,6 +82,7 @@ export default function EditGame({ game }) {
 }
 
 function EditGameForm({ homeTeam, awayTeam, spread, isWinner }) {
+  const [isDisabled, setIsDisabled] = useState(true);
   const validationSchema = useMemo(
     () =>
       yup
@@ -116,7 +117,7 @@ function EditGameForm({ homeTeam, awayTeam, spread, isWinner }) {
             return new yup.ValidationError(
               "Only one team can be the winner of a game",
               null,
-              "customField"
+              "isWinner"
             );
           }
           return true;
@@ -143,6 +144,7 @@ function EditGameForm({ homeTeam, awayTeam, spread, isWinner }) {
   });
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
+    setIsDisabled(true);
     console.log({ data });
   };
   return (
@@ -153,30 +155,43 @@ function EditGameForm({ homeTeam, awayTeam, spread, isWinner }) {
         errors={errors}
         homeTeam={homeTeam}
         awayTeam={awayTeam}
+        isDisabled={isDisabled}
+        setIsDisabled={setIsDisabled}
       />
     </form>
   );
 }
 
-function FormFields({ control, register, errors, homeTeam, awayTeam }) {
+function FormFields({
+  control,
+  register,
+  errors,
+  homeTeam,
+  awayTeam,
+  isDisabled,
+  setIsDisabled,
+}) {
   return (
     <Wrapper>
       <HomeTeamInput>
-        <Controller
-          control={control}
-          name="homeTeam"
-          render={({ field: { ref, ...fieldProps } }) => (
-            <TeamsComboBox
-              {...fieldProps}
-              inputRef={ref}
-              label="Home Team"
-              initialTeam={homeTeam}
-            />
+        <div>
+          <Controller
+            control={control}
+            name="homeTeam"
+            render={({ field: { ref, ...fieldProps } }) => (
+              <TeamsComboBox
+                {...fieldProps}
+                inputRef={ref}
+                label="Home Team"
+                initialTeam={homeTeam}
+                disabled={isDisabled}
+              />
+            )}
+          />
+          {errors.homeTeam && (
+            <ValidationError>{errors.homeTeam.message}</ValidationError>
           )}
-        />
-        {errors.homeTeam && (
-          <ValidationError>{errors.homeTeam.message}</ValidationError>
-        )}
+        </div>
         <div style={{ marginTop: "29px" }}>
           <Controller
             control={control}
@@ -186,6 +201,7 @@ function FormFields({ control, register, errors, homeTeam, awayTeam }) {
                 <Checkbox
                   checked={value}
                   onChange={(e) => onChange(e.target.checked)}
+                  disabled={isDisabled}
                 />
                 <CheckboxLabel>Matchup Winner</CheckboxLabel>
               </CheckboxWrapper>
@@ -196,7 +212,11 @@ function FormFields({ control, register, errors, homeTeam, awayTeam }) {
       <Spacer size={24} />
       <InputWrapper>
         <Label>Spread</Label>
-        <Input placeholder="Ex. -4" {...register("spread")} />
+        <Input
+          placeholder="Ex. -4"
+          {...register("spread")}
+          disabled={isDisabled}
+        />
         {errors.spread && (
           <ValidationError>{errors.spread.message}</ValidationError>
         )}
@@ -204,21 +224,24 @@ function FormFields({ control, register, errors, homeTeam, awayTeam }) {
 
       <Spacer size={24} />
       <AwayTeamInput>
-        <Controller
-          control={control}
-          name="awayTeam"
-          render={({ field: { ref, ...fieldProps } }) => (
-            <TeamsComboBox
-              {...fieldProps}
-              inputRef={ref}
-              label="Away Team"
-              initialTeam={awayTeam}
-            />
+        <div>
+          <Controller
+            control={control}
+            name="awayTeam"
+            render={({ field: { ref, ...fieldProps } }) => (
+              <TeamsComboBox
+                {...fieldProps}
+                inputRef={ref}
+                label="Away Team"
+                initialTeam={awayTeam}
+                disabled={isDisabled}
+              />
+            )}
+          />
+          {errors.awayTeam && (
+            <ValidationError>{errors.awayTeam.message}</ValidationError>
           )}
-        />
-        {errors.awayTeam && (
-          <ValidationError>{errors.awayTeam.message}</ValidationError>
-        )}
+        </div>
         <div style={{ marginTop: "29px" }}>
           <Controller
             control={control}
@@ -228,6 +251,7 @@ function FormFields({ control, register, errors, homeTeam, awayTeam }) {
                 <Checkbox
                   checked={value}
                   onChange={(e) => onChange(e.target.checked)}
+                  disabled={isDisabled}
                 />
                 <CheckboxLabel>Matchup Winner</CheckboxLabel>
               </CheckboxWrapper>
@@ -235,11 +259,27 @@ function FormFields({ control, register, errors, homeTeam, awayTeam }) {
           />
         </div>
       </AwayTeamInput>
-      {console.log(errors)}
-      <Button type="submit">Create Game</Button>
+      <FormErrors>
+        {errors.isWinner && (
+          <ValidationError>{errors.isWinner.message}</ValidationError>
+        )}
+      </FormErrors>
+      <Spacer size={10} />
+      {isDisabled && (
+        <Button type="button" onClick={() => setIsDisabled(!isDisabled)}>
+          Edit Game
+        </Button>
+      )}
+      {!isDisabled && <Button type="submit">Save Game</Button>}
     </Wrapper>
   );
 }
+
+const FormErrors = styled.div`
+  position: relative;
+  z-index: 0;
+  top: 18px;
+`;
 
 const CheckboxWrapper = styled.label`
   display: flex;
