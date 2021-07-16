@@ -102,6 +102,8 @@ html {
     --grey: #888888;
     --gray: #888888;
     --warning: hsla(0, 100%, 55%, 0.80);
+    --success: hsla(129,100%,93%, 0.80);
+    --successDark: hsla(129,100%,83%, 1);
     --bold: 800;
     --medium: 600;
     --normal: 500;

@@ -141,6 +141,8 @@ const Input = styled.input`
   word-wrap: break-word;
   min-height: 1.8rem;
   padding: 1rem;
+  background-color: ${(props) =>
+    props.disabled ? "var(--transparentGray15)" : "none"};
   color: ${(props) =>
     props.disabled ? "var(--gray500)" : "rgba(0, 0, 0, 0.87)"};
   border: 2px solid var(--black);

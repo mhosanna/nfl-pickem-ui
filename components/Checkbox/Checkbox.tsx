@@ -24,8 +24,14 @@ const HiddenCheckbox = styled.input.attrs({ type: "checkbox" })`
 const StyledCheckbox = styled.div`
   width: 16px;
   height: 16px;
-  border: 2px solid var(--black);
-  background: ${(props) => (props.checked ? `var(--black)` : "white")};
+  border: ${(props) =>
+    props.disabled ? "2px solid var(--grey)" : "2px solid var(--black)"};
+  background: ${(props) =>
+    props.checked && props.disabled
+      ? `var(--grey)`
+      : props.checked
+      ? `var(--black)`
+      : "white"};
   transition: all 150ms;
 
   ${HiddenCheckbox}:focus + & {
@@ -37,7 +43,7 @@ const Checkbox = ({ checked, ...props }) => {
   return (
     <CheckboxContainer>
       <HiddenCheckbox checked={checked} {...props} />
-      <StyledCheckbox checked={checked}>
+      <StyledCheckbox checked={checked} disabled={props.disabled}>
         <Icon
           name="Check"
           size={17}
@@ -45,9 +51,6 @@ const Checkbox = ({ checked, ...props }) => {
           color={"white"}
           style={{ display: "block", margin: "auto" }}
         />
-        {/* <Icon viewBox="0 0 24 24">
-          <polyline points="20 6 9 17 4 12" />
-        </Icon> */}
       </StyledCheckbox>
     </CheckboxContainer>
   );

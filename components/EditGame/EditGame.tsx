@@ -1,11 +1,20 @@
 import { useCallback, useMemo, useState } from "react";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import {
+  useForm,
+  useFormState,
+  SubmitHandler,
+  Controller,
+} from "react-hook-form";
 import styled from "styled-components";
 import * as yup from "yup";
+import gql from "graphql-tag";
 import PageTitle from "../PageTItle";
 import TeamsComboBox from "../TeamsComboBox";
 import Spacer from "../Spacer";
 import Checkbox from "../Checkbox";
+import Icon from "../Icon";
+import { useMutation } from "@apollo/client";
+import { useEffect } from "react";
 
 type Team = {
   __typeName: string;
@@ -21,6 +30,65 @@ type Inputs = {
   isHomeWinner: boolean;
   isAwayWinner: boolean;
 };
+
+const UPDATE_GAME_AND_WINNER_MUTATION = gql`
+  mutation UPDATE_GAME_AND_WINNER(
+    $gameId: ID!
+    $winnerId: ID!
+    $spread: Float
+  ) {
+    updateGame(
+      id: $gameId
+      data: { winner: { connect: { id: $winnerId } }, spread: $spread }
+    ) {
+      id
+      winner {
+        id
+      }
+      spread
+    }
+  }
+`;
+
+const UPDATE_GAME_REMOVE_WINNER_MUTATION = gql`
+  mutation UPDATE_GAME_REMOVE_WINNER($gameId: ID!, $spread: Float) {
+    updateGame(
+      id: $gameId
+      data: { winner: { disconnectAll: true }, spread: $spread }
+    ) {
+      id
+      winner {
+        id
+      }
+      spread
+    }
+  }
+`;
+
+export default function EditGame({ game }) {
+  const pageTitle =
+    game.homeTeam.city +
+    " " +
+    game.homeTeam.name +
+    "  vs " +
+    game.awayTeam.city +
+    " " +
+    game.awayTeam.name;
+
+  return (
+    <>
+      <PageTitle title={pageTitle} />
+      <Spacer size={32} />
+      <EditGameForm
+        gameId={game.id}
+        homeTeam={game.homeTeam}
+        awayTeam={game.awayTeam}
+        spread={game.spread}
+        gameWinner={game.winner}
+      />
+    </>
+  );
+}
 
 const useYupValidationResolver = (validationSchema) =>
   useCallback(
@@ -53,36 +121,25 @@ const useYupValidationResolver = (validationSchema) =>
     [validationSchema]
   );
 
-export default function EditGame({ game }) {
-  console.log({ game });
-  const pageTitle =
-    game.homeTeam.city +
-    " " +
-    game.homeTeam.name +
-    "  vs " +
-    game.awayTeam.city +
-    " " +
-    game.awayTeam.name;
-  const isWinner = (teamId) => {
-    if (teamId === game.winner?.id) return true;
-    return false;
-  };
-  return (
-    <>
-      <PageTitle title={pageTitle} />
-      <Spacer size={32} />
-      <EditGameForm
-        homeTeam={game.homeTeam}
-        awayTeam={game.awayTeam}
-        spread={game.spread}
-        isWinner={isWinner}
-      />
-    </>
-  );
-}
+const getWinnerId = (data) => {
+  //if no checkbox selected, no winner
+  if (!data.isAwayWinner && !data.isHomeWinner) {
+    return null;
+  }
+  //return id of home or away team
+  if (data.isAwayWinner) {
+    return data.awayTeam.id;
+  } else {
+    return data.homeTeam.id;
+  }
+};
 
-function EditGameForm({ homeTeam, awayTeam, spread, isWinner }) {
-  const [isDisabled, setIsDisabled] = useState(true);
+function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
+  const [updateGame] = useMutation(UPDATE_GAME_AND_WINNER_MUTATION);
+  const [updateGameRemoveWinner] = useMutation(
+    UPDATE_GAME_REMOVE_WINNER_MUTATION
+  );
+
   const validationSchema = useMemo(
     () =>
       yup
@@ -125,11 +182,16 @@ function EditGameForm({ homeTeam, awayTeam, spread, isWinner }) {
     []
   );
   const resolver = useYupValidationResolver(validationSchema);
+  const isWinner = (teamId) => {
+    if (teamId === gameWinner?.id) return true;
+    return false;
+  };
   const {
     handleSubmit,
     formState: { errors },
     control,
     register,
+    reset,
   } = useForm<Inputs>({
     mode: "onSubmit",
     resolver,
@@ -143,9 +205,19 @@ function EditGameForm({ homeTeam, awayTeam, spread, isWinner }) {
     },
   });
 
+  const { isSubmitting, isDirty, isSubmitSuccessful } = useFormState({
+    control,
+  });
+
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    setIsDisabled(true);
-    console.log({ data });
+    const spread = parseFloat(data.spread);
+    let winnerId = getWinnerId(data);
+    if (winnerId) {
+      updateGame({ variables: { gameId, winnerId, spread } });
+    } else {
+      updateGameRemoveWinner({ variables: { gameId, spread } });
+    }
+    reset({}, { keepValues: true });
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate={true}>
@@ -155,8 +227,9 @@ function EditGameForm({ homeTeam, awayTeam, spread, isWinner }) {
         errors={errors}
         homeTeam={homeTeam}
         awayTeam={awayTeam}
-        isDisabled={isDisabled}
-        setIsDisabled={setIsDisabled}
+        isSubmitting={isSubmitting}
+        isSubmitSuccessful={isSubmitSuccessful}
+        isDirty={isDirty}
       />
     </form>
   );
@@ -168,8 +241,9 @@ function FormFields({
   errors,
   homeTeam,
   awayTeam,
-  isDisabled,
-  setIsDisabled,
+  isSubmitting,
+  isSubmitSuccessful,
+  isDirty,
 }) {
   return (
     <Wrapper>
@@ -184,7 +258,7 @@ function FormFields({
                 inputRef={ref}
                 label="Home Team"
                 initialTeam={homeTeam}
-                disabled={isDisabled}
+                disabled={true}
               />
             )}
           />
@@ -201,7 +275,7 @@ function FormFields({
                 <Checkbox
                   checked={value}
                   onChange={(e) => onChange(e.target.checked)}
-                  disabled={isDisabled}
+                  disabled={isSubmitting}
                 />
                 <CheckboxLabel>Matchup Winner</CheckboxLabel>
               </CheckboxWrapper>
@@ -215,7 +289,7 @@ function FormFields({
         <Input
           placeholder="Ex. -4"
           {...register("spread")}
-          disabled={isDisabled}
+          disabled={isSubmitting}
         />
         {errors.spread && (
           <ValidationError>{errors.spread.message}</ValidationError>
@@ -234,7 +308,7 @@ function FormFields({
                 inputRef={ref}
                 label="Away Team"
                 initialTeam={awayTeam}
-                disabled={isDisabled}
+                disabled={true}
               />
             )}
           />
@@ -251,7 +325,7 @@ function FormFields({
                 <Checkbox
                   checked={value}
                   onChange={(e) => onChange(e.target.checked)}
-                  disabled={isDisabled}
+                  disabled={isSubmitting}
                 />
                 <CheckboxLabel>Matchup Winner</CheckboxLabel>
               </CheckboxWrapper>
@@ -264,16 +338,39 @@ function FormFields({
           <ValidationError>{errors.isWinner.message}</ValidationError>
         )}
       </FormErrors>
-      <Spacer size={10} />
-      {isDisabled && (
-        <Button type="button" onClick={() => setIsDisabled(!isDisabled)}>
-          Edit Game
+      <Spacer size={50} />
+      <ButtonWrapper>
+        <Button type="submit" disabled={!isDirty}>
+          Sav{isSubmitting ? "ing" : "e"} Game
         </Button>
-      )}
-      {!isDisabled && <Button type="submit">Save Game</Button>}
+        {isSubmitSuccessful && !isDirty && (
+          <Tile>
+            <Icon name="Check" size={15} color={"var(--gray700)"} />
+            <span> Saved!</span>
+          </Tile>
+        )}
+      </ButtonWrapper>
     </Wrapper>
   );
 }
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 15px;
+`;
+
+const Tile = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  max-height: 20px;
+  padding: 1px 12px;
+  border: 2px solid var(--successDark);
+  border-radius: 50px;
+  font-size: 1.2rem;
+  background-color: var(--success);
+`;
 
 const FormErrors = styled.div`
   position: relative;
@@ -336,15 +433,15 @@ const InputWrapper = styled.div`
 `;
 
 const Button = styled.button`
-  display: block;
   font-size: 1.4rem;
-  margin: 32px auto 0;
   padding: 8px 32px;
-  background: var(--black);
+  background: ${(props) =>
+    props.disabled ? "var(--gray500)" : "var(--black)"};
   color: white;
-  border: none;
   border-radius: 3px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: ${(props) =>
+    props.disabled ? "none" : "0px 4px 4px rgba(0, 0, 0, 0.25)"};
+  border: none;
 `;
 
 const Label = styled.label`
