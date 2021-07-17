@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 import gql from "graphql-tag";
 import styled from "styled-components";
@@ -30,6 +30,17 @@ const GET_GAMES_BY_WEEK_SLUG = gql`
   }
 `;
 
+const SELECT_GAME_WINNER = gql`
+  mutation SELECT_GAME_WINNER($gameId: ID!, $winnerId: ID!) {
+    updateGame(id: $gameId, data: { winner: { connect: { id: $winnerId } } }) {
+      id
+      winner {
+        id
+      }
+    }
+  }
+`;
+
 export function GameTiles() {
   const router = useRouter();
   const { week } = router.query;
@@ -37,6 +48,16 @@ export function GameTiles() {
   const { data, error, loading } = useQuery(GET_GAMES_BY_WEEK_SLUG, {
     variables: { slug: week, season },
   });
+  const [selectWinner, { error: selectWinnerError }] =
+    useMutation(SELECT_GAME_WINNER);
+
+  const chooseWinner = (gameId) => async (winnerId) => {
+    console.log({ winnerId });
+    console.log({ gameId });
+    selectWinner({
+      variables: { gameId, winnerId },
+    });
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error</p>;
@@ -46,29 +67,41 @@ export function GameTiles() {
   return (
     <GameListWrapper>
       {games.map((game) => {
+        const isWinner = (teamId) => {
+          if (teamId === game.winner?.id) return true;
+          return false;
+        };
         return (
-          <GameTile
-            key={game.id}
-            onClick={() => {
-              router.push({
-                pathname: "/manage-games/[season]/[week]/[game]",
-                query: {
-                  season,
-                  week,
-                  game: game.slug,
-                },
-              });
-            }}
-          >
-            <HomeTeam>
-              <AtSpan>@ </AtSpan>
-              {game.homeTeam.abbreviation}
-            </HomeTeam>
+          <GameTile key={game.id}>
+            <TeamBlock
+              id={game.homeTeam.id}
+              field={"home"}
+              abbreviation={game.homeTeam.abbreviation}
+              isWinner={isWinner(game.homeTeam.id)}
+              chooseWinner={chooseWinner(game.id)}
+            />
             <Spread>
               <SpreadCircle>{game.spread}</SpreadCircle>
             </Spread>
-            <AwayTeam>{game.awayTeam.abbreviation}</AwayTeam>
-            <EditButton>
+            <TeamBlock
+              id={game.awayTeam.id}
+              field={"away"}
+              abbreviation={game.awayTeam.abbreviation}
+              isWinner={isWinner(game.awayTeam.id)}
+              chooseWinner={chooseWinner(game.id)}
+            />
+            <EditButton
+              onClick={() => {
+                router.push({
+                  pathname: "/manage-games/[season]/[week]/[game]",
+                  query: {
+                    season,
+                    week,
+                    game: game.slug,
+                  },
+                });
+              }}
+            >
               <Icon name="Edit" size={14} />
             </EditButton>
           </GameTile>
@@ -78,36 +111,97 @@ export function GameTiles() {
   );
 }
 
+function TeamBlock({
+  id,
+  field,
+  abbreviation,
+  isWinner = false,
+  chooseWinner,
+}) {
+  let Component;
+  let WinFlag;
+  if (field === "home") {
+    Component = HomeTeam;
+    WinFlag = HomeFlag;
+  } else if (field === "away") {
+    Component = BaseTeam;
+    WinFlag = AwayFlag;
+  } else {
+    throw new Error(`Unrecognized Team Field: ${field}`);
+  }
+  return (
+    <>
+      <Component isWinner={isWinner} onClick={() => chooseWinner(id)}>
+        {isWinner && (
+          <WinFlag>
+            <Icon name={"Star"} size={10} /> Winner!
+          </WinFlag>
+        )}
+        <span>{abbreviation}</span>
+      </Component>
+    </>
+  );
+}
+
 const EditButton = styled.button`
   border: none;
   background-color: initial;
   position: absolute;
-  bottom: 5px;
-  right: 5px;
+  bottom: 0;
+  right: 0;
+  cursor: pointer;
+  height: 30px;
+  width: 40px;
 `;
 
 const Spread = styled.div`
-  flex: 1;
-  display: flex;
+  position: absolute;
+  right: 131px;
 `;
 
 const SpreadCircle = styled.div`
   width: 40px;
-  margin: auto;
-  height: 40px;
   border-radius: 50%;
-  line-height: 3.9rem;
+  line-height: 4rem;
+  text-align: center;
+  background-color: var(--background);
+  border: 1px solid var(--black);
 `;
 
-const AwayTeam = styled.div`
+const BaseTeam = styled.button`
   flex: 1;
+  height: 100%;
+  line-height: 80px;
+  border: none;
+  background-color: ${(props) =>
+    props.isWinner ? "var(--secondary)" : "inherit"};
 `;
 
-const HomeTeam = styled.div`
-  flex: 1;
+const HomeTeam = styled(BaseTeam)`
+  border-right: 1px solid var(--black);
+  &:before {
+    content: "@ ";
+  }
 `;
 
-const AtSpan = styled.span``;
+const FlagBase = styled.div`
+  position: absolute;
+  background-color: var(--primary);
+  padding: 5px 12px;
+  font-size: 1.2rem;
+  border-radius: 50px;
+  color: white;
+  line-height: initial;
+`;
+
+const HomeFlag = styled(FlagBase)`
+  top: -12px;
+  left: -10px;
+`;
+const AwayFlag = styled(FlagBase)`
+  top: -12px;
+  right: -10px;
+`;
 
 const GameListWrapper = styled.div`
   display: flex;
@@ -117,15 +211,15 @@ const GameListWrapper = styled.div`
 
 const GameTile = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-basis: 300px;
   align-items: center;
-  width: 250px;
   height: 80px;
   font-size: 1.6rem;
   background-color: var(--background);
   border: 2px solid var(--black);
   border-radius: 5px;
   position: relative;
+  text-align: center;
 `;
 
 export { GET_GAMES_BY_WEEK_SLUG };
