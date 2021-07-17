@@ -52,8 +52,6 @@ export function GameTiles() {
     useMutation(SELECT_GAME_WINNER);
 
   const chooseWinner = (gameId) => async (winnerId) => {
-    console.log({ winnerId });
-    console.log({ gameId });
     selectWinner({
       variables: { gameId, winnerId },
     });
