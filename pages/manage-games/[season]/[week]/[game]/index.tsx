@@ -113,8 +113,9 @@ export default function ManageGamePage() {
   } = useQuery(GET_GAME_BY_SLUG_QUERY, {
     variables: { slug: game, season },
   });
-  if (loading || gameLoading) return <p>Loading...</p>;
-  if (error || gameError) return <p>Error</p>;
+  if (loading || gameLoading || gameData.allGames.length === 0)
+    return <p>Loading...</p>;
+  if (error || gameError) return <p>Oops!</p>;
 
   const weekData = data.allWeeks[0];
   const games = gameData.allGames[0];

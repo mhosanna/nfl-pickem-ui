@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from "react";
+import { useRouter } from "next/router";
 import {
   useForm,
   useFormState,
@@ -61,6 +62,14 @@ const UPDATE_SPREAD_REMOVE_WINNER_MUTATION = gql`
         id
       }
       spread
+    }
+  }
+`;
+
+const DELETE_GAME_MUTATION = gql`
+  mutation DELETE_GAME_MUTATION($gameId: ID!) {
+    deleteGame(id: $gameId) {
+      id
     }
   }
 `;
@@ -134,12 +143,27 @@ const getWinnerId = (data) => {
   }
 };
 
+function update(cache, payload) {
+  console.log(payload);
+  console.log("running the update function after delete");
+  cache.evict(cache.identify(payload.data.deleteGame));
+}
+
 function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
+  const router = useRouter();
+  const { week, season } = router.query;
   const [updateGame, { error: updateGameError }] = useMutation(
     UPDATE_SPREAD_AND_WINNER_MUTATION
   );
   const [updateGameRemoveWinner, { error: updateRemoveError }] = useMutation(
     UPDATE_SPREAD_REMOVE_WINNER_MUTATION
+  );
+  const [deleteGame, { error: deleteGameError }] = useMutation(
+    DELETE_GAME_MUTATION,
+    {
+      variables: { gameId },
+      update,
+    }
   );
 
   const validationSchema = useMemo(
@@ -225,6 +249,17 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
     }
     reset({}, { keepValues: true });
   };
+
+  const handleDeleteGame = async () => {
+    await deleteGame().catch(console.error);
+    router.push({
+      pathname: "/manage-games/[season]/[week]",
+      query: {
+        season,
+        week,
+      },
+    });
+  };
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate={true}>
       <FormFields
@@ -238,6 +273,7 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
         isDirty={isDirty}
         updateGameError={updateGameError}
         updateRemoveError={updateRemoveError}
+        handleDeleteGame={handleDeleteGame}
       />
     </form>
   );
@@ -254,6 +290,7 @@ function FormFields({
   isDirty,
   updateGameError,
   updateRemoveError,
+  handleDeleteGame,
 }) {
   return (
     <Wrapper>
@@ -350,28 +387,53 @@ function FormFields({
         )}
       </FormErrors>
       <Spacer size={50} />
-      <ButtonWrapper>
-        <Button type="submit" disabled={!isDirty}>
-          Sav{isSubmitting ? "ing" : "e"} Game
-        </Button>
-        {isSubmitSuccessful &&
-          !updateGameError &&
-          !updateRemoveError &&
-          !isDirty && (
-            <Tile>
-              <Icon name="Check" size={15} color={"var(--gray700)"} />
-              <span> Saved!</span>
-            </Tile>
-          )}
-      </ButtonWrapper>
+      <FooterWrapper>
+        <ButtonWrapper>
+          <Button type="submit" disabled={!isDirty}>
+            Sav{isSubmitting ? "ing" : "e"} Game
+          </Button>
+          {isSubmitSuccessful &&
+            !updateGameError &&
+            !updateRemoveError &&
+            !isDirty && (
+              <Tile>
+                <Icon name="Check" size={15} color={"var(--gray700)"} />
+                <span> Saved!</span>
+              </Tile>
+            )}
+        </ButtonWrapper>
+        <DeleteGameButton type="button" onClick={handleDeleteGame}>
+          <Icon name={"Trash2"} size={18} />
+          <span>Delete Game</span>
+        </DeleteGameButton>
+      </FooterWrapper>
     </Wrapper>
   );
 }
 
-const ButtonWrapper = styled.div`
+const DeleteGameButton = styled.button`
   display: flex;
   align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  color: var(--warning);
+  padding: 5px 10px;
+  border-radius: 5px;
+  &:hover {
+    background-color: var(--warningLight);
+  }
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
   gap: 15px;
+  align-items: center;
+`;
+
+const FooterWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 const Tile = styled.div`
