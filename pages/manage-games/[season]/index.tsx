@@ -36,7 +36,7 @@ export default function ManageWeeksPage() {
         </Breadcrumbs.Crumb>
       </Breadcrumbs>
       <Spacer size={14} />
-      <ManageWeeks />
+      <ManageWeeks season={season} />
     </>
   );
 }
