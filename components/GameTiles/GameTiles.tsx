@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 import styled from "styled-components";
 import { season } from "../../config";
 import Icon from "../Icon";
+import { spreadToString } from "../../utils/spreadToString";
 
 const GET_GAMES_BY_WEEK_SLUG = gql`
   query GET_GAMES_BY_WEEK_SLUG($slug: String, $season: String) {
@@ -79,7 +80,7 @@ export function GameTiles() {
               chooseWinner={chooseWinner(game.id)}
             />
             <Spread>
-              <SpreadCircle>{game.spread}</SpreadCircle>
+              <SpreadCircle>{spreadToString(game.spread)}</SpreadCircle>
             </Spread>
             <TeamBlock
               id={game.awayTeam.id}

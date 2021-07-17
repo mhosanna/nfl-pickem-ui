@@ -5,6 +5,7 @@ import { Spread, List } from "./PicksStyles";
 import TeamBlock from "../TeamBlock";
 import Select from "../Select";
 import Spacer from "../Spacer";
+import { spreadToString } from "../../utils/spreadToString";
 
 const gameFragment = gql`
   fragment GameFragment on Game {
@@ -178,12 +179,7 @@ function Game({ game, playerId }) {
     });
   };
 
-  let spreadString = game.spread.toString();
-  if (spreadString[0] === "0") {
-    spreadString = "PK";
-  } else if (spreadString[0] !== "-") {
-    spreadString = "+" + spreadString;
-  }
+  const spreadString = spreadToString(game.spread);
 
   return (
     <React.Fragment key={game.id}>
