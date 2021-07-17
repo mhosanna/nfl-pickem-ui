@@ -7,8 +7,10 @@ import gql from "graphql-tag";
 import styled from "styled-components";
 import { useMutation } from "@apollo/client";
 import { string_to_slug } from "../../utils/slugify";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { useForm, Controller, SubmitHandler, set } from "react-hook-form";
 import TeamsComboBox from "../TeamsComboBox";
+import ErrorMessage from "../ErrorMessage";
+import { onError } from "apollo-link-error";
 
 type Team = {
   __typeName: string;
@@ -50,6 +52,7 @@ const CREATE_GAME_MUTATION = gql`
 
 export default function ManageGames({ week, season }) {
   const [openModal, setOpenModal] = React.useState(false);
+  const [formError, setFormError] = React.useState(null);
 
   const [createGame] = useMutation(CREATE_GAME_MUTATION, {
     update(cache, { data: { createGame } }) {
@@ -72,10 +75,10 @@ export default function ManageGames({ week, season }) {
     },
   });
 
-  function SubmitNewGame(data: Inputs) {
+  async function SubmitNewGame(data: Inputs) {
     const slug = string_to_slug(data.homeTeam.name + " " + data.awayTeam.name);
 
-    createGame({
+    await createGame({
       variables: {
         season,
         slug,
@@ -84,8 +87,12 @@ export default function ManageGames({ week, season }) {
         awayTeamId: data.awayTeam.id,
         spread: parseFloat(data.spread),
       },
-    });
-    setOpenModal(false);
+    })
+      .then(() => {
+        setOpenModal(false);
+        setFormError(null);
+      })
+      .catch((error) => setFormError(error));
   }
 
   return (
@@ -100,15 +107,21 @@ export default function ManageGames({ week, season }) {
       <Modal
         title="Add a New Game"
         isOpen={openModal}
-        handleDismiss={() => setOpenModal(false)}
+        handleDismiss={() => {
+          setFormError(null);
+          setOpenModal(false);
+        }}
       >
-        <NewGameForm handleSubmitGame={SubmitNewGame}></NewGameForm>
+        <NewGameForm
+          handleSubmitGame={SubmitNewGame}
+          error={formError}
+        ></NewGameForm>
       </Modal>
     </>
   );
 }
 
-function NewGameForm({ handleSubmitGame }) {
+function NewGameForm({ handleSubmitGame, error }) {
   const {
     handleSubmit,
     formState: { errors },
@@ -122,14 +135,20 @@ function NewGameForm({ handleSubmitGame }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <FormFields control={control} register={register} errors={errors} />
+      <FormFields
+        control={control}
+        register={register}
+        errors={errors}
+        formError={error}
+      />
     </form>
   );
 }
 
-function FormFields({ control, register, errors }) {
+function FormFields({ control, register, errors, formError }) {
   return (
     <>
+      <ErrorMessage error={formError} />
       <HomeTeamInput>
         <Controller
           control={control}

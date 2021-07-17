@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import {
   useForm,
   useFormState,
@@ -14,7 +14,7 @@ import Spacer from "../Spacer";
 import Checkbox from "../Checkbox";
 import Icon from "../Icon";
 import { useMutation } from "@apollo/client";
-import { useEffect } from "react";
+import ErrorMessage from "../ErrorMessage";
 
 type Team = {
   __typeName: string;
@@ -31,7 +31,7 @@ type Inputs = {
   isAwayWinner: boolean;
 };
 
-const UPDATE_GAME_AND_WINNER_MUTATION = gql`
+const UPDATE_SPREAD_AND_WINNER_MUTATION = gql`
   mutation UPDATE_GAME_AND_WINNER(
     $gameId: ID!
     $winnerId: ID!
@@ -50,7 +50,7 @@ const UPDATE_GAME_AND_WINNER_MUTATION = gql`
   }
 `;
 
-const UPDATE_GAME_REMOVE_WINNER_MUTATION = gql`
+const UPDATE_SPREAD_REMOVE_WINNER_MUTATION = gql`
   mutation UPDATE_GAME_REMOVE_WINNER($gameId: ID!, $spread: Float) {
     updateGame(
       id: $gameId
@@ -135,9 +135,11 @@ const getWinnerId = (data) => {
 };
 
 function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
-  const [updateGame] = useMutation(UPDATE_GAME_AND_WINNER_MUTATION);
-  const [updateGameRemoveWinner] = useMutation(
-    UPDATE_GAME_REMOVE_WINNER_MUTATION
+  const [updateGame, { error: updateGameError }] = useMutation(
+    UPDATE_SPREAD_AND_WINNER_MUTATION
+  );
+  const [updateGameRemoveWinner, { error: updateRemoveError }] = useMutation(
+    UPDATE_SPREAD_REMOVE_WINNER_MUTATION
   );
 
   const validationSchema = useMemo(
@@ -209,13 +211,17 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
     control,
   });
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const spread = parseFloat(data.spread);
     let winnerId = getWinnerId(data);
     if (winnerId) {
-      updateGame({ variables: { gameId, winnerId, spread } });
+      await updateGame({ variables: { gameId, winnerId, spread } }).catch(
+        console.error
+      );
     } else {
-      updateGameRemoveWinner({ variables: { gameId, spread } });
+      await updateGameRemoveWinner({ variables: { gameId, spread } }).catch(
+        console.error
+      );
     }
     reset({}, { keepValues: true });
   };
@@ -230,6 +236,8 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
         isSubmitting={isSubmitting}
         isSubmitSuccessful={isSubmitSuccessful}
         isDirty={isDirty}
+        updateGameError={updateGameError}
+        updateRemoveError={updateRemoveError}
       />
     </form>
   );
@@ -244,9 +252,12 @@ function FormFields({
   isSubmitting,
   isSubmitSuccessful,
   isDirty,
+  updateGameError,
+  updateRemoveError,
 }) {
   return (
     <Wrapper>
+      <ErrorMessage error={updateGameError || updateRemoveError} />
       <HomeTeamInput>
         <div>
           <Controller
@@ -343,12 +354,15 @@ function FormFields({
         <Button type="submit" disabled={!isDirty}>
           Sav{isSubmitting ? "ing" : "e"} Game
         </Button>
-        {isSubmitSuccessful && !isDirty && (
-          <Tile>
-            <Icon name="Check" size={15} color={"var(--gray700)"} />
-            <span> Saved!</span>
-          </Tile>
-        )}
+        {isSubmitSuccessful &&
+          !updateGameError &&
+          !updateRemoveError &&
+          !isDirty && (
+            <Tile>
+              <Icon name="Check" size={15} color={"var(--gray700)"} />
+              <span> Saved!</span>
+            </Tile>
+          )}
       </ButtonWrapper>
     </Wrapper>
   );

@@ -101,6 +101,7 @@ html {
     --transparentGray35: hsl(0deg 0% 50% / 0.35);
     --grey: #888888;
     --gray: #888888;
+    --warningLight: hsla(0, 100%, 88%, 0.60);
     --warning: hsla(0, 100%, 55%, 0.80);
     --success: hsla(129,100%,93%, 0.80);
     --successDark: hsla(129,100%,83%, 1);
