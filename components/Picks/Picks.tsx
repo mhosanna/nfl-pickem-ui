@@ -91,21 +91,21 @@ const MAKE_PICK_MUTATION = gql`
   }
 `;
 
-export default function Picks() {
-  const playerId = 1;
+export default function Picks({ season }) {
+  const playerId = 1; //hard code player id for now
   const {
     data: playersInfo,
     error: playersQueryError,
     loading: playersQueryLoading,
   } = useQuery(PLAYERS_QUERY, {
-    variables: { id: playerId }, //hard code player id for now
+    variables: { id: playerId },
   });
   const {
     data: weeksInfo,
     error: weeksQueryError,
     loading: weeksQueryLoading,
   } = useQuery(WEEKS_BY_SEASON_QUERY, {
-    variables: { season: "2020" },
+    variables: { season },
   });
 
   if (playersQueryLoading || weeksQueryLoading) return <p>Loading...</p>;
