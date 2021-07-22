@@ -92,7 +92,7 @@ const MAKE_PICK_MUTATION = gql`
 `;
 
 export default function Picks({ season }) {
-  const playerId = 1; //hard code player id for now
+  const playerId = 0; //hard code player id for now
   const {
     data: playersInfo,
     error: playersQueryError,

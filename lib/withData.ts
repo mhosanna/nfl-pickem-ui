@@ -12,7 +12,7 @@ let apolloClient;
 
 const httpLink = createHttpLink({
   uri: process.env.NODE_ENV === "development" ? endpoint : prodEndpoint,
-  credentials: "same-origin",
+  credentials: "include",
   fetch,
 });
 

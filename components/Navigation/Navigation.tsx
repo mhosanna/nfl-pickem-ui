@@ -2,6 +2,41 @@ import { useState } from "react";
 import styled from "styled-components";
 import NavLink from "../Navigation-Link";
 import { season } from "../../config";
+import { usePlayer } from "../../lib/usePlayer";
+
+export default function Navigation() {
+  const player = usePlayer();
+  console.log({ player });
+  return (
+    <NavigationStyles>
+      <Logo>Pick’em</Logo>
+      <NavLinks>
+        <NavLink linkName="Leaderboard" href="/" icon="TrendingUp" />
+        {player && (
+          <>
+            <NavLink linkName="My Picks" href="/picks" icon="CheckSquare" />
+            <NavLink linkName="Game Results" href="/game-results" icon="Star" />
+            <NavLink
+              linkName="Manage Games"
+              href={`/manage-games/${season}`}
+              icon="Tv"
+            />
+            <NavLink
+              linkName="Manage League"
+              href="/manage-league"
+              icon="Settings"
+            />
+          </>
+        )}
+        {!player && (
+          <>
+            <NavLink linkName="Sign In" href="/signin" icon="LogIn" />
+          </>
+        )}
+      </NavLinks>
+    </NavigationStyles>
+  );
+}
 
 const NavigationStyles = styled.nav``;
 
@@ -37,26 +72,3 @@ const NavLinks = styled.div`
   gap: 3.5rem;
   min-width: 320px;
 `;
-
-export default function Navigation() {
-  return (
-    <NavigationStyles>
-      <Logo>Pick’em</Logo>
-      <NavLinks>
-        <NavLink linkName="Leaderboard" href="/" icon="TrendingUp" />
-        <NavLink linkName="My Picks" href="/picks" icon="CheckSquare" />
-        <NavLink linkName="Game Results" href="/game-results" icon="Star" />
-        <NavLink
-          linkName="Manage Games"
-          href={`/manage-games/${season}`}
-          icon="Tv"
-        />
-        <NavLink
-          linkName="Manage League"
-          href="/manage-league"
-          icon="Settings"
-        />
-      </NavLinks>
-    </NavigationStyles>
-  );
-}
