@@ -42,8 +42,10 @@ export default function LeaderBoard({ season }) {
   if (playersQueryError || gamesQueryError) return <p>Error</p>;
 
   const { allPlayers } = playersInfo;
-  // var playersToRender = [...players];
-  // playersToRender.sort((a, b) => b.correctPicks - a.correctPicks);
+  var sortedPlayers = [...allPlayers];
+
+  //we are only returning picks that were correct, so compare length of array
+  sortedPlayers.sort((a, b) => b.picks.length - a.picks.length);
 
   const { allGames } = gamesInfo;
   const totalPlayedGames = allGames.length;
@@ -60,7 +62,7 @@ export default function LeaderBoard({ season }) {
           </tr>
         </thead>
         <tbody>
-          {allPlayers.map((player, idx) => {
+          {sortedPlayers.map((player, idx) => {
             const correctPicks = player.picks.length;
             return (
               <tr key={player.id}>

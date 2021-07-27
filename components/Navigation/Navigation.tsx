@@ -7,7 +7,6 @@ import SignOut from "../SignOut";
 
 export default function Navigation() {
   const player = usePlayer();
-  console.log({ player });
   return (
     <NavigationStyles>
       <Logo>Pick’em</Logo>

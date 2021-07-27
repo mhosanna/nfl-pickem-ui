@@ -14,7 +14,6 @@ const CURRENT_PLAYER_QUERY = gql`
 
 export function usePlayer() {
   const { data } = useQuery(CURRENT_PLAYER_QUERY);
-  console.log({ data });
   return data?.authenticatedItem;
 }
 
