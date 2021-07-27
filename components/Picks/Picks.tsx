@@ -6,6 +6,7 @@ import TeamBlock from "../TeamBlock";
 import Select from "../Select";
 import Spacer from "../Spacer";
 import { spreadToString } from "../../utils/spreadToString";
+import { usePlayer } from "../../lib/usePlayer";
 
 const gameFragment = gql`
   fragment GameFragment on Game {
@@ -39,15 +40,6 @@ const pickFragment = gql`
       id
       name
       city
-    }
-  }
-`;
-
-const PLAYERS_QUERY = gql`
-  query GET_PLAYER_BY_ID_QUERY($id: ID!) {
-    Player(where: { id: $id }) {
-      name
-      id
     }
   }
 `;
@@ -92,14 +84,9 @@ const MAKE_PICK_MUTATION = gql`
 `;
 
 export default function Picks({ season }) {
-  const playerId = 0; //hard code player id for now
-  const {
-    data: playersInfo,
-    error: playersQueryError,
-    loading: playersQueryLoading,
-  } = useQuery(PLAYERS_QUERY, {
-    variables: { id: playerId },
-  });
+  const { id } = usePlayer();
+  const playerId = id;
+
   const {
     data: weeksInfo,
     error: weeksQueryError,
@@ -108,10 +95,9 @@ export default function Picks({ season }) {
     variables: { season },
   });
 
-  if (playersQueryLoading || weeksQueryLoading) return <p>Loading...</p>;
-  if (playersQueryError || weeksQueryError) return <p>Error</p>;
+  if (weeksQueryLoading) return <p>Loading...</p>;
+  if (weeksQueryError) return <p>Error</p>;
 
-  const { Player } = playersInfo;
   const { allWeeks } = weeksInfo;
 
   return (

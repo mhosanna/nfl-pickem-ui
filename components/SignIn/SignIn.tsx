@@ -3,6 +3,8 @@ import { useMutation } from "@apollo/client";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { CURRENT_PLAYER_QUERY } from "../../lib/usePlayer";
 import ErrorMessage from "../ErrorMessage";
+import styled from "styled-components";
+import Spacer from "../Spacer";
 
 const SIGNIN_MUTATION = gql`
   mutation SIGNIN_MUTATION($email: String!, $password: String!) {
@@ -23,7 +25,7 @@ const SIGNIN_MUTATION = gql`
 `;
 
 export default function SignIn() {
-  const [signin, { data, loading }] = useMutation(SIGNIN_MUTATION, {
+  const [signIn, { data, loading }] = useMutation(SIGNIN_MUTATION, {
     // refetch the currently logged in Player
     refetchQueries: [{ query: CURRENT_PLAYER_QUERY }],
   });
@@ -33,20 +35,12 @@ export default function SignIn() {
     formState: { errors },
     register,
     reset,
-  } = useForm({
-    mode: "onSubmit",
-    reValidateMode: "onSubmit",
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+  } = useForm();
+
   async function onSubmit(data) {
-    console.log(data);
-    const res = await signin({
+    await signIn({
       variables: data,
     });
-    console.log(res);
     reset();
   }
   const error =
@@ -55,32 +49,84 @@ export default function SignIn() {
       ? data?.authenticatePlayerWithPassword
       : undefined;
   return (
-    <form onSubmit={handleSubmit(onSubmit)} method="POST" noValidate={true}>
-      <h2>Sign Into Your Account</h2>
-      <ErrorMessage error={error} />
-      <fieldset>
-        <label htmlFor="email">
-          Email
-          <input
-            {...register("email")}
+    <FormWrapper>
+      <form onSubmit={handleSubmit(onSubmit)} method="POST" noValidate={true}>
+        <h2>Sign Into Your Account</h2>
+        <ErrorMessage error={error} />
+        <Spacer size={12} />
+        <InputWrapper>
+          <Label htmlFor="email">Email</Label>
+          <Input
+            {...register("email", { required: true })}
             type="email"
             name="email"
             placeholder="Your Email Address"
             autoComplete="email"
           />
-        </label>
-        <label htmlFor="password">
-          Password
-          <input
-            {...register("password")}
+          {errors.email && (
+            <ValidationError>Email cannot be blank</ValidationError>
+          )}
+        </InputWrapper>
+        <InputWrapper>
+          <Label htmlFor="password">Password</Label>
+          <Input
+            {...register("password", { required: true })}
             type="password"
             name="password"
             placeholder="Password"
             autoComplete="password"
           />
-        </label>
-        <button type="submit">Sign In!</button>
-      </fieldset>
-    </form>
+          {errors.password && (
+            <ValidationError>Password cannot be blank</ValidationError>
+          )}
+        </InputWrapper>
+        <Spacer size={24} />
+        <Button type="submit">Sign In</Button>
+      </form>
+    </FormWrapper>
   );
 }
+
+const FormWrapper = styled.div`
+  width: 33%;
+  border: 2px solid var(--black);
+  padding: 16px;
+  h2 {
+    font-size: 2rem;
+  }
+`;
+
+const InputWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  gap: 5px;
+`;
+
+const Button = styled.button`
+  display: block;
+  font-size: 1.4rem;
+  padding: 8px 32px;
+  background: var(--black);
+  color: white;
+  border: none;
+  border-radius: 3px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+`;
+
+const Label = styled.label`
+  display: block;
+  font-weight: bold;
+`;
+
+const Input = styled.input`
+  padding: 1rem;
+  font-size: 1.5rem;
+  border-radius: 3px;
+  border: 2px solid var(--black);
+`;
+
+const ValidationError = styled.span`
+  font-size: 1.2rem;
+  color: var(--warning);
+`;

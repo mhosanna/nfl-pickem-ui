@@ -4,12 +4,12 @@ import gql from "graphql-tag";
 import { initializeApollo, addApolloState } from "../../../../../lib/withData";
 import PageHeading from "../../../../../components/PageHeading";
 import Breadcrumbs from "../../../../../components/Breadcrumbs";
-import ManageGames from "../../../../../components/ManageGames";
 import Spacer from "../../../../../components/Spacer";
 import { GET_WEEKS_BY_SEASON_QUERY } from "../../../../../components/WeekTile";
 import { GET_GAMES_BY_WEEK_SLUG } from "../../../../../components/GameTiles";
 import { season } from "../../../../../config";
 import EditGame from "../../../../../components/EditGame";
+import PleaseSignIn from "../../../../../components/PleaseSignIn";
 
 const GET_WEEK_BY_SLUG_QUERY = gql`
   query GET_WEEK_BY_SLUG_QUERY($slug: String, $season: String) {
@@ -124,19 +124,21 @@ export default function ManageGamePage() {
   return (
     <>
       <PageHeading heading="Manage Games" season={season} />
-      <Breadcrumbs>
-        <Breadcrumbs.Crumb href={`/manage-games/${season}`}>
-          {season} Season
-        </Breadcrumbs.Crumb>
-        <Breadcrumbs.Crumb href={`/manage-games/${season}/${week}`}>
-          {weekData.label}
-        </Breadcrumbs.Crumb>
-        <Breadcrumbs.Crumb href={`/manage-games/${season}/${week}/${game}`}>
-          {gameLabel}
-        </Breadcrumbs.Crumb>
-      </Breadcrumbs>
-      <Spacer size={14} />
-      <EditGame game={games} />
+      <PleaseSignIn>
+        <Breadcrumbs>
+          <Breadcrumbs.Crumb href={`/manage-games/${season}`}>
+            {season} Season
+          </Breadcrumbs.Crumb>
+          <Breadcrumbs.Crumb href={`/manage-games/${season}/${week}`}>
+            {weekData.label}
+          </Breadcrumbs.Crumb>
+          <Breadcrumbs.Crumb href={`/manage-games/${season}/${week}/${game}`}>
+            {gameLabel}
+          </Breadcrumbs.Crumb>
+        </Breadcrumbs>
+        <Spacer size={14} />
+        <EditGame game={games} />
+      </PleaseSignIn>
     </>
   );
 }

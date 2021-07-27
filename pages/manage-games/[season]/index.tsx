@@ -5,6 +5,7 @@ import { GET_WEEKS_BY_SEASON_QUERY } from "../../../components/WeekTile";
 import Spacer from "../../../components/Spacer";
 import { initializeApollo, addApolloState } from "../../../lib/withData";
 import { season } from "../../../config";
+import PleaseSignIn from "../../../components/PleaseSignIn";
 
 export async function getStaticPaths() {
   return {
@@ -30,13 +31,15 @@ export default function ManageWeeksPage() {
   return (
     <>
       <PageHeading heading="Manage Games" season={season} />
-      <Breadcrumbs>
-        <Breadcrumbs.Crumb href={`/manage-games/${season}`}>
-          {season} Season
-        </Breadcrumbs.Crumb>
-      </Breadcrumbs>
-      <Spacer size={14} />
-      <ManageWeeks season={season} />
+      <PleaseSignIn>
+        <Breadcrumbs>
+          <Breadcrumbs.Crumb href={`/manage-games/${season}`}>
+            {season} Season
+          </Breadcrumbs.Crumb>
+        </Breadcrumbs>
+        <Spacer size={14} />
+        <ManageWeeks season={season} />
+      </PleaseSignIn>
     </>
   );
 }

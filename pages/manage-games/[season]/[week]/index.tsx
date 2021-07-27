@@ -9,6 +9,7 @@ import Spacer from "../../../../components/Spacer";
 import { GET_WEEKS_BY_SEASON_QUERY } from "../../../../components/WeekTile";
 import { GET_GAMES_BY_WEEK_SLUG } from "../../../../components/GameTiles";
 import { season } from "../../../../config";
+import PleaseSignIn from "../../../../components/PleaseSignIn";
 
 const GET_WEEK_BY_SLUG_QUERY = gql`
   query GET_WEEK_BY_SLUG_QUERY($slug: String, $season: String) {
@@ -74,16 +75,18 @@ export default function ManageGamesPage() {
   return (
     <>
       <PageHeading heading="Manage Games" season={season} />
-      <Breadcrumbs>
-        <Breadcrumbs.Crumb href={`/manage-games/${season}`}>
-          {season} Season
-        </Breadcrumbs.Crumb>
-        <Breadcrumbs.Crumb href={`/manage-games/${season}/${week}`}>
-          {weekData.label}
-        </Breadcrumbs.Crumb>
-      </Breadcrumbs>
-      <Spacer size={14} />
-      <ManageGames week={weekData} season={season} />
+      <PleaseSignIn>
+        <Breadcrumbs>
+          <Breadcrumbs.Crumb href={`/manage-games/${season}`}>
+            {season} Season
+          </Breadcrumbs.Crumb>
+          <Breadcrumbs.Crumb href={`/manage-games/${season}/${week}`}>
+            {weekData.label}
+          </Breadcrumbs.Crumb>
+        </Breadcrumbs>
+        <Spacer size={14} />
+        <ManageGames week={weekData} season={season} />
+      </PleaseSignIn>
     </>
   );
 }

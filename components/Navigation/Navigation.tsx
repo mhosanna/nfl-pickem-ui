@@ -3,6 +3,7 @@ import styled from "styled-components";
 import NavLink from "../Navigation-Link";
 import { season } from "../../config";
 import { usePlayer } from "../../lib/usePlayer";
+import SignOut from "../SignOut";
 
 export default function Navigation() {
   const player = usePlayer();
@@ -26,6 +27,7 @@ export default function Navigation() {
               href="/manage-league"
               icon="Settings"
             />
+            <SignOut />
           </>
         )}
         {!player && (
