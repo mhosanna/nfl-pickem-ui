@@ -1,4 +1,4 @@
-import LeaderBoard from "../components/LeaderBoard";
+import { LeaderBoard } from "../components/LeaderBoard";
 import PageHeading from "../components/PageHeading";
 import { season } from "../config";
 

@@ -14,7 +14,7 @@ const PLAYERS_QUERY = gql`
   }
 `;
 
-export const GAMES_PLAYED_QUERY = gql`
+const GAMES_PLAYED_QUERY = gql`
   query GET_ALL_PLAYED_GAMES_BY_SEASON($season: String) {
     allGames(where: { AND: [{ season: $season }, { winner_is_null: false }] }) {
       id
@@ -22,7 +22,7 @@ export const GAMES_PLAYED_QUERY = gql`
   }
 `;
 
-export default function LeaderBoard({ season }) {
+function LeaderBoard({ season }) {
   const {
     data: playersInfo,
     error: playersQueryError,
@@ -78,6 +78,8 @@ export default function LeaderBoard({ season }) {
     </>
   );
 }
+
+export { LeaderBoard, PLAYERS_QUERY, GAMES_PLAYED_QUERY };
 
 const TableStyles = styled.table`
   border-collapse: collapse;
