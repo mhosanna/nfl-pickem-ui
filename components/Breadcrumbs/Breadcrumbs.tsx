@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from "styled-components";
 import Link from "next/link";
 
@@ -9,7 +10,7 @@ Breadcrumbs.Crumb = ({ href, children }) => {
   return (
     <CrumbWrapper>
       <Link href={href} passHref>
-        <CrumbLink>{children}</CrumbLink>
+        <CrumbLink>{  children}</CrumbLink>
       </Link>
     </CrumbWrapper>
   );
