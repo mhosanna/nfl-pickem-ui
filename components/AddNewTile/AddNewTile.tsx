@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from "styled-components";
 import Icon from "../Icon";
 
@@ -6,7 +5,7 @@ export default function AddNewTile({ label, icon, onClick }) {
   return (
     <StyledTile onClick={onClick}>
       <Icon name={icon} />
-      <span>  {label}  </span>
+      <span> {label}</span>
     </StyledTile>
   );
 }
