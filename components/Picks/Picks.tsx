@@ -83,7 +83,7 @@ const MAKE_PICK_MUTATION = gql`
   }
 `;
 
-export default function Picks({ season }) {
+function Picks({ season }) {
   const { id } = usePlayer();
   const playerId = id;
 
@@ -154,7 +154,7 @@ function GamesList({ playerId, selectedWeek }) {
 }
 
 function Game({ game, playerId }) {
-  const playersPick = game.picks.filter((pick) => pick.player.id == playerId);
+  const playersPick = game.picks.filter((pick) => pick.player?.id == playerId);
 
   const [pick] = useMutation(MAKE_PICK_MUTATION);
 
@@ -198,3 +198,5 @@ function Game({ game, playerId }) {
     </React.Fragment>
   );
 }
+
+export { Picks, WEEKS_BY_SEASON_QUERY, MAKE_PICK_MUTATION };

@@ -40,7 +40,6 @@ function LeaderBoard({ season }) {
 
   if (playersQueryLoading || gamesQueryLoading) return <p>Loading...</p>;
   if (playersQueryError || gamesQueryError) return <p>Error</p>;
-
   const { allPlayers } = playersInfo;
   var sortedPlayers = [...allPlayers];
 

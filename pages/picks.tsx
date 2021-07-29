@@ -1,5 +1,5 @@
 import PageHeading from "../components/PageHeading";
-import Picks from "../components/Picks";
+import { Picks } from "../components/Picks";
 import PleaseSignIn from "../components/PleaseSignIn";
 import { season } from "../config";
 
