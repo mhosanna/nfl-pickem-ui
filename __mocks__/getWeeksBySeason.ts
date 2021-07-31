@@ -1,4 +1,4 @@
-import { WEEKS_BY_SEASON_QUERY } from "../../components/Picks";
+import { WEEKS_BY_SEASON_QUERY } from "../components/Picks";
 import { GraphQLError } from "graphql";
 
 export const getWeeksBySeason = {
@@ -411,27 +411,7 @@ export const getWeeksBySeason = {
             {
               __typename: "Game",
               id: "30",
-              picks: [
-                {
-                  __typename: "Pick",
-                  id: "28",
-                  player: {
-                    __typename: "Player",
-                    id: "1",
-                    name: "Madeline",
-                  },
-                  game: {
-                    __typename: "Game",
-                    id: "30",
-                  },
-                  picked: {
-                    __typename: "Team",
-                    id: "32",
-                    name: "Football Team",
-                    city: "Washington",
-                  },
-                },
-              ],
+              picks: [],
               homeTeam: {
                 __typename: "Team",
                 id: "29",
@@ -592,8 +572,8 @@ export const getWeeksBySeason = {
                   id: "29",
                   player: {
                     __typename: "Player",
-                    id: "2",
-                    name: "Matt",
+                    id: "1",
+                    name: "Madeline",
                   },
                   game: {
                     __typename: "Game",
@@ -650,8 +630,8 @@ export const getWeeksBySeason = {
                   id: "31",
                   player: {
                     __typename: "Player",
-                    id: "2",
-                    name: "Matt",
+                    id: "1",
+                    name: "Madeline",
                   },
                   game: {
                     __typename: "Game",

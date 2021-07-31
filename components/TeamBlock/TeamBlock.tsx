@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Icon from "../Icon";
 
 export default function TeamBlock({
   id,
@@ -24,12 +25,22 @@ export default function TeamBlock({
     <>
       <Component isPicked={isPicked} onClick={() => makePick(id)}>
         {isWinner && <WinFlag>Game Winner</WinFlag>}
-        <span style={{ fontWeight: "bold" }}>{city}</span>
-        <span>{name}</span>
+        {isPicked && <Icon name={"CheckSquare"} data-testid="picked-team" />}
+        <TeamName>
+          <span style={{ fontWeight: "bold" }}>{city}</span>
+          <span>{name}</span>
+        </TeamName>
       </Component>
     </>
   );
 }
+
+const TeamName = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 8px;
+`;
 
 const BlockBase = styled.button`
   border: none;
@@ -42,18 +53,18 @@ const BlockBase = styled.button`
   font-size: 1.8rem;
   line-height: 1;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 8px;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
   position: relative;
 `;
 
 const HomeBlock = styled(BlockBase)`
-  padding: 0px 40px;
+  padding: ${(props) => (props.isPicked ? "0px 24px" : "0px 60px")};
 `;
 
 const AwayBlock = styled(BlockBase)`
-  padding-left: 100px;
+  padding-left: ${(props) => (props.isPicked ? "74px" : "110px")};
 `;
 
 const FlagBase = styled.div`

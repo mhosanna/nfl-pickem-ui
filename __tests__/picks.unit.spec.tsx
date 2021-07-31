@@ -1,10 +1,11 @@
 import PicksPage from "../pages/picks";
-import { getCurrentPlayer } from "./mocks/getCurrentPlayer";
+import { getCurrentPlayer } from "../__mocks__/getCurrentPlayer";
 import {
   getWeeksBySeason,
   getWeeksBySeasonNetworkError,
   getWeeksBySeasonGraphqlError,
-} from "./mocks/getWeeksBySeason";
+} from "../__mocks__/getWeeksBySeason";
+import { makePick } from "../__mocks__/makePick";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MockedProvider } from "@apollo/client/testing";
 
@@ -138,4 +139,32 @@ it("adds a tag to the game winner", async () => {
     ).toBeInTheDocument();
   });
 });
-it("highlights the game after the player picks it", async () => {});
+fit("highlights the game after the player picks it", async () => {
+  const mocks = [getCurrentPlayer, getWeeksBySeason, makePick];
+  render(
+    <MockedProvider mocks={mocks} addTypename={false}>
+      <PicksPage />
+    </MockedProvider>
+  );
+  await waitFor(() => {});
+  await waitFor(() => {
+    expect(screen.getByRole("combobox")).toBeInTheDocument();
+  });
+  fireEvent.change(screen.getByRole("combobox"), {
+    target: { value: "Week 1" },
+  });
+  await waitFor(() => {
+    expect(
+      screen.getByRole("button", { name: "Washington Football Team" })
+    ).toBeInTheDocument();
+  });
+
+  fireEvent.click(
+    screen.getByRole("button", { name: "Washington Football Team" })
+  );
+  screen.debug();
+  // await waitFor(() => {});
+  // await waitFor(() => {
+  //   expect(screen.getByTestId("picked-team")).toBeInTheDocument();
+  // });
+});

@@ -20,6 +20,9 @@ const gameFragment = gql`
       name
       city
     }
+    week {
+      id
+    }
     spread
     winner {
       id
@@ -44,6 +47,23 @@ const pickFragment = gql`
   }
 `;
 
+const PICKS_BY_WEEK_QUERY = gql`
+  query GET_PICKS_BY_WEEK_QUERY($playerId: ID!, $weekId: ID!) {
+    allPicks(
+      where: {
+        AND: [
+          { player: { id: $playerId } }
+          { game: { week: { id: $weekId } } }
+        ]
+      }
+    ) {
+      id
+      ...PickFragment
+    }
+  }
+  ${pickFragment}
+`;
+
 const WEEKS_BY_SEASON_QUERY = gql`
   query GET_ALL_WEEKS_BY_SEASON($season: String) {
     allWeeks(where: { season: $season }, orderBy: { id: desc }) {
@@ -52,35 +72,20 @@ const WEEKS_BY_SEASON_QUERY = gql`
       games {
         id
         ...GameFragment
-        picks {
-          id
-          ...PickFragment
-        }
       }
     }
   }
   ${gameFragment}
-  ${pickFragment}
 `;
 
 const MAKE_PICK_MUTATION = gql`
   mutation MAKE_PICK_MUTATION($player: ID!, $game: ID!, $team: ID!) {
     upsertPicks(playerId: $player, gameId: $game, teamId: $team) {
       id
-      player {
-        id
-        name
-      }
-      game {
-        id
-      }
-      picked {
-        id
-        name
-        city
-      }
+      ...PickFragment
     }
   }
+  ${pickFragment}
 `;
 
 function Picks({ season }) {
@@ -144,24 +149,63 @@ function GamesList({ playerId, selectedWeek }) {
 
   if (allGames.length === 0) return <div>No Games Found</div>;
 
+  const { data, error, loading } = useQuery(PICKS_BY_WEEK_QUERY, {
+    variables: { weekId: selectedWeek.id, playerId },
+  });
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error</p>;
+
   return (
     <div>
       {allGames.map((game) => {
-        return <Game key={game.id} game={game} playerId={playerId} />;
+        const playerPick = data.allPicks.filter(
+          (pick) => pick.game?.id === game.id
+        );
+        return (
+          <Game
+            key={game.id}
+            game={game}
+            playerId={playerId}
+            playersPick={playerPick[0]}
+          />
+        );
       })}
     </div>
   );
 }
 
-function Game({ game, playerId }) {
-  const playersPick = game.picks.filter((pick) => pick.player?.id == playerId);
-
-  const [pick] = useMutation(MAKE_PICK_MUTATION);
+function Game({ game, playerId, playersPick }) {
+  const [pick] = useMutation(MAKE_PICK_MUTATION, {
+    update(cache, { data }) {
+      const newPickFromResponse = data?.upsertPicks;
+      //if trying to pick game with a winner do nothing
+      if (!newPickFromResponse) {
+        return;
+      }
+      //if player removed pick
+      if (!newPickFromResponse?.picked) {
+        return cache.evict({ id: cache.identify(newPickFromResponse) });
+      }
+      const existingPicks = cache.readQuery<any>({
+        query: PICKS_BY_WEEK_QUERY,
+        variables: { weekId: game.week?.id, playerId },
+      });
+      if (existingPicks && newPickFromResponse) {
+        cache.writeQuery({
+          query: PICKS_BY_WEEK_QUERY,
+          variables: { weekId: game.week?.id, playerId },
+          data: {
+            allPicks: [...existingPicks?.allPicks, newPickFromResponse],
+          },
+        });
+      }
+    },
+  });
 
   const makePick = (gameId, playerId) => async (teamId) => {
-    pick({
+    await pick({
       variables: { player: playerId, game: gameId, team: teamId },
-      refetchQueries: [{ query: WEEKS_BY_SEASON_QUERY }],
     });
   };
 
@@ -176,9 +220,7 @@ function Game({ game, playerId }) {
           city={game.homeTeam.city}
           field="home"
           isWinner={game.homeTeam.id === game.winner?.id}
-          isPicked={
-            game.homeTeam.id === playersPick[0]?.picked?.id ? true : false
-          }
+          isPicked={game.homeTeam.id === playersPick?.picked?.id ? true : false}
           makePick={makePick(game.id, playerId)}
         />
         <TeamBlock
@@ -187,9 +229,7 @@ function Game({ game, playerId }) {
           city={game.awayTeam.city}
           field="away"
           isWinner={game.awayTeam.id === game.winner?.id}
-          isPicked={
-            game.awayTeam.id === playersPick[0]?.picked?.id ? true : false
-          }
+          isPicked={game.awayTeam.id === playersPick?.picked?.id ? true : false}
           makePick={makePick(game.id, playerId)}
         />
         <Spread spread={spreadString} />

@@ -1,4 +1,4 @@
-import { CURRENT_PLAYER_QUERY } from "../../lib/usePlayer";
+import { CURRENT_PLAYER_QUERY } from "../lib/usePlayer";
 
 export const getCurrentPlayer = {
   request: {
