@@ -5,6 +5,10 @@ import {
   getWeeksBySeasonNetworkError,
   getWeeksBySeasonGraphqlError,
 } from "../__mocks__/getWeeksBySeason";
+import {
+  getPicksByWeekEmpty,
+  getPicksByWeekAfterPick,
+} from "../__mocks__/getPicksByWeek";
 import { makePick } from "../__mocks__/makePick";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MockedProvider } from "@apollo/client/testing";
@@ -94,7 +98,7 @@ it("displays no games found if week does not have any games", async () => {
   });
 });
 it("displays list of games in the selected week", async () => {
-  const mocks = [getCurrentPlayer, getWeeksBySeason];
+  const mocks = [getCurrentPlayer, getWeeksBySeason, getPicksByWeekEmpty];
   render(
     <MockedProvider mocks={mocks} addTypename={false}>
       <PicksPage />
@@ -117,7 +121,7 @@ it("displays list of games in the selected week", async () => {
   });
 });
 it("adds a tag to the game winner", async () => {
-  const mocks = [getCurrentPlayer, getWeeksBySeason];
+  const mocks = [getCurrentPlayer, getWeeksBySeason, getPicksByWeekEmpty];
   render(
     <MockedProvider mocks={mocks} addTypename={false}>
       <PicksPage />
@@ -139,10 +143,15 @@ it("adds a tag to the game winner", async () => {
     ).toBeInTheDocument();
   });
 });
-fit("highlights the game after the player picks it", async () => {
-  const mocks = [getCurrentPlayer, getWeeksBySeason, makePick];
+it("highlights the game after the player picks it", async () => {
+  const mocks = [
+    getCurrentPlayer,
+    getWeeksBySeason,
+    getPicksByWeekEmpty,
+    makePick,
+  ];
   render(
-    <MockedProvider mocks={mocks} addTypename={false}>
+    <MockedProvider mocks={mocks} addTypename={true}>
       <PicksPage />
     </MockedProvider>
   );
@@ -157,14 +166,14 @@ fit("highlights the game after the player picks it", async () => {
     expect(
       screen.getByRole("button", { name: "Washington Football Team" })
     ).toBeInTheDocument();
+    expect(screen.queryByTestId("picked-team")).toBeNull();
   });
 
   fireEvent.click(
     screen.getByRole("button", { name: "Washington Football Team" })
   );
-  screen.debug();
-  // await waitFor(() => {});
-  // await waitFor(() => {
-  //   expect(screen.getByTestId("picked-team")).toBeInTheDocument();
-  // });
+
+  await waitFor(() => {
+    expect(screen.getByTestId("picked-team")).toBeInTheDocument();
+  });
 });

@@ -3,7 +3,7 @@ import { MAKE_PICK_MUTATION } from "../components/Picks";
 export const makePick = {
   request: {
     query: MAKE_PICK_MUTATION,
-    variables: { playerId: "2", gameId: "30", teamId: "32" },
+    variables: { player: "2", game: "30", team: "32" },
   },
   result: {
     data: {

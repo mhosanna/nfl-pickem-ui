@@ -239,4 +239,9 @@ function Game({ game, playerId, playersPick }) {
   );
 }
 
-export { Picks, WEEKS_BY_SEASON_QUERY, MAKE_PICK_MUTATION };
+export {
+  Picks,
+  WEEKS_BY_SEASON_QUERY,
+  MAKE_PICK_MUTATION,
+  PICKS_BY_WEEK_QUERY,
+};

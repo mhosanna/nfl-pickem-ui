@@ -41,7 +41,6 @@ export const getWeeksBySeason = {
             {
               __typename: "Game",
               id: "22",
-              picks: [],
               homeTeam: {
                 __typename: "Team",
                 id: "2",
@@ -53,6 +52,10 @@ export const getWeeksBySeason = {
                 id: "15",
                 name: "Jaguars",
                 city: "Jacksonville",
+              },
+              week: {
+                __typename: "Week",
+                id: "18",
               },
               spread: 12,
               winner: null,
@@ -67,27 +70,6 @@ export const getWeeksBySeason = {
             {
               __typename: "Game",
               id: "23",
-              picks: [
-                {
-                  __typename: "Pick",
-                  id: "23",
-                  player: {
-                    __typename: "Player",
-                    id: "1",
-                    name: "Madeline",
-                  },
-                  game: {
-                    __typename: "Game",
-                    id: "23",
-                  },
-                  picked: {
-                    __typename: "Team",
-                    id: "21",
-                    name: "Vikings",
-                    city: "Minnesota",
-                  },
-                },
-              ],
               homeTeam: {
                 __typename: "Team",
                 id: "21",
@@ -100,33 +82,16 @@ export const getWeeksBySeason = {
                 name: "Panthers",
                 city: "Carolina",
               },
+              week: {
+                __typename: "Week",
+                id: "3",
+              },
               spread: 12,
               winner: null,
             },
             {
               __typename: "Game",
               id: "19",
-              picks: [
-                {
-                  __typename: "Pick",
-                  id: "21",
-                  player: {
-                    __typename: "Player",
-                    id: "1",
-                    name: "Madeline",
-                  },
-                  game: {
-                    __typename: "Game",
-                    id: "19",
-                  },
-                  picked: {
-                    __typename: "Team",
-                    id: "29",
-                    name: "Seahawks",
-                    city: "Seattle",
-                  },
-                },
-              ],
               homeTeam: {
                 __typename: "Team",
                 id: "22",
@@ -139,33 +104,16 @@ export const getWeeksBySeason = {
                 name: "Seahawks",
                 city: "Seattle",
               },
+              week: {
+                __typename: "Week",
+                id: "3",
+              },
               spread: 12,
               winner: null,
             },
             {
               __typename: "Game",
               id: "21",
-              picks: [
-                {
-                  __typename: "Pick",
-                  id: "22",
-                  player: {
-                    __typename: "Player",
-                    id: "1",
-                    name: "Madeline",
-                  },
-                  game: {
-                    __typename: "Game",
-                    id: "21",
-                  },
-                  picked: {
-                    __typename: "Team",
-                    id: "17",
-                    name: "Raiders",
-                    city: "Las Vegas",
-                  },
-                },
-              ],
               homeTeam: {
                 __typename: "Team",
                 id: "17",
@@ -178,33 +126,16 @@ export const getWeeksBySeason = {
                 name: "49ers",
                 city: "San Francisco",
               },
+              week: {
+                __typename: "Week",
+                id: "3",
+              },
               spread: -10.5,
               winner: null,
             },
             {
               __typename: "Game",
               id: "24",
-              picks: [
-                {
-                  __typename: "Pick",
-                  id: "24",
-                  player: {
-                    __typename: "Player",
-                    id: "1",
-                    name: "Madeline",
-                  },
-                  game: {
-                    __typename: "Game",
-                    id: "24",
-                  },
-                  picked: {
-                    __typename: "Team",
-                    id: "20",
-                    name: "Dolphins",
-                    city: "Miami",
-                  },
-                },
-              ],
               homeTeam: {
                 __typename: "Team",
                 id: "20",
@@ -217,33 +148,16 @@ export const getWeeksBySeason = {
                 name: "Cowboys",
                 city: "Dallas",
               },
+              week: {
+                __typename: "Week",
+                id: "3",
+              },
               spread: 12,
               winner: null,
             },
             {
               __typename: "Game",
               id: "25",
-              picks: [
-                {
-                  __typename: "Pick",
-                  id: "25",
-                  player: {
-                    __typename: "Player",
-                    id: "1",
-                    name: "Madeline",
-                  },
-                  game: {
-                    __typename: "Game",
-                    id: "25",
-                  },
-                  picked: {
-                    __typename: "Team",
-                    id: "30",
-                    name: "Buccaneers",
-                    city: "Tampa Bay",
-                  },
-                },
-              ],
               homeTeam: {
                 __typename: "Team",
                 id: "25",
@@ -256,13 +170,16 @@ export const getWeeksBySeason = {
                 name: "Buccaneers",
                 city: "Tampa Bay",
               },
+              week: {
+                __typename: "Week",
+                id: "3",
+              },
               spread: -1,
               winner: null,
             },
             {
               __typename: "Game",
               id: "26",
-              picks: [],
               homeTeam: {
                 __typename: "Team",
                 id: "3",
@@ -275,13 +192,16 @@ export const getWeeksBySeason = {
                 name: "Falcons",
                 city: "Atlanta",
               },
+              week: {
+                __typename: "Week",
+                id: "3",
+              },
               spread: 0,
               winner: null,
             },
             {
               __typename: "Game",
               id: "27",
-              picks: [],
               homeTeam: {
                 __typename: "Team",
                 id: "23",
@@ -294,13 +214,16 @@ export const getWeeksBySeason = {
                 name: "Bengals",
                 city: "Cincinnati",
               },
+              week: {
+                __typename: "Week",
+                id: "3",
+              },
               spread: -10,
               winner: null,
             },
             {
               __typename: "Game",
               id: "28",
-              picks: [],
               homeTeam: {
                 __typename: "Team",
                 id: "11",
@@ -312,6 +235,10 @@ export const getWeeksBySeason = {
                 id: "22",
                 name: "Patriots",
                 city: "New England",
+              },
+              week: {
+                __typename: "Week",
+                id: "3",
               },
               spread: 16,
               winner: null,
@@ -326,27 +253,6 @@ export const getWeeksBySeason = {
             {
               __typename: "Game",
               id: "32",
-              picks: [
-                {
-                  __typename: "Pick",
-                  id: "27",
-                  player: {
-                    __typename: "Player",
-                    id: "1",
-                    name: "Madeline",
-                  },
-                  game: {
-                    __typename: "Game",
-                    id: "32",
-                  },
-                  picked: {
-                    __typename: "Team",
-                    id: "6",
-                    name: "Bears",
-                    city: "Chicago",
-                  },
-                },
-              ],
               homeTeam: {
                 __typename: "Team",
                 id: "6",
@@ -359,33 +265,16 @@ export const getWeeksBySeason = {
                 name: "Jets",
                 city: "New York",
               },
+              week: {
+                __typename: "Week",
+                id: "2",
+              },
               spread: 8,
               winner: null,
             },
             {
               __typename: "Game",
               id: "17",
-              picks: [
-                {
-                  __typename: "Pick",
-                  id: "20",
-                  player: {
-                    __typename: "Player",
-                    id: "1",
-                    name: "Madeline",
-                  },
-                  game: {
-                    __typename: "Game",
-                    id: "17",
-                  },
-                  picked: {
-                    __typename: "Team",
-                    id: "31",
-                    name: "Titans",
-                    city: "Tennessee",
-                  },
-                },
-              ],
               homeTeam: {
                 __typename: "Team",
                 id: "10",
@@ -398,7 +287,55 @@ export const getWeeksBySeason = {
                 name: "Titans",
                 city: "Tennessee",
               },
+              week: {
+                __typename: "Week",
+                id: "2",
+              },
               spread: 5,
+              winner: null,
+            },
+            {
+              __typename: "Game",
+              id: "41",
+              homeTeam: {
+                __typename: "Team",
+                id: "9",
+                name: "Cowboys",
+                city: "Dallas",
+              },
+              awayTeam: {
+                __typename: "Team",
+                id: "12",
+                name: "Packers",
+                city: "Green Bay",
+              },
+              week: {
+                __typename: "Week",
+                id: "2",
+              },
+              spread: -10,
+              winner: null,
+            },
+            {
+              __typename: "Game",
+              id: "42",
+              homeTeam: {
+                __typename: "Team",
+                id: "6",
+                name: "Bears",
+                city: "Chicago",
+              },
+              awayTeam: {
+                __typename: "Team",
+                id: "2",
+                name: "Falcons",
+                city: "Atlanta",
+              },
+              week: {
+                __typename: "Week",
+                id: "2",
+              },
+              spread: 2,
               winner: null,
             },
           ],
@@ -411,7 +348,6 @@ export const getWeeksBySeason = {
             {
               __typename: "Game",
               id: "30",
-              picks: [],
               homeTeam: {
                 __typename: "Team",
                 id: "29",
@@ -424,33 +360,16 @@ export const getWeeksBySeason = {
                 name: "Football Team",
                 city: "Washington",
               },
+              week: {
+                __typename: "Week",
+                id: "1",
+              },
               spread: -1.5,
               winner: null,
             },
             {
               __typename: "Game",
               id: "14",
-              picks: [
-                {
-                  __typename: "Pick",
-                  id: "15",
-                  player: {
-                    __typename: "Player",
-                    id: "1",
-                    name: "Madeline",
-                  },
-                  game: {
-                    __typename: "Game",
-                    id: "14",
-                  },
-                  picked: {
-                    __typename: "Team",
-                    id: "17",
-                    name: "Raiders",
-                    city: "Las Vegas",
-                  },
-                },
-              ],
               homeTeam: {
                 __typename: "Team",
                 id: "17",
@@ -463,33 +382,16 @@ export const getWeeksBySeason = {
                 name: "49ers",
                 city: "San Francisco",
               },
+              week: {
+                __typename: "Week",
+                id: "1",
+              },
               spread: 2,
               winner: null,
             },
             {
               __typename: "Game",
               id: "13",
-              picks: [
-                {
-                  __typename: "Pick",
-                  id: "10",
-                  player: {
-                    __typename: "Player",
-                    id: "1",
-                    name: "Madeline",
-                  },
-                  game: {
-                    __typename: "Game",
-                    id: "13",
-                  },
-                  picked: {
-                    __typename: "Team",
-                    id: "13",
-                    name: "Texans",
-                    city: "Houston",
-                  },
-                },
-              ],
               homeTeam: {
                 __typename: "Team",
                 id: "13",
@@ -502,33 +404,16 @@ export const getWeeksBySeason = {
                 name: "Rams",
                 city: "Los Angeles",
               },
+              week: {
+                __typename: "Week",
+                id: "1",
+              },
               spread: -14,
               winner: null,
             },
             {
               __typename: "Game",
               id: "12",
-              picks: [
-                {
-                  __typename: "Pick",
-                  id: "14",
-                  player: {
-                    __typename: "Player",
-                    id: "1",
-                    name: "Madeline",
-                  },
-                  game: {
-                    __typename: "Game",
-                    id: "12",
-                  },
-                  picked: {
-                    __typename: "Team",
-                    id: "7",
-                    name: "Bengals",
-                    city: "Cincinnati",
-                  },
-                },
-              ],
               homeTeam: {
                 __typename: "Team",
                 id: "6",
@@ -541,52 +426,16 @@ export const getWeeksBySeason = {
                 name: "Bengals",
                 city: "Cincinnati",
               },
+              week: {
+                __typename: "Week",
+                id: "1",
+              },
               spread: 10,
               winner: null,
             },
             {
               __typename: "Game",
               id: "11",
-              picks: [
-                {
-                  __typename: "Pick",
-                  id: "8",
-                  player: {
-                    __typename: "Player",
-                    id: "1",
-                    name: "Madeline",
-                  },
-                  game: {
-                    __typename: "Game",
-                    id: "11",
-                  },
-                  picked: {
-                    __typename: "Team",
-                    id: "18",
-                    name: "Chargers",
-                    city: "Los Angeles",
-                  },
-                },
-                {
-                  __typename: "Pick",
-                  id: "29",
-                  player: {
-                    __typename: "Player",
-                    id: "1",
-                    name: "Madeline",
-                  },
-                  game: {
-                    __typename: "Game",
-                    id: "11",
-                  },
-                  picked: {
-                    __typename: "Team",
-                    id: "1",
-                    name: "Cardinals",
-                    city: "Arizona",
-                  },
-                },
-              ],
               homeTeam: {
                 __typename: "Team",
                 id: "1",
@@ -599,52 +448,16 @@ export const getWeeksBySeason = {
                 name: "Chargers",
                 city: "Los Angeles",
               },
+              week: {
+                __typename: "Week",
+                id: "1",
+              },
               spread: -1,
               winner: null,
             },
             {
               __typename: "Game",
               id: "6",
-              picks: [
-                {
-                  __typename: "Pick",
-                  id: "19",
-                  player: {
-                    __typename: "Player",
-                    id: "1",
-                    name: "Madeline",
-                  },
-                  game: {
-                    __typename: "Game",
-                    id: "6",
-                  },
-                  picked: {
-                    __typename: "Team",
-                    id: "23",
-                    name: "Saints",
-                    city: "New Orleans",
-                  },
-                },
-                {
-                  __typename: "Pick",
-                  id: "31",
-                  player: {
-                    __typename: "Player",
-                    id: "1",
-                    name: "Madeline",
-                  },
-                  game: {
-                    __typename: "Game",
-                    id: "6",
-                  },
-                  picked: {
-                    __typename: "Team",
-                    id: "22",
-                    name: "Patriots",
-                    city: "New England",
-                  },
-                },
-              ],
               homeTeam: {
                 __typename: "Team",
                 id: "22",
@@ -656,6 +469,10 @@ export const getWeeksBySeason = {
                 id: "23",
                 name: "Saints",
                 city: "New Orleans",
+              },
+              week: {
+                __typename: "Week",
+                id: "1",
               },
               spread: 7,
               winner: {
