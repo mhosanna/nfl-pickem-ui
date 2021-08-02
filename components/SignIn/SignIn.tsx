@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/client";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { CURRENT_PLAYER_QUERY } from "../../lib/usePlayer";
 import ErrorMessage from "../ErrorMessage";
 import styled from "styled-components";
@@ -24,11 +24,14 @@ const SIGNIN_MUTATION = gql`
   }
 `;
 
-export default function SignIn() {
-  const [signIn, { data, loading }] = useMutation(SIGNIN_MUTATION, {
-    // refetch the currently logged in Player
-    refetchQueries: [{ query: CURRENT_PLAYER_QUERY }],
-  });
+function SignIn() {
+  const [signIn, { data, error: networkError, loading }] = useMutation(
+    SIGNIN_MUTATION,
+    {
+      // refetch the currently logged in Player
+      refetchQueries: [{ query: CURRENT_PLAYER_QUERY }],
+    }
+  );
 
   const {
     handleSubmit,
@@ -40,9 +43,10 @@ export default function SignIn() {
   async function onSubmit(data) {
     await signIn({
       variables: data,
-    });
+    }).catch(console.error);
     reset();
   }
+
   const error =
     data?.authenticatePlayerWithPassword.__typename ===
     "PlayerAuthenticationWithPasswordFailure"
@@ -52,13 +56,14 @@ export default function SignIn() {
     <FormWrapper>
       <form onSubmit={handleSubmit(onSubmit)} method="POST" noValidate={true}>
         <h2>Sign Into Your Account</h2>
-        <ErrorMessage error={error} />
+        <ErrorMessage error={error || networkError} />
         <Spacer size={12} />
         <InputWrapper>
           <Label htmlFor="email">Email</Label>
           <Input
             {...register("email", { required: true })}
             type="email"
+            id="email"
             name="email"
             placeholder="Your Email Address"
             autoComplete="email"
@@ -72,6 +77,7 @@ export default function SignIn() {
           <Input
             {...register("password", { required: true })}
             type="password"
+            id="password"
             name="password"
             placeholder="Password"
             autoComplete="password"
@@ -86,6 +92,8 @@ export default function SignIn() {
     </FormWrapper>
   );
 }
+
+export { SignIn, SIGNIN_MUTATION };
 
 const FormWrapper = styled.div`
   width: 33%;

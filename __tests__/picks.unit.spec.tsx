@@ -5,10 +5,7 @@ import {
   getWeeksBySeasonNetworkError,
   getWeeksBySeasonGraphqlError,
 } from "../__mocks__/getWeeksBySeason";
-import {
-  getPicksByWeekEmpty,
-  getPicksByWeekAfterPick,
-} from "../__mocks__/getPicksByWeek";
+import { getPicksByWeekEmpty } from "../__mocks__/getPicksByWeek";
 import { makePick } from "../__mocks__/makePick";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MockedProvider } from "@apollo/client/testing";
