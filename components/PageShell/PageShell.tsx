@@ -15,7 +15,7 @@ const NavOuterWrapper = styled.div`
 `;
 
 const NavWrapper = styled.div`
-  padding: 40px 0px;
+  padding: 5rem 0px;
   background-color: var(--background);
   position: fixed;
   top: 0px;
@@ -25,7 +25,7 @@ const NavWrapper = styled.div`
 const InnerStyles = styled.div`
   flex: 3;
   height: 100vh;
-  padding: 0px 5rem;
+  padding: 5rem;
 `;
 
 export default function PageShell({ children }) {
@@ -36,10 +36,7 @@ export default function PageShell({ children }) {
           <Navigation />
         </NavWrapper>
       </NavOuterWrapper>
-      <InnerStyles>
-        <Spacer size={48} />
-        {children}
-      </InnerStyles>
+      <InnerStyles>{children}</InnerStyles>
     </AppWrapper>
   );
 }

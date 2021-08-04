@@ -55,7 +55,8 @@ const Logo = styled.h1`
   font-weight: 400;
   font-size: 3.6rem;
   width: fit-content;
-  padding: 0 0 77px 90px;
+  margin: 0 auto;
+  margin-bottom: 45px;
 
   ::after {
     content: "!";
@@ -71,5 +72,5 @@ const NavLinks = styled.div`
   display: flex;
   flex-direction: column;
   gap: 3.5rem;
-  min-width: 320px;
+  width: 300px;
 `;
