@@ -11,6 +11,10 @@ const NavWrapper = styled.div`
   height: 100vh;
   padding: 40px 0px;
   background-color: var(--background);
+
+  @media ${(props) => props.theme.queries.phoneAndSmaller} {
+    min-width: 75px;
+  }
 `;
 
 const InnerStyles = styled.div`
