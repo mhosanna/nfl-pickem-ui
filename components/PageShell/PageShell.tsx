@@ -20,6 +20,10 @@ const NavWrapper = styled.div`
   position: fixed;
   top: 0px;
   bottom: 0px;
+
+  @media ${(props) => props.theme.queries.phoneAndSmaller} {
+    min-width: 75px;
+  }
 `;
 
 const InnerStyles = styled.div`

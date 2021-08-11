@@ -4,42 +4,68 @@ import NavLink from "../Navigation-Link";
 import { season } from "../../config";
 import { usePlayer } from "../../lib/usePlayer";
 import SignOut from "../SignOut";
+import Spacer from "../Spacer";
+import Icon from "../Icon";
+import MobileMenu from "../MobileMenu";
 
 export default function Navigation() {
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const player = usePlayer();
   return (
-    <NavigationStyles>
+    <>
       <Logo>Pick’em</Logo>
-      <NavLinks>
-        <NavLink linkName="Leaderboard" href="/" icon="TrendingUp" />
-        {player && (
-          <>
-            <NavLink linkName="My Picks" href="/picks" icon="CheckSquare" />
-            <NavLink linkName="Game Results" href="/game-results" icon="Star" />
-            <NavLink
-              linkName="Manage Games"
-              href={`/manage-games/${season}`}
-              icon="Tv"
-            />
-            <NavLink
-              linkName="Manage League"
-              href="/manage-league"
-              icon="Settings"
-            />
-            <SignOut />
-          </>
-        )}
-        {!player && (
-          <>
-            <NavLink linkName="Sign In" href="/signin" icon="LogIn" />
-          </>
-        )}
-      </NavLinks>
-    </NavigationStyles>
+      <DesktopNav>
+        <NavLinks>
+          <NavLink linkName="Leaderboard" href="/" icon="TrendingUp" />
+          {player && (
+            <>
+              <NavLink linkName="My Picks" href="/picks" icon="CheckSquare" />
+              <NavLink
+                linkName="Game Results"
+                href="/game-results"
+                icon="Star"
+              />
+              <NavLink
+                linkName="Manage Games"
+                href={`/manage-games/${season}`}
+                icon="Tv"
+              />
+              <NavLink
+                linkName="Manage League"
+                href="/manage-league"
+                icon="Settings"
+              />
+              <SignOut />
+            </>
+          )}
+          {!player && (
+            <>
+              <NavLink linkName="Sign In" href="/signin" icon="LogIn" />
+            </>
+          )}
+        </NavLinks>
+      </DesktopNav>
+      <MobileAction>
+        <MenuButton onClick={() => setShowMobileMenu(true)}>
+          <Icon name={"Menu"} size={36} />
+        </MenuButton>
+      </MobileAction>
+      <MobileMenu
+        isOpen={showMobileMenu}
+        onDismiss={() => setShowMobileMenu(false)}
+        title="Menu"
+      />
+    </>
   );
 }
 
-const NavigationStyles = styled.nav``;
+const DesktopNav = styled.nav`
+  display: flex;
+
+  @media ${(props) => props.theme.queries.phoneAndSmaller} {
+    display: none;
+  }
+`;
 
 const LogoFlourish = styled.div`
   position: relative;
@@ -56,7 +82,7 @@ const Logo = styled.h1`
   font-size: 3.6rem;
   width: fit-content;
   margin: 0 auto;
-  margin-bottom: 45px;
+  margin-bottom: 56px;
 
   ::after {
     content: "!";
@@ -66,6 +92,10 @@ const Logo = styled.h1`
     line-height: 6rem;
     position: absolute;
   }
+
+  @media ${(props) => props.theme.queries.phoneAndSmaller} {
+    display: none;
+  }
 `;
 
 const NavLinks = styled.div`
@@ -73,4 +103,32 @@ const NavLinks = styled.div`
   flex-direction: column;
   gap: 3.5rem;
   width: 300px;
+`;
+
+const MobileAction = styled.div`
+  display: none;
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+  }
+  @media ${(props) => props.theme.queries.phoneAndSmaller} {
+    display: flex;
+    gap: 16px;
+  }
+`;
+
+const MenuButton = styled.button`
+  display: ${(props) => props.display || "block"};
+  margin: 0 auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  &:focus {
+    outline-offset: 2px;
+  }
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
 `;

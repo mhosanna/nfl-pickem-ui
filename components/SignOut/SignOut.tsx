@@ -3,6 +3,7 @@ import gql from "graphql-tag";
 import styled from "styled-components";
 import { CURRENT_PLAYER_QUERY } from "../../lib/usePlayer";
 import Icon from "../Icon";
+import { MobileModal } from "../MobileMenu";
 
 const SIGN_OUT_MUTATION = gql`
   mutation {
@@ -38,5 +39,8 @@ const StyledButton = styled.button`
   cursor: pointer;
   &:hover {
     background-color: white;
+  }
+  @media ${(props) => props.theme.queries.phoneAndSmaller} {
+    padding-left: 0px;
   }
 `;

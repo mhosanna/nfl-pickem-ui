@@ -11,7 +11,7 @@ interface Props {
   children: ReactElementLike;
 }
 
-const StyledLink = styled.a<{ active?: boolean }>`
+const StyledLink = styled.a`
   display: flex;
   gap: 1.8rem;
   align-items: center;
@@ -27,6 +27,11 @@ const StyledLink = styled.a<{ active?: boolean }>`
   border-radius: 0px 15px 15px 0px;
   &:hover {
     background-color: white;
+  }
+
+  @media ${(props) => props.theme.queries.phoneAndSmaller} {
+    padding-left: 0px;
+    width: 175px;
   }
 `;
 
