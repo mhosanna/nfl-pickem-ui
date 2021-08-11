@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 import styled from "styled-components";
 import { CURRENT_PLAYER_QUERY } from "../../lib/usePlayer";
 import Icon from "../Icon";
-import { MobileModal } from "../MobileMenu";
+import { NavLinks as MobileNavLinks } from "../MobileMenu";
 
 const SIGN_OUT_MUTATION = gql`
   mutation {
@@ -40,7 +40,13 @@ const StyledButton = styled.button`
   &:hover {
     background-color: white;
   }
-  @media ${(props) => props.theme.queries.phoneAndSmaller} {
+  ${MobileNavLinks} & {
     padding-left: 0px;
+    background-color: var(--background);
+    border-left: none;
+    font-size: 2rem;
+    &:hover {
+      background-color: var(--background);
+    }
   }
 `;

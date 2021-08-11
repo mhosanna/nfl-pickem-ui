@@ -15,23 +15,36 @@ export default function MobileMenu({ isOpen, onDismiss, title }) {
           <Icon name="X" />
         </CloseButton>
         <NavLinks>
-          <NavLink linkName="Leaderboard" href="/" icon="TrendingUp" />
+          <NavLink
+            linkName="Leaderboard"
+            href="/"
+            handleClick={onDismiss}
+            icon="TrendingUp"
+          />
           {player && (
             <>
-              <NavLink linkName="My Picks" href="/picks" icon="CheckSquare" />
+              <NavLink
+                linkName="My Picks"
+                href="/picks"
+                handleClick={onDismiss}
+                icon="CheckSquare"
+              />
               <NavLink
                 linkName="Game Results"
                 href="/game-results"
+                handleClick={onDismiss}
                 icon="Star"
               />
               <NavLink
                 linkName="Manage Games"
                 href={`/manage-games/${season}`}
+                handleClick={onDismiss}
                 icon="Tv"
               />
               <NavLink
                 linkName="Manage League"
                 href="/manage-league"
+                handleClick={onDismiss}
                 icon="Settings"
               />
               <SignOut />
@@ -39,7 +52,12 @@ export default function MobileMenu({ isOpen, onDismiss, title }) {
           )}
           {!player && (
             <>
-              <NavLink linkName="Sign In" href="/signin" icon="LogIn" />
+              <NavLink
+                linkName="Sign In"
+                href="/signin"
+                handleClick={onDismiss}
+                icon="LogIn"
+              />
             </>
           )}
         </NavLinks>
@@ -48,7 +66,7 @@ export default function MobileMenu({ isOpen, onDismiss, title }) {
   );
 }
 
-export const MobileModal = styled(DialogOverlay)`
+const MobileModal = styled(DialogOverlay)`
   position: fixed;
   top: 0;
   left: 0;
@@ -63,22 +81,23 @@ const Content = styled(DialogContent)`
   background: var(--background);
   width: 300px;
   height: 100%;
-  padding: 75px 32px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
+  gap: 32px;
 `;
 
 const CloseButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 0;
   padding: 16px;
   border: none;
   cursor: pointer;
   color: var(--black);
+  background-color: var(--background);
+  width: fit-content;
+  align-self: flex-end;
 `;
 
-const NavLinks = styled.nav`
+export const NavLinks = styled.nav`
   display: flex;
   flex-direction: column;
   gap: 3.5rem;

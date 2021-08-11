@@ -11,7 +11,6 @@ const AppWrapper = styled.div`
 
 const NavOuterWrapper = styled.div`
   position: relative;
-  z-index: 2;
 `;
 
 const NavWrapper = styled.div`

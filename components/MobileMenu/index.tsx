@@ -1,1 +1,1 @@
-export { default, MobileModal } from "./MobileMenu";
+export { default, NavLinks } from "./MobileMenu";

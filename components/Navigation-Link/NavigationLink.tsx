@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import Icon from "../Icon";
+import { NavLinks as MobileNavLinks } from "../MobileMenu";
 
 interface Props {
   href: string;
@@ -28,10 +29,19 @@ const StyledLink = styled.a`
   &:hover {
     background-color: white;
   }
-
+  /* props cant be passed to composed components?
+  Gotta do it through media query */
   @media ${(props) => props.theme.queries.phoneAndSmaller} {
+    font-weight: ${(props) => (props.active ? "700" : "inherit")};
+  }
+  ${MobileNavLinks} & {
     padding-left: 0px;
-    width: 175px;
+    background-color: var(--background);
+    border-left: none;
+    font-size: 2rem;
+    &:hover {
+      background-color: var(--background);
+    }
   }
 `;
 
@@ -48,10 +58,10 @@ const ActiveLink: NextPage<Props> = ({ children, href }) => {
   );
 };
 
-export default function NavLink({ linkName, href, icon }) {
+export default function NavLink({ linkName, href, icon, handleClick = null }) {
   return (
     <ActiveLink href={href}>
-      <StyledLink>
+      <StyledLink onClick={handleClick}>
         <Icon name={icon} />
         {linkName}
       </StyledLink>
