@@ -6,11 +6,17 @@ const HeaderWrapper = styled.div`
   align-items: baseline;
   margin-bottom: 5rem;
   line-height: 1;
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 3rem;
+  }
 `;
 
 const StyledHeading = styled.h1`
   font-family: var(--header-font);
-  font-size: 4.8rem;
+  font-size: clamp(3.8rem, 6vw + 1rem, 4.8rem);
+  min-height: 0vh;
   text-transform: uppercase;
   letter-spacing: 0.15rem;
 `;
@@ -25,6 +31,9 @@ const Underline = styled.div`
 const Season = styled.div`
   color: var(--grey);
   font-size: 2em;
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    font-size: 1.2em;
+  }
 `;
 
 export default function PageHeading({ heading, season }) {

@@ -87,6 +87,7 @@ const TableStyles = styled.table`
   thead {
     color: var(--grey);
     text-transform: uppercase;
+    margin-bottom: 12px;
   }
   tbody {
     font-weight: 600;
@@ -95,6 +96,10 @@ const TableStyles = styled.table`
   td,
   th {
     text-align: left;
-    padding: 8px;
+    padding: 8px 24px 0px 8px;
+    white-space: nowrap;
+  }
+
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
   }
 `;

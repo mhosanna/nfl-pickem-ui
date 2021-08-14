@@ -29,6 +29,9 @@ const StyledLink = styled.a`
   &:hover {
     background-color: white;
   }
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    padding-left: ${(props) => (props.active ? "31px" : "35px")};
+  }
   /* props cant be passed to composed components?
   Gotta do it through media query */
   @media ${(props) => props.theme.queries.phoneAndSmaller} {

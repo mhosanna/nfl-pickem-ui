@@ -40,6 +40,9 @@ const StyledButton = styled.button`
   &:hover {
     background-color: white;
   }
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    padding-left: 35px;
+  }
   ${MobileNavLinks} & {
     padding-left: 0px;
     background-color: var(--background);

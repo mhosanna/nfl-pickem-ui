@@ -103,7 +103,7 @@ const NavLinks = styled.div`
   display: flex;
   flex-direction: column;
   gap: 3.5rem;
-  width: 300px;
+  width: 100%;
 `;
 
 const MobileAction = styled.div`

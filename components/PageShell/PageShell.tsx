@@ -2,13 +2,18 @@ import styled from "styled-components";
 import Navigation from "../Navigation";
 
 const AppWrapper = styled.div`
+  --menu-width-desktop: 300px;
+  --menu-width-tablet: 250px;
   display: grid;
-  grid-template-areas:
-    "menu content"
-    "menu content";
-  grid-template-columns: 300px 1fr;
+  grid-template-areas: "menu content";
+  grid-template-columns: var(--menu-width-desktop) 1fr;
   padding: 0px;
   max-width: 100%;
+  isolation: isolate;
+
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    grid-template-columns: var(--menu-width-tablet) 1fr;
+  }
 
   @media ${(props) => props.theme.queries.phoneAndSmaller} {
     grid-template-areas:
@@ -19,20 +24,32 @@ const AppWrapper = styled.div`
   }
 `;
 
-const NavWrapper = styled.div`
+const OuterNavWrapper = styled.div`
   grid-area: menu;
+  position: relative;
+  z-index: 1;
+  min-width: var(--menu-width-desktop);
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    min-width: var(--menu-width-tablet);
+  }
+`;
+
+const NavWrapper = styled.div`
   padding: 5rem 0px;
   background-color: var(--background);
   position: fixed;
   top: 0px;
-  bottom: 0px;
+  height: 100%;
+  min-width: var(--menu-width-desktop);
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    min-width: var(--menu-width-tablet);
+  }
 
   @media ${(props) => props.theme.queries.phoneAndSmaller} {
     position: initial;
     display: flex;
     flex-direction: row-reverse;
     justify-content: flex-end;
-    gap: 36px;
     padding: 0px;
   }
 `;
@@ -42,14 +59,19 @@ const InnerStyles = styled.div`
   flex: 3;
   height: 100vh;
   padding: 5rem;
+  @media ${(props) => props.theme.queries.phoneAndSmaller} {
+    padding: 3rem 5rem;
+  }
 `;
 
 export default function PageShell({ children }) {
   return (
     <AppWrapper>
-      <NavWrapper>
-        <Navigation />
-      </NavWrapper>
+      <OuterNavWrapper>
+        <NavWrapper>
+          <Navigation />
+        </NavWrapper>
+      </OuterNavWrapper>
       <InnerStyles>{children}</InnerStyles>
     </AppWrapper>
   );
