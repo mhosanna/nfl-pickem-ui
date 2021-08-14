@@ -103,7 +103,3 @@ export const NavLinks = styled.nav`
   gap: 3.5rem;
   margin: 0 auto;
 `;
-
-const Filler = styled.div`
-  flex: 1;
-`;

@@ -94,7 +94,8 @@ const Logo = styled.h1`
   }
 
   @media ${(props) => props.theme.queries.phoneAndSmaller} {
-    display: none;
+    margin: 0;
+    margin-bottom: 0;
   }
 `;
 
@@ -111,13 +112,15 @@ const MobileAction = styled.div`
   }
   @media ${(props) => props.theme.queries.phoneAndSmaller} {
     display: flex;
-    gap: 16px;
+    align-items: center;
+    padding: 0px 28px;
+    height: 100%;
   }
 `;
 
 const MenuButton = styled.button`
-  display: ${(props) => props.display || "block"};
-  margin: 0 auto;
+  display: flex;
+  align-items: baseline;
   padding: 0;
   border: none;
   background: transparent;
