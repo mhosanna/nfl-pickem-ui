@@ -17,6 +17,13 @@ const Spread = styled.div`
     font-size: 2rem;
     font-weight: 700;
   }
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    position: absolute;
+    right: 40%;
+    top: -5px;
+    height: 70px;
+    width: 70px;
+  }
 `;
 
 const List = styled.div`
@@ -26,6 +33,11 @@ const List = styled.div`
   margin: 0 auto;
   display: flex;
   position: relative;
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    width: 100%;
+    max-width: 500px;
+    min-width: 0px;
+  }
 `;
 
 export { Spread, List };

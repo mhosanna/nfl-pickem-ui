@@ -55,7 +55,7 @@ function SignIn() {
   return (
     <FormWrapper>
       <form onSubmit={handleSubmit(onSubmit)} method="POST" noValidate={true}>
-        <h2>Sign Into Your Account</h2>
+        <FormHeader>Sign Into Your Account</FormHeader>
         <ErrorMessage error={error || networkError} />
         <Spacer size={12} />
         <InputWrapper>
@@ -96,12 +96,16 @@ function SignIn() {
 export { SignIn, SIGNIN_MUTATION };
 
 const FormWrapper = styled.div`
-  width: 33%;
+  width: fit-content;
   border: 2px solid var(--black);
-  padding: 16px;
+  padding: 16px 36px;
   h2 {
     font-size: 2rem;
   }
+`;
+
+const FormHeader = styled.h2`
+  white-space: nowrap;
 `;
 
 const InputWrapper = styled.div`
@@ -129,7 +133,7 @@ const Label = styled.label`
 
 const Input = styled.input`
   padding: 1rem;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   border-radius: 3px;
   border: 2px solid var(--black);
 `;
