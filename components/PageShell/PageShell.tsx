@@ -59,8 +59,11 @@ const InnerStyles = styled.div`
   flex: 3;
   height: 100vh;
   padding: 5rem;
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    padding: 3rem 3rem;
+  }
   @media ${(props) => props.theme.queries.phoneAndSmaller} {
-    padding: 3rem 5rem;
+    padding: 2rem 3rem;
   }
 `;
 

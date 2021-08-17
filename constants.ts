@@ -1,5 +1,5 @@
 const BREAKPOINTS = {
-  tabletMin: 670,
+  tabletMin: 715,
   laptopMin: 1100,
   desktopMin: 1500,
 };

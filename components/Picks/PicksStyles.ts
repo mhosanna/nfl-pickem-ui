@@ -1,5 +1,28 @@
 import styled from "styled-components";
 
+const GameListWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    gap: 25px;
+  }
+`;
+
+const FieldWrapper = styled.div`
+  display: flex;
+  margin: 0 auto;
+  justify-content: space-between;
+  width: 50%;
+  margin: 0 auto;
+  margin-bottom: -18px;
+
+  h3 {
+    text-transform: uppercase;
+    color: var(--grey);
+  }
+`;
+
 const Spread = styled.div`
   height: 100px;
   width: 100px;
@@ -24,6 +47,11 @@ const Spread = styled.div`
     height: 70px;
     width: 70px;
   }
+
+  @media ${(props) => props.theme.queries.phoneAndSmaller} {
+    position: absolute;
+    right: 44%;
+  }
 `;
 
 const List = styled.div`
@@ -38,6 +66,11 @@ const List = styled.div`
     max-width: 500px;
     min-width: 0px;
   }
+  @media ${(props) => props.theme.queries.phoneAndSmaller} {
+    width: 100%;
+    max-width: none;
+    min-width: 0px;
+  }
 `;
 
-export { Spread, List };
+export { Spread, List, FieldWrapper, GameListWrapper };

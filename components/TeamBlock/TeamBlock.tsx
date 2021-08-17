@@ -38,12 +38,19 @@ export default function TeamBlock({
 }
 
 const PickedIcon = styled(Icon)`
+  min-width: 24px;
   width: 24px;
   height: 24px;
 
   @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    min-width: 18px;
     width: 18px;
     height: 18px;
+  }
+  @media ${(props) => props.theme.queries.phoneAndSmaller} {
+    min-width: 16px;
+    width: 16px;
+    height: 16px;
   }
 `;
 

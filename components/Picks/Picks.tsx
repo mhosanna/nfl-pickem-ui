@@ -1,7 +1,7 @@
 import React from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import { Spread, List } from "./PicksStyles";
+import { Spread, List, FieldWrapper, GameListWrapper } from "./PicksStyles";
 import TeamBlock from "../TeamBlock";
 import Select from "../Select";
 import Spacer from "../Spacer";
@@ -138,7 +138,7 @@ const PickWrapper = ({ availableWeeks, playerId }) => {
           );
         })}
       </Select>
-      <Spacer size={50} />
+      <Spacer size={28} />
       <GamesList playerId={playerId} selectedWeek={selectedWeek} />
     </div>
   );
@@ -157,7 +157,11 @@ function GamesList({ playerId, selectedWeek }) {
   if (error) return <p>Error</p>;
 
   return (
-    <div>
+    <GameListWrapper>
+      <FieldWrapper>
+        <h3>Home</h3>
+        <h3>Away</h3>
+      </FieldWrapper>
       {allGames.map((game) => {
         const playerPick = data.allPicks.filter(
           (pick) => pick.game?.id === game.id
@@ -171,7 +175,7 @@ function GamesList({ playerId, selectedWeek }) {
           />
         );
       })}
-    </div>
+    </GameListWrapper>
   );
 }
 
@@ -234,7 +238,6 @@ function Game({ game, playerId, playersPick }) {
         />
         <Spread spread={spreadString} />
       </List>
-      <Spacer size={35} />
     </React.Fragment>
   );
 }
