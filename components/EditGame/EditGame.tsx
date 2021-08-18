@@ -75,14 +75,9 @@ const DELETE_GAME_MUTATION = gql`
 `;
 
 export default function EditGame({ game }) {
-  const pageTitle =
-    game.homeTeam.city +
-    " " +
-    game.homeTeam.name +
-    "  vs " +
-    game.awayTeam.city +
-    " " +
-    game.awayTeam.name;
+  const homeTeam = `<span>${game.homeTeam.city} ${game.homeTeam.name}</span>`;
+  const awayTeam = `<span>${game.awayTeam.city} ${game.awayTeam.name}</span>`;
+  const pageTitle = homeTeam + "<span>vs</span>" + awayTeam;
 
   return (
     <>
@@ -457,16 +452,22 @@ const FormErrors = styled.div`
 const CheckboxWrapper = styled.label`
   display: flex;
   align-items: center;
+  white-space: nowrap;
 `;
 
 const CheckboxLabel = styled.span`
-  margin-left: 8px;
+  margin: 0px 8px;
 `;
 
 const Wrapper = styled.div`
   width: 600px;
   border: 2px solid var(--black);
   padding: 16px;
+
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    padding-right: 0px;
+    width: 100%;
+  }
 `;
 const HomeTeamInput = styled.div`
   position: relative;
