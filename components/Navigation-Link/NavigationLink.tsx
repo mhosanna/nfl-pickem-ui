@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import Icon from "../Icon";
-import { NavLinks as MobileNavLinks } from "../MobileMenu";
+// import { NavLinks as MobileNavLinks } from "../MobileMenu";
 
 interface Props {
   href: string;
@@ -36,8 +36,6 @@ const StyledLink = styled.a`
   Gotta do it through media query */
   @media ${(props) => props.theme.queries.phoneAndSmaller} {
     font-weight: ${(props) => (props.active ? "700" : "inherit")};
-  }
-  ${MobileNavLinks} & {
     padding-left: 0px;
     background-color: var(--background);
     border-left: none;

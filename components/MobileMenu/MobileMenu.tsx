@@ -97,7 +97,7 @@ const CloseButton = styled.button`
   align-self: flex-end;
 `;
 
-export const NavLinks = styled.nav`
+const NavLinks = styled.nav`
   display: flex;
   flex-direction: column;
   gap: 3.5rem;

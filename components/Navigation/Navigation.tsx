@@ -4,7 +4,6 @@ import NavLink from "../Navigation-Link";
 import { season } from "../../config";
 import { usePlayer } from "../../lib/usePlayer";
 import SignOut from "../SignOut";
-import Spacer from "../Spacer";
 import Icon from "../Icon";
 import MobileMenu from "../MobileMenu";
 
