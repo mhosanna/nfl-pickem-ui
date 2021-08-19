@@ -92,7 +92,7 @@ const TeamsComboBox = ({
             </ControllerButton>
           ) : (
             <ControllerButton {...getToggleButtonProps()}>
-              <Icon name={`${isOpen ? "ChevronUp" : "ChevronDown"}`} />
+              {isOpen ? <Icon name="ChevronUp" /> : <Icon name="ChevronDown" />}
             </ControllerButton>
           )}
           <Menu {...getMenuProps()}>
