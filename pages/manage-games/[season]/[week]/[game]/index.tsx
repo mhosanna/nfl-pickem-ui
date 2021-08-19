@@ -66,7 +66,6 @@ export async function getStaticPaths() {
   });
 
   const allWeeks = resp.data.weeks;
-  console.log({ allWeeks });
 
   const paths = [];
   allWeeks.map((week) => {
