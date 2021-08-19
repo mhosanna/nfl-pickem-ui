@@ -13,7 +13,11 @@ import PleaseSignIn from "../../../../../components/PleaseSignIn";
 
 const GET_WEEK_BY_SLUG_QUERY = gql`
   query GET_WEEK_BY_SLUG_QUERY($slug: String, $season: String) {
-    allWeeks(where: { slug: $slug, season: $season }) {
+    weeks(
+      where: {
+        AND: [{ slug: { equals: $slug } }, { season: { equals: $season } }]
+      }
+    ) {
       id
       slug
       label
@@ -23,7 +27,11 @@ const GET_WEEK_BY_SLUG_QUERY = gql`
 
 const GET_GAME_BY_SLUG_QUERY = gql`
   query GET_GAME_BY_SLUG_QUERY($slug: String, $season: String) {
-    allGames(where: { slug: $slug, season: $season }) {
+    games(
+      where: {
+        AND: [{ slug: { equals: $slug } }, { season: { equals: $season } }]
+      }
+    ) {
       id
       slug
       homeTeam {
@@ -57,14 +65,15 @@ export async function getStaticPaths() {
     variables: { season },
   });
 
-  const allWeeks = resp.data.allWeeks;
+  const allWeeks = resp.data.weeks;
+  console.log({ allWeeks });
 
-  let paths = [];
+  const paths = [];
   allWeeks.map((week) => {
-    let weekSlug = week.slug;
-    let games = week.games;
+    const weekSlug = week.slug;
+    const games = week.games;
     games.forEach((game) => {
-      let path = { params: { season, week: weekSlug, game: game.slug } };
+      const path = { params: { season, week: weekSlug, game: game.slug } };
       paths.push(path);
     });
   });
@@ -113,12 +122,12 @@ export default function ManageGamePage() {
   } = useQuery(GET_GAME_BY_SLUG_QUERY, {
     variables: { slug: game, season },
   });
-  if (loading || gameLoading || gameData.allGames.length === 0)
+  if (loading || gameLoading || gameData.games.length === 0)
     return <p>Loading...</p>;
   if (error || gameError) return <p>Oops!</p>;
 
-  const weekData = data.allWeeks[0];
-  const games = gameData.allGames[0];
+  const weekData = data.weeks[0];
+  const games = gameData.games[0];
   const gameLabel = games.homeTeam.name + " vs " + games.awayTeam.name;
 
   return (

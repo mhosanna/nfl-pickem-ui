@@ -39,7 +39,7 @@ const UPDATE_SPREAD_AND_WINNER_MUTATION = gql`
     $spread: Float
   ) {
     updateGame(
-      id: $gameId
+      where: { id: $gameId }
       data: { winner: { connect: { id: $winnerId } }, spread: $spread }
     ) {
       id
@@ -54,8 +54,8 @@ const UPDATE_SPREAD_AND_WINNER_MUTATION = gql`
 const UPDATE_SPREAD_REMOVE_WINNER_MUTATION = gql`
   mutation UPDATE_GAME_REMOVE_WINNER($gameId: ID!, $spread: Float) {
     updateGame(
-      id: $gameId
-      data: { winner: { disconnectAll: true }, spread: $spread }
+      where: { id: $gameId }
+      data: { winner: { disconnect: true }, spread: $spread }
     ) {
       id
       winner {
@@ -68,7 +68,7 @@ const UPDATE_SPREAD_REMOVE_WINNER_MUTATION = gql`
 
 const DELETE_GAME_MUTATION = gql`
   mutation DELETE_GAME_MUTATION($gameId: ID!) {
-    deleteGame(id: $gameId) {
+    deleteGame(where: { id: $gameId }) {
       id
     }
   }
@@ -232,7 +232,7 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const spread = parseFloat(data.spread);
-    let winnerId = getWinnerId(data);
+    const winnerId = getWinnerId(data);
     if (winnerId) {
       await updateGame({ variables: { gameId, winnerId, spread } }).catch(
         console.error

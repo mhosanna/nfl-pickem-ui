@@ -4,10 +4,12 @@ import styled from "styled-components";
 
 const PLAYERS_QUERY = gql`
   query GET_PLAYERS_BY_SEASON($season: String!) {
-    allPlayers(where: { picks_some: { game: { season: $season } } }) {
+    players(
+      where: { picks: { some: { game: { season: { equals: $season } } } } }
+    ) {
       id
       name
-      picks(where: { isCorrect: true }) {
+      picks(where: { isCorrect: { equals: true } }) {
         id
       }
     }
@@ -16,7 +18,11 @@ const PLAYERS_QUERY = gql`
 
 const GAMES_PLAYED_QUERY = gql`
   query GET_ALL_PLAYED_GAMES_BY_SEASON($season: String) {
-    allGames(where: { AND: [{ season: $season }, { winner_is_null: false }] }) {
+    games(
+      where: {
+        AND: [{ season: { equals: $season } }, { NOT: [{ winner: null }] }]
+      }
+    ) {
       id
     }
   }
@@ -40,14 +46,14 @@ function LeaderBoard({ season }) {
 
   if (playersQueryLoading || gamesQueryLoading) return <p>Loading...</p>;
   if (playersQueryError || gamesQueryError) return <p>Error</p>;
-  const { allPlayers } = playersInfo;
-  var sortedPlayers = [...allPlayers];
+  const { players } = playersInfo;
+  const sortedPlayers = [...players];
 
   //we are only returning picks that were correct, so compare length of array
   sortedPlayers.sort((a, b) => b.picks.length - a.picks.length);
 
-  const { allGames } = gamesInfo;
-  const totalPlayedGames = allGames.length;
+  const { games } = gamesInfo;
+  const totalPlayedGames = games.length;
 
   return (
     <>

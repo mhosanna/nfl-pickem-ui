@@ -37,11 +37,11 @@ export default function ManageWeeks({ season }) {
     update(cache, { data: { createWeek } }) {
       cache.modify({
         fields: {
-          allWeeks(existingWeeks = []) {
+          weeks(existingWeeks = []) {
             const newWeekRef = cache.writeFragment({
               data: createWeek,
               fragment: gql`
-                fragment NewWeek on allWeeks {
+                fragment NewWeek on weeks {
                   id
                   label
                   slug

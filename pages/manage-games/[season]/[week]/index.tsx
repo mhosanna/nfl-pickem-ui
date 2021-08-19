@@ -13,7 +13,11 @@ import PleaseSignIn from "../../../../components/PleaseSignIn";
 
 const GET_WEEK_BY_SLUG_QUERY = gql`
   query GET_WEEK_BY_SLUG_QUERY($slug: String, $season: String) {
-    allWeeks(where: { slug: $slug, season: $season }) {
+    weeks(
+      where: {
+        AND: [{ slug: { equals: $slug } }, { season: { equals: $season } }]
+      }
+    ) {
       id
       slug
       label
@@ -28,7 +32,7 @@ export async function getStaticPaths() {
     query: GET_WEEKS_BY_SEASON_QUERY,
     variables: { season },
   });
-  const allWeeks = resp.data.allWeeks;
+  const allWeeks = resp.data.weeks;
   const paths = allWeeks.map((week) => ({
     params: { season, week: week.slug },
   }));
@@ -70,7 +74,7 @@ export default function ManageGamesPage() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error</p>;
 
-  const weekData = data.allWeeks[0];
+  const weekData = data.weeks[0];
 
   return (
     <>

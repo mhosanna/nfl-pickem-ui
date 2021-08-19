@@ -7,7 +7,7 @@ import Icon from "../Icon";
 
 const GET_ALL_TEAMS = gql`
   query GET_ALL_TEAMS {
-    allTeams {
+    teams(orderBy: [{ city: asc }]) {
       id
       city
       name
@@ -22,9 +22,9 @@ export default function TeamComboBoxWrapper(props) {
 
   useEffect(() => {
     if (data) {
-      const { allTeams } = data;
-      setAllItems(allTeams);
-      setInputItems(allTeams);
+      const { teams } = data;
+      setAllItems(teams);
+      setInputItems(teams);
     }
   }, [data]);
 

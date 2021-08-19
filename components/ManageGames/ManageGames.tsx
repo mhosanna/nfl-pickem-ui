@@ -58,11 +58,11 @@ export default function ManageGames({ week, season }) {
     update(cache, { data: { createGame } }) {
       cache.modify({
         fields: {
-          allGames(existingGames = []) {
+          games(existingGames = []) {
             const newGameRef = cache.writeFragment({
               data: createGame,
               fragment: gql`
-                fragment NewGame on allGames {
+                fragment NewGame on games {
                   id
                   slug
                 }

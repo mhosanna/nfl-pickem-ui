@@ -49,11 +49,11 @@ const pickFragment = gql`
 
 const PICKS_BY_WEEK_QUERY = gql`
   query GET_PICKS_BY_WEEK_QUERY($playerId: ID!, $weekId: ID!) {
-    allPicks(
+    picks(
       where: {
         AND: [
-          { player: { id: $playerId } }
-          { game: { week: { id: $weekId } } }
+          { player: { id: { equals: $playerId } } }
+          { game: { week: { id: { equals: $weekId } } } }
         ]
       }
     ) {
@@ -66,7 +66,7 @@ const PICKS_BY_WEEK_QUERY = gql`
 
 const WEEKS_BY_SEASON_QUERY = gql`
   query GET_ALL_WEEKS_BY_SEASON($season: String) {
-    allWeeks(where: { season: $season }, orderBy: { id: desc }) {
+    weeks(where: { season: { equals: $season } }, orderBy: { id: desc }) {
       id
       label
       games {
@@ -103,11 +103,11 @@ function Picks({ season }) {
   if (weeksQueryLoading) return <p>Loading...</p>;
   if (weeksQueryError) return <p>Error</p>;
 
-  const { allWeeks } = weeksInfo;
+  const { weeks } = weeksInfo;
 
   return (
     <div>
-      <PickWrapper availableWeeks={allWeeks} playerId={playerId} />
+      <PickWrapper availableWeeks={weeks} playerId={playerId} />
     </div>
   );
 }
@@ -115,7 +115,7 @@ function Picks({ season }) {
 const PickWrapper = ({ availableWeeks, playerId }) => {
   const [dropdownLabel, setDropdownLabel] = React.useState(
     availableWeeks[0]?.label
-  ); //what if null?
+  );
   const [selectedWeek, setSelectedWeek] = React.useState(availableWeeks[0]);
 
   React.useEffect(() => {
@@ -123,6 +123,9 @@ const PickWrapper = ({ availableWeeks, playerId }) => {
     setSelectedWeek(week[0]);
   }, [dropdownLabel, availableWeeks]);
 
+  if (!selectedWeek) {
+    return <p>The season hasn't started yet. Check back soon!</p>;
+  }
   return (
     <div>
       <Select
@@ -145,9 +148,9 @@ const PickWrapper = ({ availableWeeks, playerId }) => {
 };
 
 function GamesList({ playerId, selectedWeek }) {
-  const allGames = selectedWeek.games;
+  const games = selectedWeek.games;
 
-  if (allGames.length === 0) return <div>No Games Found</div>;
+  if (games.length === 0) return <div>No Games Found</div>;
 
   const { data, error, loading } = useQuery(PICKS_BY_WEEK_QUERY, {
     variables: { weekId: selectedWeek.id, playerId },
@@ -162,8 +165,8 @@ function GamesList({ playerId, selectedWeek }) {
         <h3>Home</h3>
         <h3>Away</h3>
       </FieldWrapper>
-      {allGames.map((game) => {
-        const playerPick = data.allPicks.filter(
+      {games.map((game) => {
+        const playerPick = data.picks.filter(
           (pick) => pick.game?.id === game.id
         );
         return (
@@ -182,6 +185,7 @@ function GamesList({ playerId, selectedWeek }) {
 function Game({ game, playerId, playersPick }) {
   const [pick] = useMutation(MAKE_PICK_MUTATION, {
     update(cache, { data }) {
+      console.log(data);
       const newPickFromResponse = data?.upsertPicks;
       //if trying to pick game with a winner do nothing
       if (!newPickFromResponse) {
@@ -195,12 +199,21 @@ function Game({ game, playerId, playersPick }) {
         query: PICKS_BY_WEEK_QUERY,
         variables: { weekId: game.week?.id, playerId },
       });
-      if (existingPicks && newPickFromResponse) {
+      console.log({ existingPicks });
+      if (existingPicks.picks.length > 0 && newPickFromResponse) {
         cache.writeQuery({
           query: PICKS_BY_WEEK_QUERY,
           variables: { weekId: game.week?.id, playerId },
           data: {
-            allPicks: [...existingPicks?.allPicks, newPickFromResponse],
+            picks: [...existingPicks?.picks, newPickFromResponse],
+          },
+        });
+      } else {
+        cache.writeQuery({
+          query: PICKS_BY_WEEK_QUERY,
+          variables: { weekId: game.week?.id, playerId },
+          data: {
+            picks: [newPickFromResponse],
           },
         });
       }

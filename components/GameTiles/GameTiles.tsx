@@ -8,7 +8,14 @@ import { spreadToString } from "../../utils/spreadToString";
 
 const GET_GAMES_BY_WEEK_SLUG = gql`
   query GET_GAMES_BY_WEEK_SLUG($slug: String, $season: String) {
-    allGames(where: { season: $season, week: { slug: $slug } }) {
+    games(
+      where: {
+        AND: [
+          { season: { equals: $season } }
+          { week: { slug: { equals: $slug } } }
+        ]
+      }
+    ) {
       id
       slug
       homeTeam {
@@ -33,7 +40,10 @@ const GET_GAMES_BY_WEEK_SLUG = gql`
 
 const SELECT_GAME_WINNER = gql`
   mutation SELECT_GAME_WINNER($gameId: ID!, $winnerId: ID!) {
-    updateGame(id: $gameId, data: { winner: { connect: { id: $winnerId } } }) {
+    updateGame(
+      where: { id: $gameId }
+      data: { winner: { connect: { id: $winnerId } } }
+    ) {
       id
       winner {
         id
@@ -61,7 +71,7 @@ export function GameTiles() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error</p>;
 
-  const games = data.allGames;
+  const games = data.games;
 
   return (
     <GameListWrapper>

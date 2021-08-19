@@ -25,7 +25,7 @@ const gameFragment = gql`
 
 const GET_WEEKS_BY_SEASON_QUERY = gql`
   query GET_WEEKS_BY_SEASON($season: String) {
-    allWeeks(where: { season: $season }) {
+    weeks(where: { season: { equals: $season } }) {
       id
       label
       slug
@@ -55,11 +55,11 @@ export function WeekTiles() {
   if (weeksQueryLoading) return <p>Loading...</p>;
   if (weeksQueryError) return <p>Error</p>;
 
-  const { allWeeks } = weeksInfo;
+  const { weeks } = weeksInfo;
 
   return (
     <WeekListWrapper>
-      {allWeeks.map((week) => {
+      {weeks.map((week) => {
         return (
           <WeekTile
             key={week.id}
