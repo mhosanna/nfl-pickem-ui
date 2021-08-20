@@ -32,6 +32,16 @@ const handleGraphQLErrors: ErrorHandler = ({ graphQLErrors, networkError }) => {
 const errorLink = onError(handleGraphQLErrors);
 
 function createApolloClient(headers = null) {
+  const enhancedFetch = (url, init) => {
+    return fetch(url, {
+      ...init,
+      headers: {
+        ...init.headers,
+        "Access-Control-Allow-Origin": "*",
+        Cookie: headers?.cookie ?? "",
+      },
+    }).then((response) => response);
+  };
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
     link: ApolloLink.from([
@@ -51,7 +61,7 @@ function createApolloClient(headers = null) {
         uri: process.env.NODE_ENV === "development" ? endpoint : prodEndpoint,
         credentials:
           process.env.NODE_ENV === "development" ? "include" : "same-origin",
-        headers,
+        fetch: enhancedFetch,
       }),
     ]),
     cache: new InMemoryCache({
