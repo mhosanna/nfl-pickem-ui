@@ -34,6 +34,7 @@ const NativeSelect = styled.select`
   width: 100%;
   height: 100%;
   opacity: 0;
+  font-size: 16px;
 `;
 
 const PresentationalBit = styled.div`
