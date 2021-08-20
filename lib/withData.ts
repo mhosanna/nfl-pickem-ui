@@ -14,7 +14,6 @@ const httpLink = createHttpLink({
   uri: process.env.NODE_ENV === "development" ? endpoint : prodEndpoint,
   credentials:
     process.env.NODE_ENV === "development" ? "include" : "same-origin",
-  fetch,
 });
 
 const handleGraphQLErrors: ErrorHandler = ({ graphQLErrors, networkError }) => {
@@ -32,10 +31,29 @@ const handleGraphQLErrors: ErrorHandler = ({ graphQLErrors, networkError }) => {
 
 const errorLink = onError(handleGraphQLErrors);
 
-function createApolloClient() {
+function createApolloClient(headers = null) {
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
-    link: ApolloLink.from([errorLink, httpLink]),
+    link: ApolloLink.from([
+      onError(({ graphQLErrors, networkError }) => {
+        if (graphQLErrors)
+          graphQLErrors.forEach(({ message, locations, path }) =>
+            console.log(
+              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+            )
+          );
+        if (networkError)
+          console.log(
+            `[Network error]: ${networkError}. Backend is unreachable. Is it running?`
+          );
+      }),
+      createHttpLink({
+        uri: process.env.NODE_ENV === "development" ? endpoint : prodEndpoint,
+        credentials:
+          process.env.NODE_ENV === "development" ? "include" : "same-origin",
+        headers,
+      }),
+    ]),
     cache: new InMemoryCache({
       typePolicies: {
         Query: {
@@ -49,8 +67,8 @@ function createApolloClient() {
   });
 }
 
-export function initializeApollo(initialState = null) {
-  const _apolloClient = apolloClient ?? createApolloClient();
+export const initializeApollo = ({ headers = null, initialState = null }) => {
+  const _apolloClient = apolloClient ?? createApolloClient(headers);
 
   // If your page has Next.js data fetching methods that use Apollo Client, the initial state
   // gets hydrated here
@@ -78,7 +96,7 @@ export function initializeApollo(initialState = null) {
   if (!apolloClient) apolloClient = _apolloClient;
 
   return _apolloClient;
-}
+};
 
 export function addApolloState(client, pageProps) {
   if (pageProps?.props) {
@@ -90,6 +108,9 @@ export function addApolloState(client, pageProps) {
 
 export function useApollo(pageProps) {
   const state = pageProps[APOLLO_STATE_PROP_NAME];
-  const store = useMemo(() => initializeApollo(state), [state]);
+  const store = useMemo(
+    () => initializeApollo({ initialState: state }),
+    [state]
+  );
   return store;
 }

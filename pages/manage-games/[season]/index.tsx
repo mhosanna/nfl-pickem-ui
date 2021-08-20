@@ -14,8 +14,8 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({ params }) {
-  const apolloClient = initializeApollo();
+export async function getStaticProps({ params, context }) {
+  const apolloClient = initializeApollo({ headers: context?.req?.headers });
 
   await apolloClient.query({
     query: GET_WEEKS_BY_SEASON_QUERY,

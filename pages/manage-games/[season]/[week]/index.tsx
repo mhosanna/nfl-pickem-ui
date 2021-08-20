@@ -25,8 +25,8 @@ const GET_WEEK_BY_SLUG_QUERY = gql`
   }
 `;
 
-export async function getStaticPaths() {
-  const apolloClient = initializeApollo();
+export async function getStaticPaths(context) {
+  const apolloClient = initializeApollo({ headers: context?.req?.headers });
 
   const resp = await apolloClient.query({
     query: GET_WEEKS_BY_SEASON_QUERY,
@@ -43,8 +43,8 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps({ params }) {
-  const apolloClient = initializeApollo();
+export async function getStaticProps({ params, context }) {
+  const apolloClient = initializeApollo({ headers: context?.req?.headers });
 
   await apolloClient.query({
     query: GET_GAMES_BY_WEEK_SLUG,
