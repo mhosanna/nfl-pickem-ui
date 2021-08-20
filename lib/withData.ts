@@ -38,7 +38,8 @@ function createApolloClient(headers = null) {
       headers: {
         ...init.headers,
         "Access-Control-Allow-Origin": "*",
-        Cookie: headers?.cookie ?? "",
+        // eslint-disable-next-line prettier/prettier
+        "Cookie": headers?.cookie ?? "",
       },
     }).then((response) => response);
   };
@@ -59,8 +60,10 @@ function createApolloClient(headers = null) {
       }),
       createHttpLink({
         uri: process.env.NODE_ENV === "development" ? endpoint : prodEndpoint,
-        credentials:
-          process.env.NODE_ENV === "development" ? "include" : "same-origin",
+        fetchOptions: {
+          mode: "cors",
+        },
+        credentials: "include",
         fetch: enhancedFetch,
       }),
     ]),
