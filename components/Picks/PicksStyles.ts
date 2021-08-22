@@ -28,8 +28,11 @@ const Spread = styled.div`
   width: 100px;
   border-radius: 50%;
   position: absolute;
-  right: 250px;
-  top: -11px;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  top: -14px;
   background-color: white;
   border: 4px solid var(--primary);
   display: flex;
@@ -41,16 +44,9 @@ const Spread = styled.div`
     font-weight: 700;
   }
   @media ${(props) => props.theme.queries.tabletAndSmaller} {
-    position: absolute;
-    right: 40%;
-    top: -5px;
     height: 70px;
     width: 70px;
-  }
-
-  @media ${(props) => props.theme.queries.phoneAndSmaller} {
-    position: absolute;
-    right: 44%;
+    top: -4px;
   }
 `;
 
