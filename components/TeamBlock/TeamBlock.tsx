@@ -26,7 +26,11 @@ export default function TeamBlock({
       <Component isPicked={isPicked} onClick={() => makePick(id)}>
         {isWinner && <WinFlag>Game Winner</WinFlag>}
         {isPicked && (
-          <PickedIcon name={"CheckSquare"} data-testid="picked-team" />
+          <PickedIcon
+            name={"CheckSquare"}
+            data-testid="picked-team"
+            isPicked={isPicked}
+          />
         )}
         <TeamName>
           <span style={{ fontWeight: "bold" }}>{city}</span>
@@ -41,7 +45,6 @@ const PickedIcon = styled(Icon)`
   min-width: 24px;
   width: 24px;
   height: 24px;
-
   @media ${(props) => props.theme.queries.tabletAndSmaller} {
     min-width: 18px;
     width: 18px;
@@ -69,11 +72,12 @@ const BlockBase = styled.button`
     props.isPicked ? "var(--black)" : "var(--background)"};
   color: ${(props) => (props.isPicked ? "white" : "initial")};
   border-radius: 3px;
-  font-size: 1.8rem;
+  font-size: clamp(1.2rem, 4vw, 1.8rem);
   line-height: 1;
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: flex-start;
   gap: 12px;
   position: relative;
   white-space: nowrap;
@@ -95,7 +99,7 @@ const AwayBlock = styled(BlockBase)`
   padding-left: ${(props) => (props.isPicked ? "74px" : "110px")};
 
   @media ${(props) => props.theme.queries.tabletAndSmaller} {
-    padding-left: ${(props) => (props.isPicked ? "54px" : "90px")};
+    padding-left: ${(props) => (props.isPicked ? "50px" : "79px")};
   }
 `;
 
