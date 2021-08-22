@@ -185,7 +185,6 @@ function GamesList({ playerId, selectedWeek }) {
 function Game({ game, playerId, playersPick }) {
   const [pick] = useMutation(MAKE_PICK_MUTATION, {
     update(cache, { data }) {
-      console.log(data);
       const newPickFromResponse = data?.upsertPicks;
       //if trying to pick game with a winner do nothing
       if (!newPickFromResponse) {
@@ -199,7 +198,6 @@ function Game({ game, playerId, playersPick }) {
         query: PICKS_BY_WEEK_QUERY,
         variables: { weekId: game.week?.id, playerId },
       });
-      console.log({ existingPicks });
       if (existingPicks.picks.length > 0 && newPickFromResponse) {
         cache.writeQuery({
           query: PICKS_BY_WEEK_QUERY,

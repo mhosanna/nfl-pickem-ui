@@ -135,7 +135,7 @@ const Label = styled.label`
 `;
 
 const Input = styled.input`
-  width: 100%;
+  width: 95%;
   display: inline-block;
   font-size: 1.8rem;
   word-wrap: break-word;
