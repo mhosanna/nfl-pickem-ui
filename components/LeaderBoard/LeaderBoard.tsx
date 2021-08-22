@@ -103,9 +103,19 @@ const TableStyles = styled.table`
   th {
     text-align: left;
     padding: 8px 24px 0px 8px;
-    white-space: nowrap;
+  }
+  th:last-child,
+  td:last-child {
+    padding-right: 0px;
+  }
+  th:first-child,
+  td:first-child {
+    padding-left: 0px;
   }
 
   @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    th {
+      line-height: 1.3;
+    }
   }
 `;

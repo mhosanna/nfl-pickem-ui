@@ -72,7 +72,7 @@ const BlockBase = styled.button`
     props.isPicked ? "var(--black)" : "var(--background)"};
   color: ${(props) => (props.isPicked ? "white" : "initial")};
   border-radius: 3px;
-  font-size: clamp(1.2rem, 4vw, 1.8rem);
+  font-size: clamp(1rem, 4vw, 1.8rem);
   line-height: 1;
   display: flex;
   flex-direction: row;

@@ -63,7 +63,7 @@ const InnerStyles = styled.div`
     padding: 3rem 3rem;
   }
   @media ${(props) => props.theme.queries.phoneAndSmaller} {
-    padding: 2rem 3rem;
+    padding: 2rem 2.5rem;
   }
 `;
 
