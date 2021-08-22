@@ -6,7 +6,7 @@ import styled from "styled-components";
 import AddNewTile from "../AddNewTile";
 import Modal from "../Modal";
 import Spacer from "../Spacer";
-import { WeekTiles } from "../WeekTile/WeekTile";
+import { GET_WEEKS_BY_SEASON_QUERY, WeekTiles } from "../WeekTile/WeekTile";
 import { string_to_slug } from "../../utils/slugify";
 import ErrorMessage from "../ErrorMessage";
 
@@ -34,6 +34,7 @@ export default function ManageWeeks({ season }) {
   const [formError, setFormError] = useState(null);
 
   const [createWeek] = useMutation(CREATE_WEEK_MUTATION, {
+    refetchQueries: [{ query: GET_WEEKS_BY_SEASON_QUERY }],
     update(cache, { data: { createWeek } }) {
       cache.modify({
         fields: {

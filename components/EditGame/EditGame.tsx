@@ -16,6 +16,7 @@ import Checkbox from "../Checkbox";
 import Icon from "../Icon";
 import { useMutation } from "@apollo/client";
 import ErrorMessage from "../ErrorMessage";
+import { GET_WEEKS_BY_SEASON_QUERY } from "../WeekTile";
 
 type Team = {
   __typeName: string;
@@ -154,6 +155,7 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
   const [deleteGame, { error: deleteGameError }] = useMutation(
     DELETE_GAME_MUTATION,
     {
+      refetchQueries: [{ query: GET_WEEKS_BY_SEASON_QUERY }],
       variables: { gameId },
       update,
     }

@@ -11,6 +11,7 @@ import { useForm, Controller, SubmitHandler, set } from "react-hook-form";
 import TeamsComboBox from "../TeamsComboBox";
 import ErrorMessage from "../ErrorMessage";
 import { onError } from "apollo-link-error";
+import { GET_WEEKS_BY_SEASON_QUERY } from "../WeekTile";
 
 type Team = {
   __typeName: string;
@@ -55,6 +56,7 @@ export default function ManageGames({ week, season }) {
   const [formError, setFormError] = React.useState(null);
 
   const [createGame] = useMutation(CREATE_GAME_MUTATION, {
+    refetchQueries: [{ query: GET_WEEKS_BY_SEASON_QUERY }],
     update(cache, { data: { createGame } }) {
       cache.modify({
         fields: {
