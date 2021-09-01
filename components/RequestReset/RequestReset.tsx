@@ -1,62 +1,43 @@
 import gql from "graphql-tag";
+import styled from "styled-components";
 import { useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
-import { CURRENT_PLAYER_QUERY } from "../../lib/usePlayer";
 import ErrorMessage from "../ErrorMessage";
-import styled from "styled-components";
 import Spacer from "../Spacer";
+import Icon from "../Icon";
 
-const SIGNIN_MUTATION = gql`
-  mutation SIGNIN_MUTATION($email: String!, $password: String!) {
-    authenticatePlayerWithPassword(email: $email, password: $password) {
-      ... on PlayerAuthenticationWithPasswordSuccess {
-        item {
-          id
-          email
-          name
-        }
-      }
-      ... on PlayerAuthenticationWithPasswordFailure {
-        code
-        message
-      }
+const REQUEST_RESET_MUTATION = gql`
+  mutation REQUEST_RESET_MUTATION($email: String!) {
+    sendPlayerPasswordResetLink(email: $email) {
+      code
+      message
     }
   }
 `;
 
-function SignIn() {
-  const [signIn, { data, error: networkError, loading }] = useMutation(
-    SIGNIN_MUTATION,
-    {
-      // refetch the currently logged in Player
-      refetchQueries: [{ query: CURRENT_PLAYER_QUERY }],
-    }
-  );
-
+export default function RequestReset() {
   const {
     handleSubmit,
     formState: { errors },
     register,
     reset,
   } = useForm();
-
+  const [resetPassword, { data, loading, error }] = useMutation(
+    REQUEST_RESET_MUTATION
+  );
   async function onSubmit(data) {
-    await signIn({
+    const res = await resetPassword({
       variables: data,
     }).catch(console.error);
+    console.log(res);
+    console.log({ data, loading, error });
     reset();
   }
-
-  const error =
-    data?.authenticatePlayerWithPassword.__typename ===
-    "PlayerAuthenticationWithPasswordFailure"
-      ? data?.authenticatePlayerWithPassword
-      : undefined;
   return (
     <FormWrapper>
       <form onSubmit={handleSubmit(onSubmit)} method="POST" noValidate={true}>
-        <FormHeader>Sign Into Your Account</FormHeader>
-        <ErrorMessage error={error || networkError} />
+        <FormHeader>Request a Password Reset</FormHeader>
+        <ErrorMessage error={error} />
         <Spacer size={12} />
         <InputWrapper>
           <Label htmlFor="email">Email</Label>
@@ -72,28 +53,21 @@ function SignIn() {
             <ValidationError>Email cannot be blank</ValidationError>
           )}
         </InputWrapper>
-        <InputWrapper>
-          <Label htmlFor="password">Password</Label>
-          <Input
-            {...register("password", { required: true })}
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Password"
-            autoComplete="password"
-          />
-          {errors.password && (
-            <ValidationError>Password cannot be blank</ValidationError>
-          )}
-        </InputWrapper>
         <Spacer size={24} />
-        <Button type="submit">Sign In</Button>
+        <Button type="submit">Request Reset</Button>
+        {data?.sendPlayerPasswordResetLink === null && (
+          <>
+            <Spacer size={24} />
+            <Tile>
+              <Icon name="Check" size={15} color={"var(--gray700)"} />
+              <span> Success! Check your email for a link!</span>
+            </Tile>
+          </>
+        )}
       </form>
     </FormWrapper>
   );
 }
-
-export { SignIn, SIGNIN_MUTATION };
 
 const FormWrapper = styled.div`
   border: 2px solid var(--black);
@@ -141,4 +115,16 @@ const Input = styled.input`
 const ValidationError = styled.span`
   font-size: 1.2rem;
   color: var(--warning);
+`;
+
+const Tile = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  max-height: 20px;
+  padding: 1px 12px;
+  border: 2px solid var(--successDark);
+  border-radius: 50px;
+  font-size: 1.2rem;
+  background-color: var(--success);
 `;

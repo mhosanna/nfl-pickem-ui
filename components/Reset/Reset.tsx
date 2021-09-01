@@ -1,62 +1,60 @@
 import gql from "graphql-tag";
+import styled from "styled-components";
 import { useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
-import { CURRENT_PLAYER_QUERY } from "../../lib/usePlayer";
 import ErrorMessage from "../ErrorMessage";
-import styled from "styled-components";
 import Spacer from "../Spacer";
+import Icon from "../Icon";
 
-const SIGNIN_MUTATION = gql`
-  mutation SIGNIN_MUTATION($email: String!, $password: String!) {
-    authenticatePlayerWithPassword(email: $email, password: $password) {
-      ... on PlayerAuthenticationWithPasswordSuccess {
-        item {
-          id
-          email
-          name
-        }
-      }
-      ... on PlayerAuthenticationWithPasswordFailure {
-        code
-        message
-      }
+const RESET_MUTATION = gql`
+  mutation RESET_MUTATION(
+    $email: String!
+    $password: String!
+    $token: String!
+  ) {
+    redeemPlayerPasswordResetToken(
+      email: $email
+      token: $token
+      password: $password
+    ) {
+      code
+      message
     }
   }
 `;
 
-function SignIn() {
-  const [signIn, { data, error: networkError, loading }] = useMutation(
-    SIGNIN_MUTATION,
-    {
-      // refetch the currently logged in Player
-      refetchQueries: [{ query: CURRENT_PLAYER_QUERY }],
-    }
-  );
-
+export default function Reset({ token }) {
   const {
     handleSubmit,
     formState: { errors },
     register,
     reset,
   } = useForm();
+  const [resetWithToken, { data, loading, error }] =
+    useMutation(RESET_MUTATION);
+
+  const successfulError = data?.redeemPlayerPasswordResetToken?.code
+    ? data?.redeemPlayerPasswordResetToken
+    : undefined;
+  console.log(error);
 
   async function onSubmit(data) {
-    await signIn({
-      variables: data,
+    const res = await resetWithToken({
+      variables: {
+        email: data.email,
+        password: data.password,
+        token,
+      },
     }).catch(console.error);
+    console.log(res);
+    console.log({ data, loading, error });
     reset();
   }
-
-  const error =
-    data?.authenticatePlayerWithPassword.__typename ===
-    "PlayerAuthenticationWithPasswordFailure"
-      ? data?.authenticatePlayerWithPassword
-      : undefined;
   return (
     <FormWrapper>
       <form onSubmit={handleSubmit(onSubmit)} method="POST" noValidate={true}>
-        <FormHeader>Sign Into Your Account</FormHeader>
-        <ErrorMessage error={error || networkError} />
+        <FormHeader>Reset Your Password</FormHeader>
+        <ErrorMessage error={error || successfulError} />
         <Spacer size={12} />
         <InputWrapper>
           <Label htmlFor="email">Email</Label>
@@ -87,13 +85,20 @@ function SignIn() {
           )}
         </InputWrapper>
         <Spacer size={24} />
-        <Button type="submit">Sign In</Button>
+        <Button type="submit">Request Reset</Button>
+        {data?.redeemPlayerPasswordResetToken === null && (
+          <>
+            <Spacer size={24} />
+            <Tile>
+              <Icon name="Check" size={15} color={"var(--gray700)"} />
+              <span>Success! You can Now sign in</span>
+            </Tile>
+          </>
+        )}
       </form>
     </FormWrapper>
   );
 }
-
-export { SignIn, SIGNIN_MUTATION };
 
 const FormWrapper = styled.div`
   border: 2px solid var(--black);
@@ -141,4 +146,16 @@ const Input = styled.input`
 const ValidationError = styled.span`
   font-size: 1.2rem;
   color: var(--warning);
+`;
+
+const Tile = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  max-height: 20px;
+  padding: 1px 12px;
+  border: 2px solid var(--successDark);
+  border-radius: 50px;
+  font-size: 1.2rem;
+  background-color: var(--success);
 `;
