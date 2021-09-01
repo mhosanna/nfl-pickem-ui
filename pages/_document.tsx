@@ -16,6 +16,7 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head />
+        <title>Pick'em!</title>
         <link rel="shortcut icon" href="/favicon.ico" />
         <body>
           <Main />
