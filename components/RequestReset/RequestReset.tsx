@@ -26,11 +26,9 @@ export default function RequestReset() {
     REQUEST_RESET_MUTATION
   );
   async function onSubmit(data) {
-    const res = await resetPassword({
+    await resetPassword({
       variables: data,
     }).catch(console.error);
-    console.log(res);
-    console.log({ data, loading, error });
     reset();
   }
   return (

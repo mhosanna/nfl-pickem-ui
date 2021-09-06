@@ -4,7 +4,7 @@ import { useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import ErrorMessage from "../ErrorMessage";
 import Spacer from "../Spacer";
-import Icon from "../Icon";
+import Tile from "../Tile";
 
 const RESET_MUTATION = gql`
   mutation RESET_MUTATION(
@@ -36,7 +36,6 @@ export default function Reset({ token }) {
   const successfulError = data?.redeemPlayerPasswordResetToken?.code
     ? data?.redeemPlayerPasswordResetToken
     : undefined;
-  console.log(error);
 
   async function onSubmit(data) {
     const res = await resetWithToken({
@@ -46,8 +45,6 @@ export default function Reset({ token }) {
         token,
       },
     }).catch(console.error);
-    console.log(res);
-    console.log({ data, loading, error });
     reset();
   }
   return (
@@ -85,14 +82,13 @@ export default function Reset({ token }) {
           )}
         </InputWrapper>
         <Spacer size={24} />
-        <Button type="submit">Request Reset</Button>
+        <Button type="submit" disabled={loading}>
+          Request Reset
+        </Button>
         {data?.redeemPlayerPasswordResetToken === null && (
           <>
             <Spacer size={24} />
-            <Tile>
-              <Icon name="Check" size={15} color={"var(--gray700)"} />
-              <span>Success! You can Now sign in</span>
-            </Tile>
+            <Tile type="success">Success! You can now sign in</Tile>
           </>
         )}
       </form>
@@ -128,6 +124,9 @@ const Button = styled.button`
   border: none;
   border-radius: 3px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  &:disabled {
+    background: var(--gray700);
+  }
 `;
 
 const Label = styled.label`
@@ -146,16 +145,4 @@ const Input = styled.input`
 const ValidationError = styled.span`
   font-size: 1.2rem;
   color: var(--warning);
-`;
-
-const Tile = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  max-height: 20px;
-  padding: 1px 12px;
-  border: 2px solid var(--successDark);
-  border-radius: 50px;
-  font-size: 1.2rem;
-  background-color: var(--success);
 `;

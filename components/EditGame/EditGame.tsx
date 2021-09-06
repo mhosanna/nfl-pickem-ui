@@ -17,6 +17,7 @@ import Icon from "../Icon";
 import { useMutation } from "@apollo/client";
 import ErrorMessage from "../ErrorMessage";
 import { GET_WEEKS_BY_SEASON_QUERY } from "../WeekTile";
+import Tile from "../Tile";
 
 type Team = {
   __typeName: string;
@@ -146,12 +147,12 @@ function update(cache, payload) {
 function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
   const router = useRouter();
   const { week, season } = router.query;
-  const [updateGame, { error: updateGameError }] = useMutation(
-    UPDATE_SPREAD_AND_WINNER_MUTATION
-  );
-  const [updateGameRemoveWinner, { error: updateRemoveError }] = useMutation(
-    UPDATE_SPREAD_REMOVE_WINNER_MUTATION
-  );
+  const [updateGame, { loading: updateGameLoading, error: updateGameError }] =
+    useMutation(UPDATE_SPREAD_AND_WINNER_MUTATION);
+  const [
+    updateGameRemoveWinner,
+    { loading: updateGameRemoveLoading, error: updateRemoveError },
+  ] = useMutation(UPDATE_SPREAD_REMOVE_WINNER_MUTATION);
   const [deleteGame, { error: deleteGameError }] = useMutation(
     DELETE_GAME_MUTATION,
     {
@@ -265,6 +266,7 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
         awayTeam={awayTeam}
         isSubmitting={isSubmitting}
         isSubmitSuccessful={isSubmitSuccessful}
+        isLoading={updateGameLoading || updateGameRemoveLoading}
         isDirty={isDirty}
         updateGameError={updateGameError}
         updateRemoveError={updateRemoveError}
@@ -282,6 +284,7 @@ function FormFields({
   awayTeam,
   isSubmitting,
   isSubmitSuccessful,
+  isLoading,
   isDirty,
   updateGameError,
   updateRemoveError,
@@ -384,18 +387,13 @@ function FormFields({
       <Spacer size={50} />
       <FooterWrapper>
         <ButtonWrapper>
-          <Button type="submit" disabled={!isDirty}>
+          <Button type="submit" disabled={!isDirty || isLoading}>
             Sav{isSubmitting ? "ing" : "e"} Game
           </Button>
           {isSubmitSuccessful &&
             !updateGameError &&
             !updateRemoveError &&
-            !isDirty && (
-              <Tile>
-                <Icon name="Check" size={15} color={"var(--gray700)"} />
-                <span> Saved!</span>
-              </Tile>
-            )}
+            !isDirty && <Tile type="success">Saved!</Tile>}
         </ButtonWrapper>
         <DeleteGameButton type="button" onClick={handleDeleteGame}>
           <Icon name={"Trash2"} size={18} />
@@ -429,18 +427,6 @@ const ButtonWrapper = styled.div`
 const FooterWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-`;
-
-const Tile = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  max-height: 20px;
-  padding: 1px 12px;
-  border: 2px solid var(--successDark);
-  border-radius: 50px;
-  font-size: 1.2rem;
-  background-color: var(--success);
 `;
 
 const FormErrors = styled.div`

@@ -33,7 +33,7 @@ export default function ManageWeeks({ season }) {
   const [openModal, setOpenModal] = useState(false);
   const [formError, setFormError] = useState(null);
 
-  const [createWeek] = useMutation(CREATE_WEEK_MUTATION, {
+  const [createWeek, { loading }] = useMutation(CREATE_WEEK_MUTATION, {
     refetchQueries: [{ query: GET_WEEKS_BY_SEASON_QUERY }],
     update(cache, { data: { createWeek } }) {
       cache.modify({
@@ -90,13 +90,17 @@ export default function ManageWeeks({ season }) {
           setOpenModal(false);
         }}
       >
-        <NewWeekForm handleSubmitWeek={SubmitNewWeek} error={formError} />
+        <NewWeekForm
+          handleSubmitWeek={SubmitNewWeek}
+          error={formError}
+          loading={loading}
+        />
       </Modal>
     </>
   );
 }
 
-function NewWeekForm({ handleSubmitWeek, error }) {
+function NewWeekForm({ handleSubmitWeek, error, loading }) {
   const {
     register,
     handleSubmit,
@@ -119,7 +123,9 @@ function NewWeekForm({ handleSubmitWeek, error }) {
           <ValidationError>Week label cannot be blank</ValidationError>
         )}
       </InputWrapper>
-      <Button type="submit">Create Week</Button>
+      <Button disabled={loading} type="submit">
+        Create Week
+      </Button>
     </form>
   );
 }
@@ -141,6 +147,9 @@ const Button = styled.button`
   border: none;
   border-radius: 3px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  &:disabled {
+    background: var(--gray700);
+  }
 `;
 
 const Label = styled.label`

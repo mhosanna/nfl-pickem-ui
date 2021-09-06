@@ -5,6 +5,7 @@ import { CURRENT_PLAYER_QUERY } from "../../lib/usePlayer";
 import ErrorMessage from "../ErrorMessage";
 import styled from "styled-components";
 import Spacer from "../Spacer";
+import Tile from "../Tile";
 
 const SIGNIN_MUTATION = gql`
   mutation SIGNIN_MUTATION($email: String!, $password: String!) {
@@ -32,7 +33,6 @@ function SignIn() {
       refetchQueries: [{ query: CURRENT_PLAYER_QUERY }],
     }
   );
-
   const {
     handleSubmit,
     formState: { errors },
@@ -87,7 +87,16 @@ function SignIn() {
           )}
         </InputWrapper>
         <Spacer size={24} />
-        <Button type="submit">Sign In</Button>
+        <Button type="submit" disabled={loading}>
+          Sign In
+        </Button>
+        {data?.authenticatePlayerWithPassword.__typename ===
+          "PlayerAuthenticationWithPasswordSuccess" && (
+          <>
+            <Spacer size={24} />
+            <Tile type="success">Success! You are now signed in</Tile>
+          </>
+        )}
       </form>
     </FormWrapper>
   );
@@ -123,6 +132,9 @@ const Button = styled.button`
   border: none;
   border-radius: 3px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  &:disabled {
+    background: var(--gray700);
+  }
 `;
 
 const Label = styled.label`
