@@ -10,7 +10,7 @@ import PleaseSignIn from "../../../components/PleaseSignIn";
 export async function getStaticPaths() {
   return {
     paths: [{ params: { season } }],
-    fallback: false,
+    fallback: "blocking",
   };
 }
 

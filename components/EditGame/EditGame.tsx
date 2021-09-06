@@ -182,12 +182,9 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
               id: yup.string().required(),
             })
             .typeError("Away team cannot be blank"),
-          spread: yup
-            .string()
-            .matches(/^[-+]?[0-9]*\.?[0-9]+$/, {
-              message: "Spread must be a number",
-            })
-            .required("Spread cannot be blank"),
+          spread: yup.string().matches(/^$|[-+]?[0-9]*\.?[0-9]+$/, {
+            message: "Spread must be a number",
+          }),
           isHomeWinner: yup.boolean(),
           isAwayWinner: yup.boolean(),
         })

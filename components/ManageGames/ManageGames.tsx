@@ -172,8 +172,7 @@ function FormFields({ control, register, errors, formError }) {
         <Input
           placeholder="Ex. -4"
           {...register("spread", {
-            required: true,
-            pattern: /^[-+]?[0-9]*\.?[0-9]+$/,
+            pattern: /^$|[-+]?[0-9]*\.?[0-9]+$/,
           })}
         />
         {errors.spread && (
