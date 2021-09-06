@@ -55,6 +55,10 @@ function LeaderBoard({ season }) {
   const { games } = gamesInfo;
   const totalPlayedGames = games.length;
 
+  if (totalPlayedGames === 0) {
+    return <p>The season hasn't started yet. Check back soon!</p>;
+  }
+
   return (
     <>
       <TableStyles>
