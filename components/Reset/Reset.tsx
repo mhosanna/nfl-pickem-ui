@@ -70,7 +70,7 @@ export default function Reset({ token }) {
         <InputWrapper>
           <Label htmlFor="password">Password</Label>
           <Input
-            {...register("password", { required: true })}
+            {...register("password", { required: true, minLength: 8 })}
             type="password"
             id="password"
             name="password"
@@ -78,7 +78,9 @@ export default function Reset({ token }) {
             autoComplete="password"
           />
           {errors.password && (
-            <ValidationError>Password cannot be blank</ValidationError>
+            <ValidationError>
+              Password must be at least 8 characters
+            </ValidationError>
           )}
         </InputWrapper>
         <Spacer size={24} />
