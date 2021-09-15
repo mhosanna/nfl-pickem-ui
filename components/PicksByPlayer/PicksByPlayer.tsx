@@ -143,7 +143,7 @@ const FloatingIcon = styled(Icon)`
 `;
 
 const TeamAbbreviation = styled.span`
-  font-weight: ${(props) => (props.isPicked ? "600" : "initial")};
+  font-weight: ${(props) => (props.isPicked ? "800" : "initial")};
 `;
 
 const GamesWrapper = styled.ul`

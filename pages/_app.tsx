@@ -1,15 +1,14 @@
 import { ApolloProvider } from "@apollo/client";
 import Page from "../components/PageShell";
-import withData from "../lib/withData";
 import GlobalStyles from "../components/GlobalStyles/GlobalStyles";
 import { SeasonProvider } from "../lib/seasonContext";
 import { ThemeProvider } from "styled-components";
 import { QUERIES } from "../constants";
+import withData from "../lib/withData";
 
-export default function App({ Component, pageProps, apollo }) {
-  const apolloClient = useApollo(pageProps);
+function App({ Component, pageProps, apollo }) {
   return (
-    <ApolloProvider client={apolloClient}>
+    <ApolloProvider client={apollo}>
       <ThemeProvider theme={{ queries: QUERIES }}>
         <GlobalStyles />
         <SeasonProvider>
@@ -26,3 +25,4 @@ function useLayout({ Component, pageProps }) {
   return getLayout(<Component {...pageProps} />);
 }
 
+export default withData(App);
