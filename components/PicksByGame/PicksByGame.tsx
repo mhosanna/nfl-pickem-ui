@@ -14,6 +14,8 @@ export default function PicksByGame() {
     <>
       <Spacer size={45} />
       {weekSelector}
+      <Spacer size={30} />
+      <p>Coming Soon!</p>
     </>
   );
 }

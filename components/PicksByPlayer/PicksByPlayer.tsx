@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 import styled from "styled-components";
 import useWeekSelect from "../../lib/useWeekSelect";
 import Spacer from "../Spacer";
+import Icon from "../Icon";
 
 const PLAYERS_QUERY = gql`
   query GET_PLAYERS_BY_SEASON_AND_WEEK($season: String!, $weekId: ID!) {
@@ -58,9 +59,7 @@ export default function PicksByPlayer({ season }) {
         />
         {selectedPlayer && (
           <GameList
-            season={season}
             selectedWeek={selectedWeek}
-            setPlayer={setSelectedPlayer}
             selectedPlayer={selectedPlayer}
           />
         )}
@@ -69,27 +68,50 @@ export default function PicksByPlayer({ season }) {
   );
 }
 
-function GameList({ season, selectedWeek, selectedPlayer, setPlayer }) {
-  // console.log(selectedWeek.games);
+function GameList({ selectedWeek, selectedPlayer }) {
   const playerPicks = selectedPlayer?.picks;
 
   return (
     <GamesWrapper>
       {selectedWeek.games.map((g) => {
         const playerPick = playerPicks?.find(({ game }) => game.id === g.id);
+        const isHomePicked = playerPick?.picked.id === g.homeTeam.id;
+        const isAwayPicked = playerPick?.picked.id === g.awayTeam.id;
+        const hasWinner = playerPick && g.winner;
+        const wasCorrect = hasWinner && playerPick?.picked.id === g.winner?.id;
         return (
-          <li key={g.id}>
-            <GameTile>
-              <span>@ {g.homeTeam.abbreviation}</span>
+          <GameItem key={g.id}>
+            {wasCorrect && <FloatingIcon name={"Check"} size="16" />}
+            {hasWinner && !wasCorrect && <FloatingIcon name={"X"} size="16" />}
+            <GameTile noWinner={!hasWinner} correct={wasCorrect}>
+              <TeamAbbreviation isPicked={isHomePicked}>
+                @ {g.homeTeam.abbreviation}
+              </TeamAbbreviation>
               <span>{g.spread}</span>
-              <span>{g.awayTeam.abbreviation}</span>
+              <TeamAbbreviation isPicked={isAwayPicked}>
+                {g.awayTeam.abbreviation}
+              </TeamAbbreviation>
             </GameTile>
-          </li>
+          </GameItem>
         );
       })}
     </GamesWrapper>
   );
 }
+
+const GameItem = styled.li`
+  position: relative;
+`;
+
+const FloatingIcon = styled(Icon)`
+  position: absolute;
+  top: 10px;
+  left: 8px;
+`;
+
+const TeamAbbreviation = styled.span`
+  font-weight: ${(props) => (props.isPicked ? "600" : "initial")};
+`;
 
 const GamesWrapper = styled.ul`
   flex: 1;
@@ -112,7 +134,12 @@ const GameTile = styled.div`
   padding: 1px 12px;
   border-radius: 50px;
   font-size: 1.6rem;
-  background-color: var(--background);
+  background-color: ${(props) =>
+    props.noWinner
+      ? "var(--background)"
+      : props.correct
+      ? "var(--success)"
+      : "var(--warningLight)"};
 `;
 
 function PlayerList({ season, selectedWeek, selectedPlayer, setPlayer }) {
