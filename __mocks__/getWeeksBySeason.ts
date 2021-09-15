@@ -1,4 +1,4 @@
-import { WEEKS_BY_SEASON_QUERY } from "../components/Picks";
+import { WEEKS_BY_SEASON_QUERY } from "../lib/useWeekSelect";
 import { GraphQLError } from "graphql";
 
 export const getWeeksBySeason = {

@@ -26,11 +26,7 @@ export default function TeamBlock({
       <Component isPicked={isPicked} onClick={() => makePick(id)}>
         {isWinner && <WinFlag>Game Winner</WinFlag>}
         {isPicked && (
-          <PickedIcon
-            name={"CheckSquare"}
-            data-testid="picked-team"
-            isPicked={isPicked}
-          />
+          <PickedIcon name={"CheckSquare"} data-testid="picked-team" />
         )}
         <TeamName>
           <span style={{ fontWeight: "bold" }}>{city}</span>

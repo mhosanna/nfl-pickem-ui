@@ -3,32 +3,10 @@ import { useMutation, useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { Spread, List, FieldWrapper, GameListWrapper } from "./PicksStyles";
 import TeamBlock from "../TeamBlock";
-import Select from "../Select";
 import Spacer from "../Spacer";
 import { spreadToString } from "../../utils/spreadToString";
 import { usePlayer } from "../../lib/usePlayer";
-
-const gameFragment = gql`
-  fragment GameFragment on Game {
-    homeTeam {
-      id
-      name
-      city
-    }
-    awayTeam {
-      id
-      name
-      city
-    }
-    week {
-      id
-    }
-    spread
-    winner {
-      id
-    }
-  }
-`;
+import useWeekSelect from "../../lib/useWeekSelect";
 
 const pickFragment = gql`
   fragment PickFragment on Pick {
@@ -64,20 +42,6 @@ const PICKS_BY_WEEK_QUERY = gql`
   ${pickFragment}
 `;
 
-const WEEKS_BY_SEASON_QUERY = gql`
-  query GET_ALL_WEEKS_BY_SEASON($season: String) {
-    weeks(where: { season: { equals: $season } }, orderBy: { id: desc }) {
-      id
-      label
-      games {
-        id
-        ...GameFragment
-      }
-    }
-  }
-  ${gameFragment}
-`;
-
 const MAKE_PICK_MUTATION = gql`
   mutation MAKE_PICK_MUTATION($player: ID!, $game: ID!, $team: ID!) {
     upsertPicks(playerId: $player, gameId: $game, teamId: $team) {
@@ -92,55 +56,25 @@ function Picks({ season }) {
   const { id } = usePlayer();
   const playerId = id;
 
-  const {
-    data: weeksInfo,
-    error: weeksQueryError,
-    loading: weeksQueryLoading,
-  } = useQuery(WEEKS_BY_SEASON_QUERY, {
-    variables: { season },
-  });
-
-  if (weeksQueryLoading) return <p>Loading...</p>;
-  if (weeksQueryError) return <p>Error</p>;
-
-  const { weeks } = weeksInfo;
-
   return (
     <div>
-      <PickWrapper availableWeeks={weeks} playerId={playerId} />
+      <PickWrapper playerId={playerId} />
     </div>
   );
 }
 
-const PickWrapper = ({ availableWeeks, playerId }) => {
-  const [dropdownLabel, setDropdownLabel] = React.useState(
-    availableWeeks[0]?.label
-  );
-  const [selectedWeek, setSelectedWeek] = React.useState(availableWeeks[0]);
+const PickWrapper = ({ playerId }) => {
+  const { weekSelector, selectedWeek, loading, error } = useWeekSelect();
 
-  React.useEffect(() => {
-    const week = availableWeeks.filter((week) => week.label === dropdownLabel);
-    setSelectedWeek(week[0]);
-  }, [dropdownLabel, availableWeeks]);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error</p>;
 
   if (!selectedWeek) {
     return <p>The season hasn't started yet. Check back soon!</p>;
   }
   return (
     <div>
-      <Select
-        label="Select a Week"
-        value={dropdownLabel}
-        onChange={(ev) => setDropdownLabel(ev.target.value)}
-      >
-        {availableWeeks.map((week) => {
-          return (
-            <option key={week.id} value={week.label}>
-              {week.label}
-            </option>
-          );
-        })}
-      </Select>
+      {weekSelector}
       <Spacer size={28} />
       <GamesList playerId={playerId} selectedWeek={selectedWeek} />
     </div>
@@ -253,10 +187,4 @@ function Game({ game, playerId, playersPick }) {
   );
 }
 
-export {
-  Picks,
-  WEEKS_BY_SEASON_QUERY,
-  MAKE_PICK_MUTATION,
-  PICKS_BY_WEEK_QUERY,
-  gameFragment,
-};
+export { Picks, MAKE_PICK_MUTATION, PICKS_BY_WEEK_QUERY };
