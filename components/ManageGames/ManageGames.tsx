@@ -7,11 +7,10 @@ import gql from "graphql-tag";
 import styled from "styled-components";
 import { useMutation } from "@apollo/client";
 import { string_to_slug } from "../../utils/slugify";
-import { useForm, Controller, SubmitHandler, set } from "react-hook-form";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import TeamsComboBox from "../TeamsComboBox";
 import ErrorMessage from "../ErrorMessage";
-import { onError } from "apollo-link-error";
-import { GET_WEEKS_BY_SEASON_QUERY } from "../WeekTile";
+import { GET_GAMES_BY_WEEK_SLUG } from "../GameTiles";
 
 type Team = {
   __typeName: string;
@@ -51,12 +50,12 @@ const CREATE_GAME_MUTATION = gql`
   }
 `;
 
-export default function ManageGames({ week, season }) {
+export default function ManageGames({ weekId, season }) {
   const [openModal, setOpenModal] = React.useState(false);
   const [formError, setFormError] = React.useState(null);
 
   const [createGame] = useMutation(CREATE_GAME_MUTATION, {
-    refetchQueries: [{ query: GET_WEEKS_BY_SEASON_QUERY }],
+    refetchQueries: [{ query: GET_GAMES_BY_WEEK_SLUG }],
     update(cache, { data: { createGame } }) {
       cache.modify({
         fields: {
@@ -84,7 +83,7 @@ export default function ManageGames({ week, season }) {
       variables: {
         season,
         slug,
-        week: week.id,
+        week: weekId,
         homeTeamId: data.homeTeam.id,
         awayTeamId: data.awayTeam.id,
         spread: parseFloat(data.spread),

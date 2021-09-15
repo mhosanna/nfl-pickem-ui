@@ -1,13 +1,12 @@
 import { ApolloProvider } from "@apollo/client";
-import type { AppProps } from "next/app";
 import Page from "../components/PageShell";
-import { useApollo } from "../lib/withData";
+import withData from "../lib/withData";
 import GlobalStyles from "../components/GlobalStyles/GlobalStyles";
 import { SeasonProvider } from "../lib/seasonContext";
 import { ThemeProvider } from "styled-components";
 import { QUERIES } from "../constants";
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps, apollo }) {
   const apolloClient = useApollo(pageProps);
   return (
     <ApolloProvider client={apolloClient}>
@@ -26,3 +25,4 @@ function useLayout({ Component, pageProps }) {
 
   return getLayout(<Component {...pageProps} />);
 }
+
