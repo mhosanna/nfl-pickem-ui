@@ -8,7 +8,7 @@ import Icon from "../Icon";
 // import { NavLinks as MobileNavLinks } from "../MobileMenu";
 
 interface Props {
-  href: string;
+  href: string | { pathname: string; query: { by: string } };
   children: ReactElementLike;
 }
 
@@ -50,12 +50,17 @@ const ActiveLink: NextPage<Props> = ({ children, href }) => {
   const { asPath } = useRouter();
   const child = React.Children.only(children);
 
+  //if href is just a string, we dont worry about url queries
+  const active =
+    typeof href === "string"
+      ? `/${asPath.split("/")[1]}` === `/${href.split("/")[1]}`
+      : `/${asPath.split("/")[1].split("?")[0]}` ===
+        `/${href.pathname.split("/")[1]}`;
+
   return (
     <Link href={href} passHref>
       {React.cloneElement(child, {
-        active:
-          `/${asPath.split("/")[1].split("?")[0]}` ===
-          `/${href.split("/")[1].split("?")[0]}`,
+        active,
       })}
     </Link>
   );

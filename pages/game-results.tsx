@@ -23,12 +23,14 @@ function ResultsSubMenu() {
   return (
     <SubNav>
       <PageTitle size={2.4} isActive={by === "player"}>
-        <ActiveLink href="?by=player">
+        <ActiveLink
+          href={{ pathname: "/game-results", query: { by: "player" } }}
+        >
           <NavLink>Picks by Player</NavLink>
         </ActiveLink>
       </PageTitle>
       <PageTitle size={2.4} isActive={by === "game"}>
-        <ActiveLink href="?by=game">
+        <ActiveLink href={{ pathname: "/game-results", query: { by: "game" } }}>
           <NavLink>Picks by Game</NavLink>
         </ActiveLink>
       </PageTitle>
@@ -43,7 +45,7 @@ const ActiveLink = ({ children, href }) => {
   return (
     <Link href={href} passHref>
       {React.cloneElement(child, {
-        active: `${query.by}` === `${href.split("=")[1]}`,
+        active: `${query.by}` === `${href.query.by}`,
       })}
     </Link>
   );

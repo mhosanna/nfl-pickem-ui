@@ -5,6 +5,8 @@ import styled from "styled-components";
 import useWeekSelect from "../../lib/useWeekSelect";
 import Spacer from "../Spacer";
 import Icon from "../Icon";
+import { spreadToString } from "../../utils/spreadToString";
+import { useEffect } from "react";
 
 const PLAYERS_QUERY = gql`
   query GET_PLAYERS_BY_SEASON_AND_WEEK($season: String!, $weekId: ID!) {
@@ -37,10 +39,7 @@ const PLAYERS_QUERY = gql`
 
 export default function PicksByPlayer({ season }) {
   const [selectedPlayer, setSelectedPlayer] = useState();
-  const { weekSelector, selectedWeek, loading, error } = useWeekSelect();
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error</p>;
+  const { weekSelector, selectedWeek } = useWeekSelect();
 
   if (!selectedWeek) {
     return null;
@@ -50,21 +49,55 @@ export default function PicksByPlayer({ season }) {
       <Spacer size={45} />
       {weekSelector}
       <Spacer size={32} />
-      <Wrapper>
-        <PlayerList
-          season={season}
-          selectedWeek={selectedWeek}
-          setPlayer={setSelectedPlayer}
-          selectedPlayer={selectedPlayer}
-        />
-        {selectedPlayer && (
-          <GameList
-            selectedWeek={selectedWeek}
-            selectedPlayer={selectedPlayer}
-          />
-        )}
-      </Wrapper>
+      <PlayerPicks
+        season={season}
+        selectedWeek={selectedWeek}
+        selectedPlayer={selectedPlayer}
+        setSelectedPlayer={setSelectedPlayer}
+      />
     </>
+  );
+}
+
+function PlayerPicks({
+  season,
+  selectedWeek,
+  selectedPlayer,
+  setSelectedPlayer,
+}) {
+  const {
+    data: playersInfo,
+    error: playersQueryError,
+    loading: playersQueryLoading,
+  } = useQuery(PLAYERS_QUERY, {
+    variables: { season, weekId: selectedWeek.id },
+  });
+  //if week changed from dropdown, reselect the selected player
+  useEffect(() => {
+    const player = playersInfo?.players.find(
+      (player) => player.id === selectedPlayer?.id
+    );
+    setSelectedPlayer(player);
+  }, [selectedWeek]);
+
+  if (playersQueryLoading) return <p>Loading...</p>;
+  if (playersQueryError) return <p>Error</p>;
+  const { players } = playersInfo;
+  const sortedPlayers = [...players];
+  sortedPlayers.sort((a, b) => b.picksCount - a.picksCount);
+
+  return (
+    <Wrapper>
+      <PlayerList
+        selectedWeek={selectedWeek}
+        players={sortedPlayers}
+        setPlayer={setSelectedPlayer}
+        selectedPlayer={selectedPlayer}
+      />
+      {selectedPlayer && (
+        <GameList selectedWeek={selectedWeek} selectedPlayer={selectedPlayer} />
+      )}
+    </Wrapper>
   );
 }
 
@@ -87,7 +120,7 @@ function GameList({ selectedWeek, selectedPlayer }) {
               <TeamAbbreviation isPicked={isHomePicked}>
                 @ {g.homeTeam.abbreviation}
               </TeamAbbreviation>
-              <span>{g.spread}</span>
+              <span>{spreadToString(g.spread)}</span>
               <TeamAbbreviation isPicked={isAwayPicked}>
                 {g.awayTeam.abbreviation}
               </TeamAbbreviation>
@@ -142,24 +175,10 @@ const GameTile = styled.div`
       : "var(--warningLight)"};
 `;
 
-function PlayerList({ season, selectedWeek, selectedPlayer, setPlayer }) {
-  const {
-    data: playersInfo,
-    error: playersQueryError,
-    loading: playersQueryLoading,
-  } = useQuery(PLAYERS_QUERY, {
-    variables: { season, weekId: selectedWeek.id },
-  });
-
-  if (playersQueryLoading) return <p>Loading...</p>;
-  if (playersQueryError) return <p>Error</p>;
-  const { players } = playersInfo;
-  const sortedPlayers = [...players];
-  sortedPlayers.sort((a, b) => b.picksCount - a.picksCount);
-
+function PlayerList({ players, selectedWeek, selectedPlayer, setPlayer }) {
   return (
     <List>
-      {sortedPlayers.map((player) => {
+      {players.map((player) => {
         return (
           <Player
             key={player.id}
