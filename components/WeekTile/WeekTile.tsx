@@ -3,7 +3,28 @@ import { useRouter } from "next/router";
 import gql from "graphql-tag";
 import styled from "styled-components";
 import { useSeason } from "../../lib/seasonContext";
-import { gameFragment } from "../Picks";
+
+const gameFragment = gql`
+  fragment GameFragment on Game {
+    homeTeam {
+      id
+      name
+      city
+    }
+    awayTeam {
+      id
+      name
+      city
+    }
+    week {
+      id
+    }
+    spread
+    winner {
+      id
+    }
+  }
+`;
 
 const GET_WEEKS_BY_SEASON_QUERY = gql`
   query GET_WEEKS_BY_SEASON($season: String) {
