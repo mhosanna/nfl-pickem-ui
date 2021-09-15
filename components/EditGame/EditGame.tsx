@@ -77,13 +77,17 @@ const DELETE_GAME_MUTATION = gql`
 `;
 
 export default function EditGame({ game }) {
-  const homeTeam = `<span>${game.homeTeam.city} ${game.homeTeam.name}</span>`;
-  const awayTeam = `<span>${game.awayTeam.city} ${game.awayTeam.name}</span>`;
-  const pageTitle = homeTeam + "<span>vs</span>" + awayTeam;
-
   return (
     <>
-      <PageTitle title={pageTitle} />
+      <PageTitle>
+        <span>
+          {game.homeTeam.city} {game.homeTeam.name}
+        </span>
+        <span>vs</span>
+        <span>
+          {game.awayTeam.city} {game.awayTeam.name}
+        </span>
+      </PageTitle>
       <Spacer size={32} />
       <EditGameForm
         gameId={game.id}

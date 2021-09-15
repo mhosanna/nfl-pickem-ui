@@ -1,10 +1,11 @@
 import styled from "styled-components";
+// import { NavLink } from "../../pages/game-results";
 
-export default function PageTitle({ title }) {
+export default function PageTitle({ children, size = 3.2, isActive = true }) {
   return (
     <Wrapper>
-      <StyledHeading dangerouslySetInnerHTML={{ __html: title }} />
-      <Underline />
+      <StyledHeading size={size}>{children}</StyledHeading>
+      <Underline isActive={isActive} />
     </Wrapper>
   );
 }
@@ -17,7 +18,7 @@ const Wrapper = styled.div`
 
 const StyledHeading = styled.h2`
   font-family: var(--body-font);
-  font-size: 3.2rem;
+  font-size: ${(props) => props.size}rem;
   line-height: 1;
   display: flex;
   gap: 12px;
@@ -27,6 +28,7 @@ const StyledHeading = styled.h2`
   span:last-child {
     flex: 1 2 auto;
   }
+
   @media ${(props) => props.theme.queries.tabletAndSmaller} {
     font-size: 2.6rem;
   }
@@ -36,6 +38,7 @@ const StyledHeading = styled.h2`
 `;
 
 const Underline = styled.div`
+  display: ${(props) => (props.isActive ? "inline" : "none")};
   width: 140px;
   height: 4px;
   background-color: var(--primary);

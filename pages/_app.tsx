@@ -8,19 +8,21 @@ import { ThemeProvider } from "styled-components";
 import { QUERIES } from "../constants";
 
 export default function App({ Component, pageProps }: AppProps) {
-  const getLayout = Component.getLayout || ((page) => page);
-
   const apolloClient = useApollo(pageProps);
-  return getLayout(
+  return (
     <ApolloProvider client={apolloClient}>
       <ThemeProvider theme={{ queries: QUERIES }}>
         <GlobalStyles />
         <SeasonProvider>
-          <Page>
-            <Component {...pageProps} />
-          </Page>
+          <Page>{useLayout({ Component, pageProps })}</Page>
         </SeasonProvider>
       </ThemeProvider>
     </ApolloProvider>
   );
+}
+
+function useLayout({ Component, pageProps }) {
+  const getLayout = Component.getLayout || ((page) => page);
+
+  return getLayout(<Component {...pageProps} />);
 }

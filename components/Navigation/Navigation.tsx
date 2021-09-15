@@ -21,7 +21,7 @@ export default function Navigation() {
               <NavLink linkName="My Picks" href="/picks" icon="CheckSquare" />
               <NavLink
                 linkName="Game Results"
-                href="/game-results"
+                href="/game-results?by=player"
                 icon="Star"
               />
               <NavLink
