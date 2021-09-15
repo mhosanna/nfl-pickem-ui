@@ -42,7 +42,6 @@ export default function RequestReset() {
           <Input
             {...register("email", { required: true })}
             type="email"
-            id="email"
             name="email"
             placeholder="Your Email Address"
             autoComplete="email"
