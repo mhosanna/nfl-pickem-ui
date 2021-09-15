@@ -30,7 +30,7 @@ export default function MobileMenu({ isOpen, onDismiss, title }) {
                 icon="CheckSquare"
               />
               <NavLink
-                linkName="Game Results"
+                linkName="Picks & Results"
                 href={{ pathname: "/game-results", query: { by: "player" } }}
                 handleClick={onDismiss}
                 icon="Star"
