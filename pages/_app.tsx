@@ -8,14 +8,16 @@ import withData from "../lib/withData";
 
 function App({ Component, pageProps, apollo }) {
   return (
-    <ApolloProvider client={apollo}>
-      <ThemeProvider theme={{ queries: QUERIES }}>
-        <GlobalStyles />
-        <SeasonProvider>
-          <Page>{useLayout({ Component, pageProps })}</Page>
-        </SeasonProvider>
-      </ThemeProvider>
-    </ApolloProvider>
+    <>
+      <GlobalStyles />
+      <ApolloProvider client={apollo}>
+        <ThemeProvider theme={{ queries: QUERIES }}>
+          <SeasonProvider>
+            <Page>{useLayout({ Component, pageProps })}</Page>
+          </SeasonProvider>
+        </ThemeProvider>
+      </ApolloProvider>
+    </>
   );
 }
 
