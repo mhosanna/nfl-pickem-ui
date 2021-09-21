@@ -8,7 +8,7 @@ import Icon from "../Icon";
 import { spreadToString } from "../../utils/spreadToString";
 import { useEffect } from "react";
 
-const PLAYERS_QUERY = gql`
+export const PLAYERS_QUERY = gql`
   query GET_PLAYERS_BY_SEASON_AND_WEEK($season: String!, $weekId: ID!) {
     players(
       where: { picks: { some: { game: { season: { equals: $season } } } } }
@@ -28,6 +28,8 @@ const PLAYERS_QUERY = gql`
         isCorrect
         picked {
           id
+          city
+          name
         }
         game {
           id
