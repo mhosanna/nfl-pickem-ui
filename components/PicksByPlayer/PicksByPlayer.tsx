@@ -89,17 +89,14 @@ function PlayerPicks({
   sortedPlayers.sort((a, b) => b.picksCount - a.picksCount);
 
   return (
-    <Wrapper>
+    <div>
       <PlayerList
         selectedWeek={selectedWeek}
         players={sortedPlayers}
         setPlayer={setSelectedPlayer}
         selectedPlayer={selectedPlayer}
       />
-      {selectedPlayer && (
-        <GameList selectedWeek={selectedWeek} selectedPlayer={selectedPlayer} />
-      )}
-    </Wrapper>
+    </div>
   );
 }
 
@@ -150,13 +147,19 @@ const TeamAbbreviation = styled.span`
 
 const GamesWrapper = styled.ul`
   flex: 1;
+  width: 47%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
   gap: 18px;
   height: fit-content;
+  position: absolute;
+  right: 0;
 
   @media ${(props) => props.theme.queries.tabletAndSmaller} {
-    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+    width: auto;
+    position: initial;
+    padding: 10px 0px;
+    grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
   }
 `;
 
@@ -181,35 +184,41 @@ function PlayerList({ players, selectedWeek, selectedPlayer, setPlayer }) {
   return (
     <List>
       {players.map((player) => {
+        const isSelected = player.id === selectedPlayer?.id;
         return (
-          <Player
-            key={player.id}
-            onClick={() => setPlayer(player)}
-            isSelected={player.id === selectedPlayer?.id}
-          >
-            <span>{player.name}</span>
-            <span>
-              {player.picksCount} / {selectedWeek.games.length}
-            </span>
-          </Player>
+          <>
+            <Player
+              key={player.id}
+              onClick={() => setPlayer(player)}
+              isSelected={isSelected}
+            >
+              <span>{player.name}</span>
+              <span>
+                {player.picksCount} / {selectedWeek.games.length}
+              </span>
+            </Player>
+            {isSelected && (
+              <GameList
+                selectedWeek={selectedWeek}
+                selectedPlayer={selectedPlayer}
+              />
+            )}
+          </>
         );
       })}
     </List>
   );
 }
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 32px;
-`;
 const List = styled.ol`
-  flex: 1;
-  max-width: 350px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   white-space: nowrap;
+  position: relative;
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    position: initial;
+  }
 `;
 
 const Player = styled.li`
@@ -224,6 +233,8 @@ const Player = styled.li`
     props.isSelected ? "var(--black)" : "initial"};
   color: ${(props) => (props.isSelected ? "white" : "initial")};
 
+  width: 35%;
+
   &:hover {
     background-color: ${(props) =>
       props.isSelected ? "var(--black)" : "var(--backgroundHover)"};
@@ -236,5 +247,11 @@ const Player = styled.li`
     top: 2px;
     color: black;
     font-size: 2.5rem;
+  }
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    width: auto;
+    &::after {
+      display: none;
+    }
   }
 `;
