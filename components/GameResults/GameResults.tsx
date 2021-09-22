@@ -8,6 +8,6 @@ export default function GameResults({ season }) {
   } = useRouter();
 
   if (by === "player") return <PicksByPlayer season={season} />;
-  if (by === "game") return <PicksByGame />;
+  if (by === "game") return <PicksByGame season={season} />;
   return <p>Oops! This page doesn't exist</p>;
 }

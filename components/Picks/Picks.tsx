@@ -52,7 +52,7 @@ const MAKE_PICK_MUTATION = gql`
   ${pickFragment}
 `;
 
-function Picks({ season }) {
+function Picks() {
   const { id } = usePlayer();
   const playerId = id;
 

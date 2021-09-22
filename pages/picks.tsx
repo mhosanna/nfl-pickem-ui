@@ -8,7 +8,7 @@ export default function PicksPage() {
     <>
       <PageHeading heading="Make Your Picks" season={season} />
       <PleaseSignIn>
-        <Picks season={season} />
+        <Picks />
       </PleaseSignIn>
     </>
   );
