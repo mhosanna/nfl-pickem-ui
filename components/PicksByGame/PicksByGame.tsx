@@ -76,7 +76,7 @@ function GamePicks({ season, selectedWeek, selectedGame, setSelectedGame }) {
   const { games } = data;
 
   return (
-    <Wrapper>
+    <div>
       <GamesList
         season={season}
         selectedWeek={selectedWeek}
@@ -84,15 +84,9 @@ function GamePicks({ season, selectedWeek, selectedGame, setSelectedGame }) {
         setGame={setSelectedGame}
         selectedGame={selectedGame}
       />
-    </Wrapper>
+    </div>
   );
 }
-
-const Wrapper = styled.div`
-  /* display: flex;
-  flex-direction: row;
-  gap: 32px; */
-`;
 
 function PlayerList({ season, selectedWeek, selectedGame }) {
   const { data, error, loading } = useQuery(PLAYERS_QUERY, {
@@ -140,14 +134,25 @@ const FloatingIcon = styled(Icon)`
   position: absolute;
   top: 19px;
   left: 8px;
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    top: 14px;
+    left: 10px;
+  }
 `;
 
 const PlayerWrapper = styled.ul`
   flex: 1;
-  display: grid;
-  grid-template-columns: minmax(max-content, 350px);
+  display: flex;
+  flex-direction: column;
   gap: 18px;
-  height: fit-content;
+  width: 45%;
+  position: absolute;
+  right: 0;
+
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    width: auto;
+    position: initial;
+  }
 `;
 
 const PlayerTile = styled.div`
@@ -165,6 +170,11 @@ const PlayerTile = styled.div`
       : props.correct
       ? "var(--success)"
       : "var(--warningLight)"};
+
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    justify-content: space-evenly;
+    padding: 5px 30px;
+  }
 `;
 
 function GamesList({ season, selectedWeek, games, selectedGame, setGame }) {
@@ -173,7 +183,7 @@ function GamesList({ season, selectedWeek, games, selectedGame, setGame }) {
       {games.map((game) => {
         const isSelected = game.id === selectedGame?.id;
         return (
-          <SelectedWrapper>
+          <>
             <Game
               key={game.id}
               onClick={() => setGame(game)}
@@ -190,7 +200,7 @@ function GamesList({ season, selectedWeek, games, selectedGame, setGame }) {
                 selectedGame={selectedGame}
               />
             )}
-          </SelectedWrapper>
+          </>
         );
       })}
     </List>
@@ -198,19 +208,13 @@ function GamesList({ season, selectedWeek, games, selectedGame, setGame }) {
 }
 
 const List = styled.ol`
-  /* flex: 1;
-  max-width: 350px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  white-space: nowrap; */
-`;
-
-const SelectedWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
+  white-space: nowrap;
+  position: relative;
   @media ${(props) => props.theme.queries.tabletAndSmaller} {
-    flex-direction: column;
+    position: initial;
   }
 `;
 
@@ -227,6 +231,8 @@ const Game = styled.li`
     props.isSelected ? "var(--black)" : "initial"};
   color: ${(props) => (props.isSelected ? "white" : "initial")};
 
+  width: 45%;
+
   &:hover {
     background-color: ${(props) =>
       props.isSelected ? "var(--black)" : "var(--backgroundHover)"};
@@ -239,5 +245,14 @@ const Game = styled.li`
     top: -5px;
     color: black;
     font-size: 2.5rem;
+  }
+
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    width: auto;
+    justify-content: space-evenly;
+
+    &::after {
+      display: none;
+    }
   }
 `;
