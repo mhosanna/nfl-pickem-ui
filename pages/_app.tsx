@@ -3,7 +3,7 @@ import Page from "../components/PageShell";
 import GlobalStyles from "../components/GlobalStyles/GlobalStyles";
 import { SeasonProvider } from "../lib/seasonContext";
 import { ThemeProvider } from "styled-components";
-import { QUERIES } from "../constants";
+import { myTheme } from "../constants";
 import withData from "../lib/withData";
 
 function App({ Component, pageProps, apollo }) {
@@ -11,7 +11,7 @@ function App({ Component, pageProps, apollo }) {
     <>
       <GlobalStyles />
       <ApolloProvider client={apollo}>
-        <ThemeProvider theme={{ queries: QUERIES }}>
+        <ThemeProvider theme={myTheme}>
           <SeasonProvider>
             <Page>{useLayout({ Component, pageProps })}</Page>
           </SeasonProvider>
