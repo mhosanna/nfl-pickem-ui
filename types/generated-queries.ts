@@ -937,6 +937,40 @@ export type GamesPlayedBySeasonQuery = {
   games?: Array<{ __typename?: 'Game'; id: string }> | null | undefined;
 };
 
+export type PicksByWeekAndPlayerQueryVariables = Exact<{
+  playerId: Scalars['ID'];
+  weekId: Scalars['ID'];
+}>;
+
+export type PicksByWeekAndPlayerQuery = {
+  __typename?: 'Query';
+  picks?:
+    | Array<{
+        __typename?: 'Pick';
+        id: string;
+        player?:
+          | {
+              __typename?: 'Player';
+              id: string;
+              name?: string | null | undefined;
+            }
+          | null
+          | undefined;
+        game?: { __typename?: 'Game'; id: string } | null | undefined;
+        picked?:
+          | {
+              __typename?: 'Team';
+              id: string;
+              name?: string | null | undefined;
+              city?: string | null | undefined;
+            }
+          | null
+          | undefined;
+      }>
+    | null
+    | undefined;
+};
+
 export type PlayerQueryVariables = Exact<{ [key: string]: never }>;
 
 export type PlayerQuery = {
@@ -965,6 +999,41 @@ export type PlayersBySeasonQuery = {
         name?: string | null | undefined;
         picks?: Array<{ __typename?: 'Pick'; id: string }> | null | undefined;
       }>
+    | null
+    | undefined;
+};
+
+export type MakePickMutationVariables = Exact<{
+  player: Scalars['ID'];
+  game: Scalars['ID'];
+  team: Scalars['ID'];
+}>;
+
+export type MakePickMutation = {
+  __typename?: 'Mutation';
+  upsertPicks?:
+    | {
+        __typename?: 'Pick';
+        id: string;
+        player?:
+          | {
+              __typename?: 'Player';
+              id: string;
+              name?: string | null | undefined;
+            }
+          | null
+          | undefined;
+        game?: { __typename?: 'Game'; id: string } | null | undefined;
+        picked?:
+          | {
+              __typename?: 'Team';
+              id: string;
+              name?: string | null | undefined;
+              city?: string | null | undefined;
+            }
+          | null
+          | undefined;
+      }
     | null
     | undefined;
 };
@@ -1039,6 +1108,89 @@ export function refetchGamesPlayedBySeasonQuery(
   variables?: GamesPlayedBySeasonQueryVariables
 ) {
   return { query: GamesPlayedBySeasonDocument, variables: variables };
+}
+export const PicksByWeekAndPlayerDocument = gql`
+  query picksByWeekAndPlayer($playerId: ID!, $weekId: ID!) {
+    picks(
+      where: {
+        AND: [
+          { player: { id: { equals: $playerId } } }
+          { game: { week: { id: { equals: $weekId } } } }
+        ]
+      }
+    ) {
+      id
+      player {
+        id
+        name
+      }
+      game {
+        id
+      }
+      picked {
+        id
+        name
+        city
+      }
+    }
+  }
+`;
+
+/**
+ * __usePicksByWeekAndPlayerQuery__
+ *
+ * To run a query within a React component, call `usePicksByWeekAndPlayerQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePicksByWeekAndPlayerQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePicksByWeekAndPlayerQuery({
+ *   variables: {
+ *      playerId: // value for 'playerId'
+ *      weekId: // value for 'weekId'
+ *   },
+ * });
+ */
+export function usePicksByWeekAndPlayerQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    PicksByWeekAndPlayerQuery,
+    PicksByWeekAndPlayerQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    PicksByWeekAndPlayerQuery,
+    PicksByWeekAndPlayerQueryVariables
+  >(PicksByWeekAndPlayerDocument, options);
+}
+export function usePicksByWeekAndPlayerLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    PicksByWeekAndPlayerQuery,
+    PicksByWeekAndPlayerQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    PicksByWeekAndPlayerQuery,
+    PicksByWeekAndPlayerQueryVariables
+  >(PicksByWeekAndPlayerDocument, options);
+}
+export type PicksByWeekAndPlayerQueryHookResult = ReturnType<
+  typeof usePicksByWeekAndPlayerQuery
+>;
+export type PicksByWeekAndPlayerLazyQueryHookResult = ReturnType<
+  typeof usePicksByWeekAndPlayerLazyQuery
+>;
+export type PicksByWeekAndPlayerQueryResult = Apollo.QueryResult<
+  PicksByWeekAndPlayerQuery,
+  PicksByWeekAndPlayerQueryVariables
+>;
+export function refetchPicksByWeekAndPlayerQuery(
+  variables?: PicksByWeekAndPlayerQueryVariables
+) {
+  return { query: PicksByWeekAndPlayerDocument, variables: variables };
 }
 export const PlayerDocument = gql`
   query Player {
@@ -1163,6 +1315,67 @@ export function refetchPlayersBySeasonQuery(
 ) {
   return { query: PlayersBySeasonDocument, variables: variables };
 }
+export const MakePickDocument = gql`
+  mutation makePick($player: ID!, $game: ID!, $team: ID!) {
+    upsertPicks(playerId: $player, gameId: $game, teamId: $team) {
+      id
+      player {
+        id
+        name
+      }
+      game {
+        id
+      }
+      picked {
+        id
+        name
+        city
+      }
+    }
+  }
+`;
+export type MakePickMutationFn = Apollo.MutationFunction<
+  MakePickMutation,
+  MakePickMutationVariables
+>;
+
+/**
+ * __useMakePickMutation__
+ *
+ * To run a mutation, you first call `useMakePickMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMakePickMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [makePickMutation, { data, loading, error }] = useMakePickMutation({
+ *   variables: {
+ *      player: // value for 'player'
+ *      game: // value for 'game'
+ *      team: // value for 'team'
+ *   },
+ * });
+ */
+export function useMakePickMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    MakePickMutation,
+    MakePickMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<MakePickMutation, MakePickMutationVariables>(
+    MakePickDocument,
+    options
+  );
+}
+export type MakePickMutationHookResult = ReturnType<typeof useMakePickMutation>;
+export type MakePickMutationResult = Apollo.MutationResult<MakePickMutation>;
+export type MakePickMutationOptions = Apollo.BaseMutationOptions<
+  MakePickMutation,
+  MakePickMutationVariables
+>;
 export const SignOutDocument = gql`
   mutation signOut {
     endSession

@@ -1,0 +1,24 @@
+query picksByWeekAndPlayer($playerId: ID!, $weekId: ID!) {
+    picks(
+      where: {
+        AND: [
+          { player: { id: { equals: $playerId } } }
+          { game: { week: { id: { equals: $weekId } } } }
+        ]
+      }
+    ) {
+        id
+        player {
+          id
+          name
+        }
+        game {
+          id
+        }
+        picked {
+          id
+          name
+          city
+        }
+    }
+  }

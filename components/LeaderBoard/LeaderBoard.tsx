@@ -53,7 +53,6 @@ function LeaderBoard({ season }) {
         </thead>
         <tbody>
           {sortedPlayers.map((player, idx) => {
-            console.log(player);
             //players query returns only correct picks, so just count length
             const correctPicks = player?.picks?.length;
             return (
