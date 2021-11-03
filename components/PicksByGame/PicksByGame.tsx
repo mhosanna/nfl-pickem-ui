@@ -1,47 +1,13 @@
-import { useState } from "react";
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import styled from "styled-components";
-import useWeekSelect from "../../lib/useWeekSelect";
-import Spacer from "../Spacer";
-import Icon from "../Icon";
-import { spreadToString } from "../../utils/spreadToString";
-import { PLAYERS_QUERY } from "../PicksByPlayer";
-
-const GAMES_QUERY = gql`
-  query GET_GAMES_BY_SEASON_AND_WEEK($season: String!, $weekId: ID!) {
-    games(
-      where: {
-        AND: [
-          { season: { equals: $season } }
-          { week: { id: { equals: $weekId } } }
-        ]
-      }
-    ) {
-      id
-      homeTeam {
-        name
-      }
-      awayTeam {
-        name
-      }
-      winner {
-        id
-      }
-      spread
-      picks {
-        id
-        isCorrect
-        picked {
-          id
-        }
-        player {
-          id
-        }
-      }
-    }
-  }
-`;
+import { useState } from 'react';
+import styled from 'styled-components';
+import useWeekSelect from '../../lib/useWeekSelect';
+import Spacer from '../Spacer';
+import Icon from '../Icon';
+import { spreadToString } from '../../utils/spreadToString';
+import {
+  useGamesBySeasonAndWeekQuery,
+  usePlayersBySeasonAndWeekQuery,
+} from '../../types/generated-queries';
 
 export default function PicksByGame({ season }) {
   const [selectedGame, setSelectedGame] = useState();
@@ -66,14 +32,14 @@ export default function PicksByGame({ season }) {
 }
 
 function GamePicks({ season, selectedWeek, selectedGame, setSelectedGame }) {
-  const { data, error, loading } = useQuery(GAMES_QUERY, {
+  const { data, error, loading } = useGamesBySeasonAndWeekQuery({
     variables: { season, weekId: selectedWeek.id },
   });
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error</p>;
 
-  const { games } = data;
+  const games = data?.games;
 
   return (
     <div>
@@ -89,12 +55,15 @@ function GamePicks({ season, selectedWeek, selectedGame, setSelectedGame }) {
 }
 
 function PlayerList({ season, selectedWeek, selectedGame }) {
-  const { data, error, loading } = useQuery(PLAYERS_QUERY, {
+  const { data, error, loading } = usePlayersBySeasonAndWeekQuery({
     variables: { season, weekId: selectedWeek.id },
   });
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error</p>;
-  const { players } = data;
+  const players = data?.players;
+  if (!players) {
+    return <p>The season hasn't started yet. Check back soon!</p>;
+  }
   const sortedPlayers = [...players];
   sortedPlayers.sort((a, b) =>
     a.name.toUpperCase() < b.name.toUpperCase()
@@ -106,18 +75,18 @@ function PlayerList({ season, selectedWeek, selectedGame }) {
   return (
     <PlayerWrapper>
       {sortedPlayers.map((player) => {
-        const playerPick = player?.picks.find(
+        const playerPick = player?.picks?.find(
           ({ game }) => game.id === selectedGame.id
         );
         const hasWinner = !!(playerPick && selectedGame.winner);
         const wasCorrect = !!playerPick?.isCorrect;
         return (
           <PlayerItem key={player.id}>
-            {wasCorrect && <FloatingIcon name={"Check"} size="16" />}
-            {hasWinner && !wasCorrect && <FloatingIcon name={"X"} size="16" />}
+            {wasCorrect && <FloatingIcon name={'Check'} size="16" />}
+            {hasWinner && !wasCorrect && <FloatingIcon name={'X'} size="16" />}
             <PlayerTile noWinner={!hasWinner} correct={wasCorrect}>
               <span>{player.name}</span>
-              <span>{playerPick?.picked.name}</span>
+              <span>{playerPick?.picked?.name}</span>
             </PlayerTile>
           </PlayerItem>
         );
@@ -166,10 +135,10 @@ const PlayerTile = styled.div`
   font-size: 1.6rem;
   background-color: ${(props) =>
     props.noWinner
-      ? "var(--background)"
+      ? 'var(--background)'
       : props.correct
-      ? "var(--success)"
-      : "var(--warningLight)"};
+      ? 'var(--success)'
+      : 'var(--warningLight)'};
 
   @media ${(props) => props.theme.queries.tabletAndSmaller} {
     justify-content: space-evenly;
@@ -228,18 +197,18 @@ const Game = styled.li`
   font-size: 1.8rem;
   font-weight: 500;
   background-color: ${(props) =>
-    props.isSelected ? "var(--black)" : "initial"};
-  color: ${(props) => (props.isSelected ? "white" : "initial")};
+    props.isSelected ? 'var(--black)' : 'initial'};
+  color: ${(props) => (props.isSelected ? 'white' : 'initial')};
 
   width: 45%;
 
   &:hover {
     background-color: ${(props) =>
-      props.isSelected ? "var(--black)" : "var(--backgroundHover)"};
+      props.isSelected ? 'var(--black)' : 'var(--backgroundHover)'};
   }
   &::after {
-    display: ${(props) => (props.isSelected ? "initial" : "none")};
-    content: ">";
+    display: ${(props) => (props.isSelected ? 'initial' : 'none')};
+    content: '>';
     position: absolute;
     right: -25px;
     top: -5px;

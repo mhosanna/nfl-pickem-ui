@@ -928,6 +928,42 @@ export type WeekWhereUniqueInput = {
   id?: Maybe<Scalars['ID']>;
 };
 
+export type GamesBySeasonAndWeekQueryVariables = Exact<{
+  season: Scalars['String'];
+  weekId: Scalars['ID'];
+}>;
+
+export type GamesBySeasonAndWeekQuery = {
+  __typename?: 'Query';
+  games?:
+    | Array<{
+        __typename?: 'Game';
+        id: string;
+        spread?: number | null | undefined;
+        homeTeam?:
+          | { __typename?: 'Team'; name?: string | null | undefined }
+          | null
+          | undefined;
+        awayTeam?:
+          | { __typename?: 'Team'; name?: string | null | undefined }
+          | null
+          | undefined;
+        winner?: { __typename?: 'Team'; id: string } | null | undefined;
+        picks?:
+          | Array<{
+              __typename?: 'Pick';
+              id: string;
+              isCorrect?: boolean | null | undefined;
+              picked?: { __typename?: 'Team'; id: string } | null | undefined;
+              player?: { __typename?: 'Player'; id: string } | null | undefined;
+            }>
+          | null
+          | undefined;
+      }>
+    | null
+    | undefined;
+};
+
 export type GamesPlayedBySeasonQueryVariables = Exact<{
   season?: Maybe<Scalars['String']>;
 }>;
@@ -1003,6 +1039,42 @@ export type PlayersBySeasonQuery = {
     | undefined;
 };
 
+export type PlayersBySeasonAndWeekQueryVariables = Exact<{
+  season: Scalars['String'];
+  weekId: Scalars['ID'];
+}>;
+
+export type PlayersBySeasonAndWeekQuery = {
+  __typename?: 'Query';
+  players?:
+    | Array<{
+        __typename?: 'Player';
+        id: string;
+        name?: string | null | undefined;
+        picksCount?: number | null | undefined;
+        picks?:
+          | Array<{
+              __typename?: 'Pick';
+              id: string;
+              isCorrect?: boolean | null | undefined;
+              picked?:
+                | {
+                    __typename?: 'Team';
+                    id: string;
+                    city?: string | null | undefined;
+                    name?: string | null | undefined;
+                  }
+                | null
+                | undefined;
+              game?: { __typename?: 'Game'; id: string } | null | undefined;
+            }>
+          | null
+          | undefined;
+      }>
+    | null
+    | undefined;
+};
+
 export type MakePickMutationVariables = Exact<{
   player: Scalars['ID'];
   game: Scalars['ID'];
@@ -1042,6 +1114,97 @@ export type SignOutMutationVariables = Exact<{ [key: string]: never }>;
 
 export type SignOutMutation = { __typename?: 'Mutation'; endSession: boolean };
 
+export const GamesBySeasonAndWeekDocument = gql`
+  query gamesBySeasonAndWeek($season: String!, $weekId: ID!) {
+    games(
+      where: {
+        AND: [
+          { season: { equals: $season } }
+          { week: { id: { equals: $weekId } } }
+        ]
+      }
+    ) {
+      id
+      homeTeam {
+        name
+      }
+      awayTeam {
+        name
+      }
+      winner {
+        id
+      }
+      spread
+      picks {
+        id
+        isCorrect
+        picked {
+          id
+        }
+        player {
+          id
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useGamesBySeasonAndWeekQuery__
+ *
+ * To run a query within a React component, call `useGamesBySeasonAndWeekQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGamesBySeasonAndWeekQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGamesBySeasonAndWeekQuery({
+ *   variables: {
+ *      season: // value for 'season'
+ *      weekId: // value for 'weekId'
+ *   },
+ * });
+ */
+export function useGamesBySeasonAndWeekQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GamesBySeasonAndWeekQuery,
+    GamesBySeasonAndWeekQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GamesBySeasonAndWeekQuery,
+    GamesBySeasonAndWeekQueryVariables
+  >(GamesBySeasonAndWeekDocument, options);
+}
+export function useGamesBySeasonAndWeekLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GamesBySeasonAndWeekQuery,
+    GamesBySeasonAndWeekQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GamesBySeasonAndWeekQuery,
+    GamesBySeasonAndWeekQueryVariables
+  >(GamesBySeasonAndWeekDocument, options);
+}
+export type GamesBySeasonAndWeekQueryHookResult = ReturnType<
+  typeof useGamesBySeasonAndWeekQuery
+>;
+export type GamesBySeasonAndWeekLazyQueryHookResult = ReturnType<
+  typeof useGamesBySeasonAndWeekLazyQuery
+>;
+export type GamesBySeasonAndWeekQueryResult = Apollo.QueryResult<
+  GamesBySeasonAndWeekQuery,
+  GamesBySeasonAndWeekQueryVariables
+>;
+export function refetchGamesBySeasonAndWeekQuery(
+  variables?: GamesBySeasonAndWeekQueryVariables
+) {
+  return { query: GamesBySeasonAndWeekDocument, variables: variables };
+}
 export const GamesPlayedBySeasonDocument = gql`
   query gamesPlayedBySeason($season: String) {
     games(
@@ -1314,6 +1477,93 @@ export function refetchPlayersBySeasonQuery(
   variables?: PlayersBySeasonQueryVariables
 ) {
   return { query: PlayersBySeasonDocument, variables: variables };
+}
+export const PlayersBySeasonAndWeekDocument = gql`
+  query playersBySeasonAndWeek($season: String!, $weekId: ID!) {
+    players(
+      where: { picks: { some: { game: { season: { equals: $season } } } } }
+    ) {
+      id
+      name
+      picksCount(
+        where: {
+          AND: [
+            { game: { week: { id: { equals: $weekId } } } }
+            { isCorrect: { equals: true } }
+          ]
+        }
+      )
+      picks(where: { game: { week: { id: { equals: $weekId } } } }) {
+        id
+        isCorrect
+        picked {
+          id
+          city
+          name
+        }
+        game {
+          id
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __usePlayersBySeasonAndWeekQuery__
+ *
+ * To run a query within a React component, call `usePlayersBySeasonAndWeekQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePlayersBySeasonAndWeekQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePlayersBySeasonAndWeekQuery({
+ *   variables: {
+ *      season: // value for 'season'
+ *      weekId: // value for 'weekId'
+ *   },
+ * });
+ */
+export function usePlayersBySeasonAndWeekQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    PlayersBySeasonAndWeekQuery,
+    PlayersBySeasonAndWeekQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    PlayersBySeasonAndWeekQuery,
+    PlayersBySeasonAndWeekQueryVariables
+  >(PlayersBySeasonAndWeekDocument, options);
+}
+export function usePlayersBySeasonAndWeekLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    PlayersBySeasonAndWeekQuery,
+    PlayersBySeasonAndWeekQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    PlayersBySeasonAndWeekQuery,
+    PlayersBySeasonAndWeekQueryVariables
+  >(PlayersBySeasonAndWeekDocument, options);
+}
+export type PlayersBySeasonAndWeekQueryHookResult = ReturnType<
+  typeof usePlayersBySeasonAndWeekQuery
+>;
+export type PlayersBySeasonAndWeekLazyQueryHookResult = ReturnType<
+  typeof usePlayersBySeasonAndWeekLazyQuery
+>;
+export type PlayersBySeasonAndWeekQueryResult = Apollo.QueryResult<
+  PlayersBySeasonAndWeekQuery,
+  PlayersBySeasonAndWeekQueryVariables
+>;
+export function refetchPlayersBySeasonAndWeekQuery(
+  variables?: PlayersBySeasonAndWeekQueryVariables
+) {
+  return { query: PlayersBySeasonAndWeekDocument, variables: variables };
 }
 export const MakePickDocument = gql`
   mutation makePick($player: ID!, $game: ID!, $team: ID!) {
