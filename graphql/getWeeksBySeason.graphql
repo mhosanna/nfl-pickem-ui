@@ -1,0 +1,28 @@
+query getWeeksBySeason($season: String) {
+    weeks(where: { season: { equals: $season } }, orderBy: { id: desc }) {
+      id
+      label
+      games {
+        id
+        homeTeam {
+      id
+      name
+      city
+      abbreviation
+    }
+    awayTeam {
+      id
+      name
+      city
+      abbreviation
+    }
+    week {
+      id
+    }
+    spread
+    winner {
+      id
+    }
+      }
+    }
+  }

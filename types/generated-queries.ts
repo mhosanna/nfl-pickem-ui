@@ -1121,6 +1121,52 @@ export type PlayersBySeasonAndWeekQuery = {
     | undefined;
 };
 
+export type GetWeeksBySeasonQueryVariables = Exact<{
+  season?: Maybe<Scalars['String']>;
+}>;
+
+export type GetWeeksBySeasonQuery = {
+  __typename?: 'Query';
+  weeks?:
+    | Array<{
+        __typename?: 'Week';
+        id: string;
+        label?: string | null | undefined;
+        games?:
+          | Array<{
+              __typename?: 'Game';
+              id: string;
+              spread?: number | null | undefined;
+              homeTeam?:
+                | {
+                    __typename?: 'Team';
+                    id: string;
+                    name?: string | null | undefined;
+                    city?: string | null | undefined;
+                    abbreviation?: string | null | undefined;
+                  }
+                | null
+                | undefined;
+              awayTeam?:
+                | {
+                    __typename?: 'Team';
+                    id: string;
+                    name?: string | null | undefined;
+                    city?: string | null | undefined;
+                    abbreviation?: string | null | undefined;
+                  }
+                | null
+                | undefined;
+              week?: { __typename?: 'Week'; id: string } | null | undefined;
+              winner?: { __typename?: 'Team'; id: string } | null | undefined;
+            }>
+          | null
+          | undefined;
+      }>
+    | null
+    | undefined;
+};
+
 export type MakePickMutationVariables = Exact<{
   player: Scalars['ID'];
   game: Scalars['ID'];
@@ -1824,6 +1870,92 @@ export function refetchPlayersBySeasonAndWeekQuery(
   variables?: PlayersBySeasonAndWeekQueryVariables
 ) {
   return { query: PlayersBySeasonAndWeekDocument, variables: variables };
+}
+export const GetWeeksBySeasonDocument = gql`
+  query getWeeksBySeason($season: String) {
+    weeks(where: { season: { equals: $season } }, orderBy: { id: desc }) {
+      id
+      label
+      games {
+        id
+        homeTeam {
+          id
+          name
+          city
+          abbreviation
+        }
+        awayTeam {
+          id
+          name
+          city
+          abbreviation
+        }
+        week {
+          id
+        }
+        spread
+        winner {
+          id
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetWeeksBySeasonQuery__
+ *
+ * To run a query within a React component, call `useGetWeeksBySeasonQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWeeksBySeasonQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWeeksBySeasonQuery({
+ *   variables: {
+ *      season: // value for 'season'
+ *   },
+ * });
+ */
+export function useGetWeeksBySeasonQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetWeeksBySeasonQuery,
+    GetWeeksBySeasonQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetWeeksBySeasonQuery, GetWeeksBySeasonQueryVariables>(
+    GetWeeksBySeasonDocument,
+    options
+  );
+}
+export function useGetWeeksBySeasonLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetWeeksBySeasonQuery,
+    GetWeeksBySeasonQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetWeeksBySeasonQuery,
+    GetWeeksBySeasonQueryVariables
+  >(GetWeeksBySeasonDocument, options);
+}
+export type GetWeeksBySeasonQueryHookResult = ReturnType<
+  typeof useGetWeeksBySeasonQuery
+>;
+export type GetWeeksBySeasonLazyQueryHookResult = ReturnType<
+  typeof useGetWeeksBySeasonLazyQuery
+>;
+export type GetWeeksBySeasonQueryResult = Apollo.QueryResult<
+  GetWeeksBySeasonQuery,
+  GetWeeksBySeasonQueryVariables
+>;
+export function refetchGetWeeksBySeasonQuery(
+  variables?: GetWeeksBySeasonQueryVariables
+) {
+  return { query: GetWeeksBySeasonDocument, variables: variables };
 }
 export const MakePickDocument = gql`
   mutation makePick($player: ID!, $game: ID!, $team: ID!) {
