@@ -1,59 +1,40 @@
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import styled from "styled-components";
-
-const PLAYERS_QUERY = gql`
-  query GET_PLAYERS_BY_SEASON($season: String!) {
-    players(
-      where: { picks: { some: { game: { season: { equals: $season } } } } }
-    ) {
-      id
-      name
-      picks(where: { isCorrect: { equals: true } }) {
-        id
-      }
-    }
-  }
-`;
-
-const GAMES_PLAYED_QUERY = gql`
-  query GET_ALL_PLAYED_GAMES_BY_SEASON($season: String) {
-    games(
-      where: {
-        AND: [{ season: { equals: $season } }, { NOT: [{ winner: null }] }]
-      }
-    ) {
-      id
-    }
-  }
-`;
+import styled from 'styled-components';
+import {
+  usePlayersBySeasonQuery,
+  useGamesPlayedBySeasonQuery,
+} from '../../types/generated-queries';
 
 function LeaderBoard({ season }) {
+  //this returns a players' correct picks only!
   const {
     data: playersInfo,
     error: playersQueryError,
     loading: playersQueryLoading,
-  } = useQuery(PLAYERS_QUERY, {
+  } = usePlayersBySeasonQuery({
     variables: { season },
   });
   const {
     data: gamesInfo,
     error: gamesQueryError,
     loading: gamesQueryLoading,
-  } = useQuery(GAMES_PLAYED_QUERY, {
+  } = useGamesPlayedBySeasonQuery({
     variables: { season },
   });
 
   if (playersQueryLoading || gamesQueryLoading) return <p>Loading...</p>;
   if (playersQueryError || gamesQueryError) return <p>Error</p>;
-  const { players } = playersInfo;
+
+  const players = playersInfo?.players;
+  if (!players) {
+    return <p>The season hasn't started yet. Check back soon!</p>;
+  }
   const sortedPlayers = [...players];
 
   //we are only returning picks that were correct, so compare length of array
   sortedPlayers.sort((a, b) => b.picks.length - a.picks.length);
 
-  const { games } = gamesInfo;
-  const totalPlayedGames = games.length;
+  const games = gamesInfo?.games;
+  const totalPlayedGames = games?.length;
 
   if (totalPlayedGames === 0) {
     return <p>The season hasn't started yet. Check back soon!</p>;
@@ -72,7 +53,9 @@ function LeaderBoard({ season }) {
         </thead>
         <tbody>
           {sortedPlayers.map((player, idx) => {
-            const correctPicks = player.picks.length;
+            console.log(player);
+            //players query returns only correct picks, so just count length
+            const correctPicks = player?.picks?.length;
             return (
               <tr key={player.id}>
                 <td>{idx + 1}</td>
@@ -88,7 +71,7 @@ function LeaderBoard({ season }) {
   );
 }
 
-export { LeaderBoard, PLAYERS_QUERY, GAMES_PLAYED_QUERY };
+export { LeaderBoard };
 
 const TableStyles = styled.table`
   border-collapse: collapse;

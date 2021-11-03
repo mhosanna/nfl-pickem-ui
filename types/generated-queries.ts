@@ -928,6 +928,15 @@ export type WeekWhereUniqueInput = {
   id?: Maybe<Scalars['ID']>;
 };
 
+export type GamesPlayedBySeasonQueryVariables = Exact<{
+  season?: Maybe<Scalars['String']>;
+}>;
+
+export type GamesPlayedBySeasonQuery = {
+  __typename?: 'Query';
+  games?: Array<{ __typename?: 'Game'; id: string }> | null | undefined;
+};
+
 export type PlayerQueryVariables = Exact<{ [key: string]: never }>;
 
 export type PlayerQuery = {
@@ -943,10 +952,94 @@ export type PlayerQuery = {
     | undefined;
 };
 
+export type PlayersBySeasonQueryVariables = Exact<{
+  season: Scalars['String'];
+}>;
+
+export type PlayersBySeasonQuery = {
+  __typename?: 'Query';
+  players?:
+    | Array<{
+        __typename?: 'Player';
+        id: string;
+        name?: string | null | undefined;
+        picks?: Array<{ __typename?: 'Pick'; id: string }> | null | undefined;
+      }>
+    | null
+    | undefined;
+};
+
 export type SignOutMutationVariables = Exact<{ [key: string]: never }>;
 
 export type SignOutMutation = { __typename?: 'Mutation'; endSession: boolean };
 
+export const GamesPlayedBySeasonDocument = gql`
+  query gamesPlayedBySeason($season: String) {
+    games(
+      where: {
+        AND: [{ season: { equals: $season } }, { NOT: [{ winner: null }] }]
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+/**
+ * __useGamesPlayedBySeasonQuery__
+ *
+ * To run a query within a React component, call `useGamesPlayedBySeasonQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGamesPlayedBySeasonQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGamesPlayedBySeasonQuery({
+ *   variables: {
+ *      season: // value for 'season'
+ *   },
+ * });
+ */
+export function useGamesPlayedBySeasonQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GamesPlayedBySeasonQuery,
+    GamesPlayedBySeasonQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GamesPlayedBySeasonQuery,
+    GamesPlayedBySeasonQueryVariables
+  >(GamesPlayedBySeasonDocument, options);
+}
+export function useGamesPlayedBySeasonLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GamesPlayedBySeasonQuery,
+    GamesPlayedBySeasonQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GamesPlayedBySeasonQuery,
+    GamesPlayedBySeasonQueryVariables
+  >(GamesPlayedBySeasonDocument, options);
+}
+export type GamesPlayedBySeasonQueryHookResult = ReturnType<
+  typeof useGamesPlayedBySeasonQuery
+>;
+export type GamesPlayedBySeasonLazyQueryHookResult = ReturnType<
+  typeof useGamesPlayedBySeasonLazyQuery
+>;
+export type GamesPlayedBySeasonQueryResult = Apollo.QueryResult<
+  GamesPlayedBySeasonQuery,
+  GamesPlayedBySeasonQueryVariables
+>;
+export function refetchGamesPlayedBySeasonQuery(
+  variables?: GamesPlayedBySeasonQueryVariables
+) {
+  return { query: GamesPlayedBySeasonDocument, variables: variables };
+}
 export const PlayerDocument = gql`
   query Player {
     authenticatedItem {
@@ -1000,6 +1093,75 @@ export type PlayerQueryResult = Apollo.QueryResult<
 >;
 export function refetchPlayerQuery(variables?: PlayerQueryVariables) {
   return { query: PlayerDocument, variables: variables };
+}
+export const PlayersBySeasonDocument = gql`
+  query playersBySeason($season: String!) {
+    players(
+      where: { picks: { some: { game: { season: { equals: $season } } } } }
+    ) {
+      id
+      name
+      picks(where: { isCorrect: { equals: true } }) {
+        id
+      }
+    }
+  }
+`;
+
+/**
+ * __usePlayersBySeasonQuery__
+ *
+ * To run a query within a React component, call `usePlayersBySeasonQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePlayersBySeasonQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePlayersBySeasonQuery({
+ *   variables: {
+ *      season: // value for 'season'
+ *   },
+ * });
+ */
+export function usePlayersBySeasonQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    PlayersBySeasonQuery,
+    PlayersBySeasonQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<PlayersBySeasonQuery, PlayersBySeasonQueryVariables>(
+    PlayersBySeasonDocument,
+    options
+  );
+}
+export function usePlayersBySeasonLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    PlayersBySeasonQuery,
+    PlayersBySeasonQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    PlayersBySeasonQuery,
+    PlayersBySeasonQueryVariables
+  >(PlayersBySeasonDocument, options);
+}
+export type PlayersBySeasonQueryHookResult = ReturnType<
+  typeof usePlayersBySeasonQuery
+>;
+export type PlayersBySeasonLazyQueryHookResult = ReturnType<
+  typeof usePlayersBySeasonLazyQuery
+>;
+export type PlayersBySeasonQueryResult = Apollo.QueryResult<
+  PlayersBySeasonQuery,
+  PlayersBySeasonQueryVariables
+>;
+export function refetchPlayersBySeasonQuery(
+  variables?: PlayersBySeasonQueryVariables
+) {
+  return { query: PlayersBySeasonDocument, variables: variables };
 }
 export const SignOutDocument = gql`
   mutation signOut {
