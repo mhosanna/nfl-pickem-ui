@@ -1,0 +1,11 @@
+mutation selectGameWinner($gameId: ID!, $winnerId: ID!) {
+    updateGame(
+      where: { id: $gameId }
+      data: { winner: { connect: { id: $winnerId } } }
+    ) {
+      id
+      winner {
+        id
+      }
+    }
+  }

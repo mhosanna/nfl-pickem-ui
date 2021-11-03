@@ -1058,6 +1058,45 @@ export type GamesBySeasonAndWeekQuery = {
     | undefined;
 };
 
+export type GetGamesByWeekSlugQueryVariables = Exact<{
+  slug?: Maybe<Scalars['String']>;
+  season?: Maybe<Scalars['String']>;
+}>;
+
+export type GetGamesByWeekSlugQuery = {
+  __typename?: 'Query';
+  games?:
+    | Array<{
+        __typename?: 'Game';
+        id: string;
+        slug?: string | null | undefined;
+        spread?: number | null | undefined;
+        homeTeam?:
+          | {
+              __typename?: 'Team';
+              id: string;
+              name?: string | null | undefined;
+              city?: string | null | undefined;
+              abbreviation?: string | null | undefined;
+            }
+          | null
+          | undefined;
+        awayTeam?:
+          | {
+              __typename?: 'Team';
+              id: string;
+              name?: string | null | undefined;
+              city?: string | null | undefined;
+              abbreviation?: string | null | undefined;
+            }
+          | null
+          | undefined;
+        winner?: { __typename?: 'Team'; id: string } | null | undefined;
+      }>
+    | null
+    | undefined;
+};
+
 export type GamesPlayedBySeasonQueryVariables = Exact<{
   season?: Maybe<Scalars['String']>;
 }>;
@@ -1263,6 +1302,39 @@ export type MakePickMutation = {
             }
           | null
           | undefined;
+      }
+    | null
+    | undefined;
+};
+
+export type RequestResetMutationVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+export type RequestResetMutation = {
+  __typename?: 'Mutation';
+  sendPlayerPasswordResetLink?:
+    | {
+        __typename?: 'SendPlayerPasswordResetLinkResult';
+        code: PasswordResetRequestErrorCode;
+        message: string;
+      }
+    | null
+    | undefined;
+};
+
+export type SelectGameWinnerMutationVariables = Exact<{
+  gameId: Scalars['ID'];
+  winnerId: Scalars['ID'];
+}>;
+
+export type SelectGameWinnerMutation = {
+  __typename?: 'Mutation';
+  updateGame?:
+    | {
+        __typename?: 'Game';
+        id: string;
+        winner?: { __typename?: 'Team'; id: string } | null | undefined;
       }
     | null
     | undefined;
@@ -1664,6 +1736,94 @@ export function refetchGamesBySeasonAndWeekQuery(
   variables?: GamesBySeasonAndWeekQueryVariables
 ) {
   return { query: GamesBySeasonAndWeekDocument, variables: variables };
+}
+export const GetGamesByWeekSlugDocument = gql`
+  query getGamesByWeekSlug($slug: String, $season: String) {
+    games(
+      where: {
+        AND: [
+          { season: { equals: $season } }
+          { week: { slug: { equals: $slug } } }
+        ]
+      }
+    ) {
+      id
+      slug
+      homeTeam {
+        id
+        name
+        city
+        abbreviation
+      }
+      awayTeam {
+        id
+        name
+        city
+        abbreviation
+      }
+      spread
+      winner {
+        id
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetGamesByWeekSlugQuery__
+ *
+ * To run a query within a React component, call `useGetGamesByWeekSlugQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGamesByWeekSlugQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGamesByWeekSlugQuery({
+ *   variables: {
+ *      slug: // value for 'slug'
+ *      season: // value for 'season'
+ *   },
+ * });
+ */
+export function useGetGamesByWeekSlugQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetGamesByWeekSlugQuery,
+    GetGamesByWeekSlugQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetGamesByWeekSlugQuery,
+    GetGamesByWeekSlugQueryVariables
+  >(GetGamesByWeekSlugDocument, options);
+}
+export function useGetGamesByWeekSlugLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetGamesByWeekSlugQuery,
+    GetGamesByWeekSlugQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetGamesByWeekSlugQuery,
+    GetGamesByWeekSlugQueryVariables
+  >(GetGamesByWeekSlugDocument, options);
+}
+export type GetGamesByWeekSlugQueryHookResult = ReturnType<
+  typeof useGetGamesByWeekSlugQuery
+>;
+export type GetGamesByWeekSlugLazyQueryHookResult = ReturnType<
+  typeof useGetGamesByWeekSlugLazyQuery
+>;
+export type GetGamesByWeekSlugQueryResult = Apollo.QueryResult<
+  GetGamesByWeekSlugQuery,
+  GetGamesByWeekSlugQueryVariables
+>;
+export function refetchGetGamesByWeekSlugQuery(
+  variables?: GetGamesByWeekSlugQueryVariables
+) {
+  return { query: GetGamesByWeekSlugDocument, variables: variables };
 }
 export const GamesPlayedBySeasonDocument = gql`
   query gamesPlayedBySeason($season: String) {
@@ -2241,6 +2401,114 @@ export type MakePickMutationResult = Apollo.MutationResult<MakePickMutation>;
 export type MakePickMutationOptions = Apollo.BaseMutationOptions<
   MakePickMutation,
   MakePickMutationVariables
+>;
+export const RequestResetDocument = gql`
+  mutation requestReset($email: String!) {
+    sendPlayerPasswordResetLink(email: $email) {
+      code
+      message
+    }
+  }
+`;
+export type RequestResetMutationFn = Apollo.MutationFunction<
+  RequestResetMutation,
+  RequestResetMutationVariables
+>;
+
+/**
+ * __useRequestResetMutation__
+ *
+ * To run a mutation, you first call `useRequestResetMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRequestResetMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [requestResetMutation, { data, loading, error }] = useRequestResetMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useRequestResetMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RequestResetMutation,
+    RequestResetMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    RequestResetMutation,
+    RequestResetMutationVariables
+  >(RequestResetDocument, options);
+}
+export type RequestResetMutationHookResult = ReturnType<
+  typeof useRequestResetMutation
+>;
+export type RequestResetMutationResult =
+  Apollo.MutationResult<RequestResetMutation>;
+export type RequestResetMutationOptions = Apollo.BaseMutationOptions<
+  RequestResetMutation,
+  RequestResetMutationVariables
+>;
+export const SelectGameWinnerDocument = gql`
+  mutation selectGameWinner($gameId: ID!, $winnerId: ID!) {
+    updateGame(
+      where: { id: $gameId }
+      data: { winner: { connect: { id: $winnerId } } }
+    ) {
+      id
+      winner {
+        id
+      }
+    }
+  }
+`;
+export type SelectGameWinnerMutationFn = Apollo.MutationFunction<
+  SelectGameWinnerMutation,
+  SelectGameWinnerMutationVariables
+>;
+
+/**
+ * __useSelectGameWinnerMutation__
+ *
+ * To run a mutation, you first call `useSelectGameWinnerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSelectGameWinnerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [selectGameWinnerMutation, { data, loading, error }] = useSelectGameWinnerMutation({
+ *   variables: {
+ *      gameId: // value for 'gameId'
+ *      winnerId: // value for 'winnerId'
+ *   },
+ * });
+ */
+export function useSelectGameWinnerMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SelectGameWinnerMutation,
+    SelectGameWinnerMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    SelectGameWinnerMutation,
+    SelectGameWinnerMutationVariables
+  >(SelectGameWinnerDocument, options);
+}
+export type SelectGameWinnerMutationHookResult = ReturnType<
+  typeof useSelectGameWinnerMutation
+>;
+export type SelectGameWinnerMutationResult =
+  Apollo.MutationResult<SelectGameWinnerMutation>;
+export type SelectGameWinnerMutationOptions = Apollo.BaseMutationOptions<
+  SelectGameWinnerMutation,
+  SelectGameWinnerMutationVariables
 >;
 export const SignOutDocument = gql`
   mutation signOut {

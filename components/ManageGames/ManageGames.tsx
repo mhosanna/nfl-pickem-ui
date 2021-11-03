@@ -9,8 +9,10 @@ import { string_to_slug } from '../../utils/slugify';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import TeamsComboBox from '../TeamsComboBox';
 import ErrorMessage from '../ErrorMessage';
-import { GET_GAMES_BY_WEEK_SLUG } from '../GameTiles';
-import { useCreateGameMutation } from '../../types/generated-queries';
+import {
+  useCreateGameMutation,
+  GetGamesByWeekSlugDocument,
+} from '../../types/generated-queries';
 
 type Team = {
   __typeName: string;
@@ -30,7 +32,7 @@ export default function ManageGames({ weekId, season }) {
   const [formError, setFormError] = React.useState(null);
 
   const [createGame] = useCreateGameMutation({
-    refetchQueries: [{ query: GET_GAMES_BY_WEEK_SLUG }],
+    refetchQueries: [{ query: GetGamesByWeekSlugDocument }],
     update(cache, { data: { createGame } }) {
       cache.modify({
         fields: {

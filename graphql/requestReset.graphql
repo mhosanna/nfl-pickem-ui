@@ -1,0 +1,6 @@
+mutation requestReset($email: String!) {
+    sendPlayerPasswordResetLink(email: $email) {
+      code
+      message
+    }
+  }
