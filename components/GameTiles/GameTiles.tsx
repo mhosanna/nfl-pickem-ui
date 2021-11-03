@@ -1,10 +1,10 @@
-import { useQuery, useMutation } from "@apollo/client";
-import { useRouter } from "next/router";
-import gql from "graphql-tag";
-import styled from "styled-components";
-import { season } from "../../config";
-import Icon from "../Icon";
-import { spreadToString } from "../../utils/spreadToString";
+import { useQuery, useMutation } from '@apollo/client';
+import { useRouter } from 'next/router';
+import gql from 'graphql-tag';
+import styled from 'styled-components';
+import { season } from '../../config';
+import Icon from '../Icon';
+import { spreadToString } from '../../utils/spreadToString';
 
 const GET_GAMES_BY_WEEK_SLUG = gql`
   query GET_GAMES_BY_WEEK_SLUG($slug: String, $season: String) {
@@ -84,7 +84,7 @@ export function GameTiles() {
           <GameTile key={game.id}>
             <TeamBlock
               id={game.homeTeam.id}
-              field={"home"}
+              field={'home'}
               abbreviation={game.homeTeam.abbreviation}
               isWinner={isWinner(game.homeTeam.id)}
               chooseWinner={chooseWinner(game.id)}
@@ -94,7 +94,7 @@ export function GameTiles() {
             </Spread>
             <TeamBlock
               id={game.awayTeam.id}
-              field={"away"}
+              field={'away'}
               abbreviation={game.awayTeam.abbreviation}
               isWinner={isWinner(game.awayTeam.id)}
               chooseWinner={chooseWinner(game.id)}
@@ -102,7 +102,7 @@ export function GameTiles() {
             <EditButton
               onClick={() => {
                 router.push({
-                  pathname: "/manage-games/[season]/[week]/[game]",
+                  pathname: '/manage-games/[season]/[week]/[game]',
                   query: {
                     season,
                     week,
@@ -129,10 +129,10 @@ function TeamBlock({
 }) {
   let Component;
   let WinFlag;
-  if (field === "home") {
+  if (field === 'home') {
     Component = HomeTeam;
     WinFlag = HomeFlag;
-  } else if (field === "away") {
+  } else if (field === 'away') {
     Component = BaseTeam;
     WinFlag = AwayFlag;
   } else {
@@ -143,7 +143,7 @@ function TeamBlock({
       <Component isWinner={isWinner} onClick={() => chooseWinner(id)}>
         {isWinner && (
           <WinFlag>
-            <Icon name={"Star"} size={10} /> Winner!
+            <Icon name={'Star'} size={10} /> Winner!
           </WinFlag>
         )}
         <span>{abbreviation}</span>
@@ -183,13 +183,13 @@ const BaseTeam = styled.button`
   line-height: 80px;
   border: none;
   background-color: ${(props) =>
-    props.isWinner ? "var(--secondary)" : "inherit"};
+    props.isWinner ? 'var(--secondary)' : 'inherit'};
 `;
 
 const HomeTeam = styled(BaseTeam)`
   border-right: 1px solid var(--black);
   &:before {
-    content: "@ ";
+    content: '@ ';
   }
 `;
 

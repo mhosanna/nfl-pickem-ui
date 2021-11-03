@@ -1,12 +1,12 @@
-import { ReactNode } from "react";
-import type { AppProps, AppLayoutProps } from "next/app";
-import { ApolloClient, ApolloProvider } from "@apollo/client";
-import Page from "../components/PageShell";
-import GlobalStyles from "../components/GlobalStyles/GlobalStyles";
-import { SeasonProvider } from "../lib/seasonContext";
-import { ThemeProvider } from "styled-components";
-import { myTheme } from "../constants";
-import withData from "../lib/withData";
+import { ReactNode } from 'react';
+import type { AppProps, AppLayoutProps } from 'next/app';
+import { ApolloClient, ApolloProvider } from '@apollo/client';
+import Page from '../components/PageShell';
+import GlobalStyles from '../components/GlobalStyles/GlobalStyles';
+import { SeasonProvider } from '../lib/seasonContext';
+import { ThemeProvider } from 'styled-components';
+import { myTheme } from '../constants';
+import withData from '../lib/withData';
 
 type ApolloProps = {
   apollo: ApolloClient<any>;

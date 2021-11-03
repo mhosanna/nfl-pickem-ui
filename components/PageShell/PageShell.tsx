@@ -1,11 +1,11 @@
-import styled from "styled-components";
-import Navigation from "../Navigation";
+import styled from 'styled-components';
+import Navigation from '../Navigation';
 
 const AppWrapper = styled.div`
   --menu-width-desktop: 300px;
   --menu-width-tablet: 250px;
   display: grid;
-  grid-template-areas: "menu content";
+  grid-template-areas: 'menu content';
   grid-template-columns: var(--menu-width-desktop) 1fr;
   padding: 0px;
   max-width: 100%;
@@ -17,8 +17,8 @@ const AppWrapper = styled.div`
 
   @media ${(props) => props.theme.queries.phoneAndSmaller} {
     grid-template-areas:
-      "menu"
-      "content";
+      'menu'
+      'content';
     grid-template-rows: 75px 1fr;
     grid-template-columns: 1fr;
   }

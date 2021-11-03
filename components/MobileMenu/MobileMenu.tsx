@@ -1,15 +1,15 @@
-import styled from "styled-components";
-import { DialogOverlay, DialogContent } from "@reach/dialog";
-import { usePlayer } from "../../lib/usePlayer";
-import Icon from "../Icon";
-import NavLink from "../Navigation-Link/NavigationLink";
-import { season } from "../../config";
-import SignOut from "../SignOut";
+import styled from 'styled-components';
+import { DialogOverlay, DialogContent } from '@reach/dialog';
+import { usePlayer } from '../../lib/usePlayer';
+import Icon from '../Icon';
+import NavLink from '../Navigation-Link/NavigationLink';
+import { season } from '../../config';
+import SignOut from '../SignOut';
 
 export default function MobileMenu({ isOpen, onDismiss, title }) {
   const player = usePlayer();
   return (
-    <MobileModal isOpen={isOpen} onDismiss={onDismiss} title={""}>
+    <MobileModal isOpen={isOpen} onDismiss={onDismiss} title={''}>
       <Content aria-label={title}>
         <CloseButton onClick={onDismiss}>
           <Icon name="X" />
@@ -31,7 +31,7 @@ export default function MobileMenu({ isOpen, onDismiss, title }) {
               />
               <NavLink
                 linkName="Picks & Results"
-                href={{ pathname: "/game-results", query: { by: "player" } }}
+                href={{ pathname: '/game-results', query: { by: 'player' } }}
                 handleClick={onDismiss}
                 icon="Star"
               />

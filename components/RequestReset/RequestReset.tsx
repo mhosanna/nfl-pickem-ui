@@ -1,10 +1,10 @@
-import gql from "graphql-tag";
-import styled from "styled-components";
-import { useMutation } from "@apollo/client";
-import { useForm } from "react-hook-form";
-import ErrorMessage from "../ErrorMessage";
-import Spacer from "../Spacer";
-import Icon from "../Icon";
+import gql from 'graphql-tag';
+import styled from 'styled-components';
+import { useMutation } from '@apollo/client';
+import { useForm } from 'react-hook-form';
+import ErrorMessage from '../ErrorMessage';
+import Spacer from '../Spacer';
+import Icon from '../Icon';
 
 const REQUEST_RESET_MUTATION = gql`
   mutation REQUEST_RESET_MUTATION($email: String!) {
@@ -40,7 +40,7 @@ export default function RequestReset() {
         <InputWrapper>
           <Label htmlFor="email">Email</Label>
           <Input
-            {...register("email", { required: true })}
+            {...register('email', { required: true })}
             type="email"
             name="email"
             placeholder="Your Email Address"
@@ -56,7 +56,7 @@ export default function RequestReset() {
           <>
             <Spacer size={24} />
             <Tile>
-              <Icon name="Check" size={15} color={"var(--gray700)"} />
+              <Icon name="Check" size={15} color={'var(--gray700)'} />
               <span> Success! Check your email for a link!</span>
             </Tile>
           </>

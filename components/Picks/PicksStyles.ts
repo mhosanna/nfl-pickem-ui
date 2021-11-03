@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const GameListWrapper = styled.div`
   display: flex;
@@ -39,7 +39,7 @@ const Spread = styled.div`
   justify-content: center;
   align-items: center;
   &:after {
-    content: "${(props) => props.spread}";
+    content: '${(props) => props.spread}';
     font-size: 2rem;
     font-weight: 700;
   }

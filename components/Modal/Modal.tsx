@@ -1,6 +1,6 @@
-import { DialogOverlay, DialogContent } from "@reach/dialog";
-import styled from "styled-components";
-import Icon from "../Icon";
+import { DialogOverlay, DialogContent } from '@reach/dialog';
+import styled from 'styled-components';
+import Icon from '../Icon';
 
 const MOBILE_BREAKPOINT = 550;
 

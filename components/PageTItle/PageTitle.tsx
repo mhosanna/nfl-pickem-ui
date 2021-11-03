@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 // import { NavLink } from "../../pages/game-results";
 
 export default function PageTitle({ children, size = 3.2, isActive = true }) {
@@ -38,7 +38,7 @@ const StyledHeading = styled.h2`
 `;
 
 const Underline = styled.div`
-  display: ${(props) => (props.isActive ? "inline" : "none")};
+  display: ${(props) => (props.isActive ? 'inline' : 'none')};
   width: 140px;
   height: 4px;
   background-color: var(--primary);

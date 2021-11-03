@@ -1,1 +1,1 @@
-export { default } from "./PicksByGame";
+export { default } from './PicksByGame';

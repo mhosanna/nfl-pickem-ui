@@ -3,12 +3,12 @@ import {
   ApolloLink,
   InMemoryCache,
   NormalizedCacheObject,
-} from "@apollo/client";
-import { onError } from "@apollo/client/link/error";
-import { createHttpLink } from "@apollo/client/link/http";
-import { getDataFromTree } from "@apollo/client/react/ssr";
-import { withApollo, InitApolloOptions } from "next-with-apollo";
-import { endpoint, prodEndpoint } from "../config";
+} from '@apollo/client';
+import { onError } from '@apollo/client/link/error';
+import { createHttpLink } from '@apollo/client/link/http';
+import { getDataFromTree } from '@apollo/client/react/ssr';
+import { withApollo, InitApolloOptions } from 'next-with-apollo';
+import { endpoint, prodEndpoint } from '../config';
 
 function createClient({
   headers,
@@ -19,14 +19,14 @@ function createClient({
       ...init,
       headers: {
         ...init.headers,
-        "Access-Control-Allow-Origin": "*",
+        'Access-Control-Allow-Origin': '*',
         // eslint-disable-next-line prettier/prettier
         Cookie: headers?.cookie ?? "",
       },
     }).then((response) => response);
   };
   return new ApolloClient({
-    ssrMode: typeof window === "undefined",
+    ssrMode: typeof window === 'undefined',
     link: ApolloLink.from([
       onError(({ graphQLErrors, networkError }) => {
         if (graphQLErrors)
@@ -41,11 +41,11 @@ function createClient({
           );
       }),
       createHttpLink({
-        uri: process.env.NODE_ENV === "development" ? endpoint : prodEndpoint,
+        uri: process.env.NODE_ENV === 'development' ? endpoint : prodEndpoint,
         fetchOptions: {
-          mode: "cors",
+          mode: 'cors',
         },
-        credentials: "include",
+        credentials: 'include',
         fetch: enhancedFetch,
       }),
     ]),

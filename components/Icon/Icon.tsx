@@ -1,5 +1,5 @@
-import React from "react";
-import * as icons from "react-feather";
+import React from 'react';
+import * as icons from 'react-feather';
 
 export type IconName = keyof typeof icons;
 

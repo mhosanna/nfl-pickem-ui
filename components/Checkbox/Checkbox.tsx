@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import Icon from "../Icon";
+import styled from 'styled-components';
+import Icon from '../Icon';
 
 const CheckboxContainer = styled.div`
   /* display: inline-block;
@@ -8,7 +8,7 @@ const CheckboxContainer = styled.div`
 
 // Hide checkbox visually but remain accessible to screen readers.
 // Source: https://polished.js.org/docs/#hidevisually
-const HiddenCheckbox = styled.input.attrs({ type: "checkbox" })`
+const HiddenCheckbox = styled.input.attrs({ type: 'checkbox' })`
   border: 0;
   clip: rect(0 0 0 0);
   clippath: inset(50%);
@@ -25,13 +25,13 @@ const StyledCheckbox = styled.div`
   width: 16px;
   height: 16px;
   border: ${(props) =>
-    props.disabled ? "2px solid var(--grey)" : "2px solid var(--black)"};
+    props.disabled ? '2px solid var(--grey)' : '2px solid var(--black)'};
   background: ${(props) =>
     props.checked && props.disabled
       ? `var(--grey)`
       : props.checked
       ? `var(--black)`
-      : "white"};
+      : 'white'};
   transition: all 150ms;
 
   ${HiddenCheckbox}:focus + & {
@@ -47,9 +47,9 @@ const Checkbox = ({ checked, ...props }) => {
         <Icon
           name="Check"
           size={17}
-          visibility={checked ? "visible" : "hidden"}
-          color={"white"}
-          style={{ display: "block", margin: "auto" }}
+          visibility={checked ? 'visible' : 'hidden'}
+          color={'white'}
+          style={{ display: 'block', margin: 'auto' }}
         />
       </StyledCheckbox>
     </CheckboxContainer>

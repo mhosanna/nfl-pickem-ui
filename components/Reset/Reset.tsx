@@ -1,10 +1,10 @@
-import gql from "graphql-tag";
-import styled from "styled-components";
-import { useMutation } from "@apollo/client";
-import { useForm } from "react-hook-form";
-import ErrorMessage from "../ErrorMessage";
-import Spacer from "../Spacer";
-import Tile from "../Tile";
+import gql from 'graphql-tag';
+import styled from 'styled-components';
+import { useMutation } from '@apollo/client';
+import { useForm } from 'react-hook-form';
+import ErrorMessage from '../ErrorMessage';
+import Spacer from '../Spacer';
+import Tile from '../Tile';
 
 const RESET_MUTATION = gql`
   mutation RESET_MUTATION(
@@ -56,7 +56,7 @@ export default function Reset({ token }) {
         <InputWrapper>
           <Label htmlFor="email">Email</Label>
           <Input
-            {...register("email", { required: true })}
+            {...register('email', { required: true })}
             type="email"
             id="email"
             name="email"
@@ -70,7 +70,7 @@ export default function Reset({ token }) {
         <InputWrapper>
           <Label htmlFor="password">Password</Label>
           <Input
-            {...register("password", { required: true, minLength: 8 })}
+            {...register('password', { required: true, minLength: 8 })}
             type="password"
             id="password"
             name="password"
