@@ -974,6 +974,54 @@ export type DeleteGameMutation = {
   deleteGame?: { __typename?: 'Game'; id: string } | null | undefined;
 };
 
+export type GetGameBySlugQueryVariables = Exact<{
+  slug?: Maybe<Scalars['String']>;
+  season?: Maybe<Scalars['String']>;
+}>;
+
+export type GetGameBySlugQuery = {
+  __typename?: 'Query';
+  games?:
+    | Array<{
+        __typename?: 'Game';
+        id: string;
+        slug?: string | null | undefined;
+        spread?: number | null | undefined;
+        homeTeam?:
+          | {
+              __typename?: 'Team';
+              id: string;
+              name?: string | null | undefined;
+              city?: string | null | undefined;
+              abbreviation?: string | null | undefined;
+            }
+          | null
+          | undefined;
+        awayTeam?:
+          | {
+              __typename?: 'Team';
+              id: string;
+              name?: string | null | undefined;
+              city?: string | null | undefined;
+              abbreviation?: string | null | undefined;
+            }
+          | null
+          | undefined;
+        winner?:
+          | {
+              __typename?: 'Team';
+              id: string;
+              name?: string | null | undefined;
+              city?: string | null | undefined;
+              abbreviation?: string | null | undefined;
+            }
+          | null
+          | undefined;
+      }>
+    | null
+    | undefined;
+};
+
 export type GamesBySeasonAndWeekQueryVariables = Exact<{
   season: Scalars['String'];
   weekId: Scalars['ID'];
@@ -1116,6 +1164,24 @@ export type PlayersBySeasonAndWeekQuery = {
             }>
           | null
           | undefined;
+      }>
+    | null
+    | undefined;
+};
+
+export type GetWeekBySlugQueryVariables = Exact<{
+  slug?: Maybe<Scalars['String']>;
+  season?: Maybe<Scalars['String']>;
+}>;
+
+export type GetWeekBySlugQuery = {
+  __typename?: 'Query';
+  weeks?:
+    | Array<{
+        __typename?: 'Week';
+        id: string;
+        slug?: string | null | undefined;
+        label?: string | null | undefined;
       }>
     | null
     | undefined;
@@ -1420,6 +1486,94 @@ export type DeleteGameMutationOptions = Apollo.BaseMutationOptions<
   DeleteGameMutation,
   DeleteGameMutationVariables
 >;
+export const GetGameBySlugDocument = gql`
+  query getGameBySlug($slug: String, $season: String) {
+    games(
+      where: {
+        AND: [{ slug: { equals: $slug } }, { season: { equals: $season } }]
+      }
+    ) {
+      id
+      slug
+      homeTeam {
+        id
+        name
+        city
+        abbreviation
+      }
+      awayTeam {
+        id
+        name
+        city
+        abbreviation
+      }
+      spread
+      winner {
+        id
+        name
+        city
+        abbreviation
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetGameBySlugQuery__
+ *
+ * To run a query within a React component, call `useGetGameBySlugQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGameBySlugQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGameBySlugQuery({
+ *   variables: {
+ *      slug: // value for 'slug'
+ *      season: // value for 'season'
+ *   },
+ * });
+ */
+export function useGetGameBySlugQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetGameBySlugQuery,
+    GetGameBySlugQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetGameBySlugQuery, GetGameBySlugQueryVariables>(
+    GetGameBySlugDocument,
+    options
+  );
+}
+export function useGetGameBySlugLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetGameBySlugQuery,
+    GetGameBySlugQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetGameBySlugQuery, GetGameBySlugQueryVariables>(
+    GetGameBySlugDocument,
+    options
+  );
+}
+export type GetGameBySlugQueryHookResult = ReturnType<
+  typeof useGetGameBySlugQuery
+>;
+export type GetGameBySlugLazyQueryHookResult = ReturnType<
+  typeof useGetGameBySlugLazyQuery
+>;
+export type GetGameBySlugQueryResult = Apollo.QueryResult<
+  GetGameBySlugQuery,
+  GetGameBySlugQueryVariables
+>;
+export function refetchGetGameBySlugQuery(
+  variables?: GetGameBySlugQueryVariables
+) {
+  return { query: GetGameBySlugDocument, variables: variables };
+}
 export const GamesBySeasonAndWeekDocument = gql`
   query gamesBySeasonAndWeek($season: String!, $weekId: ID!) {
     games(
@@ -1870,6 +2024,76 @@ export function refetchPlayersBySeasonAndWeekQuery(
   variables?: PlayersBySeasonAndWeekQueryVariables
 ) {
   return { query: PlayersBySeasonAndWeekDocument, variables: variables };
+}
+export const GetWeekBySlugDocument = gql`
+  query getWeekBySlug($slug: String, $season: String) {
+    weeks(
+      where: {
+        AND: [{ slug: { equals: $slug } }, { season: { equals: $season } }]
+      }
+    ) {
+      id
+      slug
+      label
+    }
+  }
+`;
+
+/**
+ * __useGetWeekBySlugQuery__
+ *
+ * To run a query within a React component, call `useGetWeekBySlugQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWeekBySlugQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWeekBySlugQuery({
+ *   variables: {
+ *      slug: // value for 'slug'
+ *      season: // value for 'season'
+ *   },
+ * });
+ */
+export function useGetWeekBySlugQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetWeekBySlugQuery,
+    GetWeekBySlugQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetWeekBySlugQuery, GetWeekBySlugQueryVariables>(
+    GetWeekBySlugDocument,
+    options
+  );
+}
+export function useGetWeekBySlugLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetWeekBySlugQuery,
+    GetWeekBySlugQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetWeekBySlugQuery, GetWeekBySlugQueryVariables>(
+    GetWeekBySlugDocument,
+    options
+  );
+}
+export type GetWeekBySlugQueryHookResult = ReturnType<
+  typeof useGetWeekBySlugQuery
+>;
+export type GetWeekBySlugLazyQueryHookResult = ReturnType<
+  typeof useGetWeekBySlugLazyQuery
+>;
+export type GetWeekBySlugQueryResult = Apollo.QueryResult<
+  GetWeekBySlugQuery,
+  GetWeekBySlugQueryVariables
+>;
+export function refetchGetWeekBySlugQuery(
+  variables?: GetWeekBySlugQueryVariables
+) {
+  return { query: GetWeekBySlugDocument, variables: variables };
 }
 export const GetWeeksBySeasonDocument = gql`
   query getWeeksBySeason($season: String) {

@@ -1,71 +1,27 @@
 import { useRouter } from 'next/router';
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import PageHeading from '../../../../../components/PageHeading';
 import Breadcrumbs from '../../../../../components/Breadcrumbs';
 import Spacer from '../../../../../components/Spacer';
 import EditGame from '../../../../../components/EditGame';
 import PleaseSignIn from '../../../../../components/PleaseSignIn';
-
-const GET_WEEK_BY_SLUG_QUERY = gql`
-  query GET_WEEK_BY_SLUG_QUERY($slug: String, $season: String) {
-    weeks(
-      where: {
-        AND: [{ slug: { equals: $slug } }, { season: { equals: $season } }]
-      }
-    ) {
-      id
-      slug
-      label
-    }
-  }
-`;
-
-const GET_GAME_BY_SLUG_QUERY = gql`
-  query GET_GAME_BY_SLUG_QUERY($slug: String, $season: String) {
-    games(
-      where: {
-        AND: [{ slug: { equals: $slug } }, { season: { equals: $season } }]
-      }
-    ) {
-      id
-      slug
-      homeTeam {
-        id
-        name
-        city
-        abbreviation
-      }
-      awayTeam {
-        id
-        name
-        city
-        abbreviation
-      }
-      spread
-      winner {
-        id
-        name
-        city
-        abbreviation
-      }
-    }
-  }
-`;
+import {
+  useGetWeekBySlugQuery,
+  useGetGameBySlugQuery,
+} from '../../../../../types/generated-queries';
 
 export default function ManageGamePage() {
   const {
     query: { season, week, game },
   } = useRouter();
 
-  const { data, error, loading } = useQuery(GET_WEEK_BY_SLUG_QUERY, {
+  const { data, error, loading } = useGetWeekBySlugQuery({
     variables: { slug: week, season },
   });
   const {
     data: gameData,
     error: gameError,
     loading: gameLoading,
-  } = useQuery(GET_GAME_BY_SLUG_QUERY, {
+  } = useGetGameBySlugQuery({
     variables: { slug: game, season },
   });
   if (loading || gameLoading) return <p>Loading...</p>;
