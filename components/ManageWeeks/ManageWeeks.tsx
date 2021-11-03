@@ -1,39 +1,24 @@
-import { useState } from "react";
-import { useMutation } from "@apollo/client";
-import { useForm, SubmitHandler } from "react-hook-form";
-import gql from "graphql-tag";
-import styled from "styled-components";
-import AddNewTile from "../AddNewTile";
-import Modal from "../Modal";
-import Spacer from "../Spacer";
-import { GET_WEEKS_BY_SEASON_QUERY, WeekTiles } from "../WeekTile/WeekTile";
-import { string_to_slug } from "../../utils/slugify";
-import ErrorMessage from "../ErrorMessage";
+import { useState } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import gql from 'graphql-tag';
+import styled from 'styled-components';
+import AddNewTile from '../AddNewTile';
+import Modal from '../Modal';
+import Spacer from '../Spacer';
+import { GET_WEEKS_BY_SEASON_QUERY, WeekTiles } from '../WeekTile/WeekTile';
+import { string_to_slug } from '../../utils/slugify';
+import ErrorMessage from '../ErrorMessage';
+import { useCreateWeekMutation } from '../../types/generated-queries';
 
 type Inputs = {
   weekLabel: string;
 };
 
-const CREATE_WEEK_MUTATION = gql`
-  mutation CREATE_WEEK_BY_SEASON(
-    $label: String
-    $slug: String
-    $season: String
-  ) {
-    createWeek(data: { label: $label, slug: $slug, season: $season }) {
-      id
-      label
-      slug
-      season
-    }
-  }
-`;
-
 export default function ManageWeeks({ season }) {
   const [openModal, setOpenModal] = useState(false);
   const [formError, setFormError] = useState(null);
 
-  const [createWeek, { loading }] = useMutation(CREATE_WEEK_MUTATION, {
+  const [createWeek, { loading }] = useCreateWeekMutation({
     refetchQueries: [{ query: GET_WEEKS_BY_SEASON_QUERY }],
     update(cache, { data: { createWeek } }) {
       cache.modify({
@@ -117,7 +102,7 @@ function NewWeekForm({ handleSubmitWeek, error, loading }) {
         <Label>Week Label</Label>
         <Input
           placeholder="Ex. Week 1"
-          {...register("weekLabel", { required: true })}
+          {...register('weekLabel', { required: true })}
         />
         {errors.weekLabel && (
           <ValidationError>Week label cannot be blank</ValidationError>

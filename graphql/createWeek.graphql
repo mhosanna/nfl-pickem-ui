@@ -1,0 +1,12 @@
+mutation createWeek(
+    $label: String
+    $slug: String
+    $season: String
+  ) {
+    createWeek(data: { label: $label, slug: $slug, season: $season }) {
+      id
+      label
+      slug
+      season
+    }
+  }

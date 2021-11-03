@@ -1,23 +1,26 @@
-import { useCallback, useMemo } from "react";
-import { useRouter } from "next/router";
+import { useCallback, useMemo } from 'react';
+import { useRouter } from 'next/router';
 import {
   useForm,
   useFormState,
   SubmitHandler,
   Controller,
-} from "react-hook-form";
-import styled from "styled-components";
-import * as yup from "yup";
-import gql from "graphql-tag";
-import PageTitle from "../PageTItle";
-import TeamsComboBox from "../TeamsComboBox";
-import Spacer from "../Spacer";
-import Checkbox from "../Checkbox";
-import Icon from "../Icon";
-import { useMutation } from "@apollo/client";
-import ErrorMessage from "../ErrorMessage";
-import { GET_WEEKS_BY_SEASON_QUERY } from "../WeekTile";
-import Tile from "../Tile";
+} from 'react-hook-form';
+import styled from 'styled-components';
+import * as yup from 'yup';
+import PageTitle from '../PageTItle';
+import TeamsComboBox from '../TeamsComboBox';
+import Spacer from '../Spacer';
+import Checkbox from '../Checkbox';
+import Icon from '../Icon';
+import ErrorMessage from '../ErrorMessage';
+import { GET_WEEKS_BY_SEASON_QUERY } from '../WeekTile';
+import Tile from '../Tile';
+import {
+  useDeleteGameMutation,
+  useUpdateGameAndWinnerMutation,
+  useUpdateGameRemoveWinnerMutation,
+} from '../../types/generated-queries';
 
 type Team = {
   __typeName: string;
@@ -33,49 +36,6 @@ type Inputs = {
   isHomeWinner: boolean;
   isAwayWinner: boolean;
 };
-
-const UPDATE_SPREAD_AND_WINNER_MUTATION = gql`
-  mutation UPDATE_GAME_AND_WINNER(
-    $gameId: ID!
-    $winnerId: ID!
-    $spread: Float
-  ) {
-    updateGame(
-      where: { id: $gameId }
-      data: { winner: { connect: { id: $winnerId } }, spread: $spread }
-    ) {
-      id
-      winner {
-        id
-      }
-      spread
-    }
-  }
-`;
-
-const UPDATE_SPREAD_REMOVE_WINNER_MUTATION = gql`
-  mutation UPDATE_GAME_REMOVE_WINNER($gameId: ID!, $spread: Float) {
-    updateGame(
-      where: { id: $gameId }
-      data: { winner: { disconnect: true }, spread: $spread }
-    ) {
-      id
-      winner {
-        id
-      }
-      spread
-    }
-  }
-`;
-
-const DELETE_GAME_MUTATION = gql`
-  mutation DELETE_GAME_MUTATION($gameId: ID!) {
-    deleteGame(where: { id: $gameId }) {
-      id
-    }
-  }
-`;
-
 export default function EditGame({ game }) {
   return (
     <>
@@ -119,7 +79,7 @@ const useYupValidationResolver = (validationSchema) =>
             (allErrors, currentError) => ({
               ...allErrors,
               [currentError.path]: {
-                type: currentError.type ?? "validation",
+                type: currentError.type ?? 'validation',
                 message: currentError.message,
               },
             }),
@@ -152,19 +112,16 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
   const router = useRouter();
   const { week, season } = router.query;
   const [updateGame, { loading: updateGameLoading, error: updateGameError }] =
-    useMutation(UPDATE_SPREAD_AND_WINNER_MUTATION);
+    useUpdateGameAndWinnerMutation();
   const [
     updateGameRemoveWinner,
     { loading: updateGameRemoveLoading, error: updateRemoveError },
-  ] = useMutation(UPDATE_SPREAD_REMOVE_WINNER_MUTATION);
-  const [deleteGame, { error: deleteGameError }] = useMutation(
-    DELETE_GAME_MUTATION,
-    {
-      refetchQueries: [{ query: GET_WEEKS_BY_SEASON_QUERY }],
-      variables: { gameId },
-      update,
-    }
-  );
+  ] = useUpdateGameRemoveWinnerMutation();
+  const [deleteGame] = useDeleteGameMutation({
+    refetchQueries: [{ query: GET_WEEKS_BY_SEASON_QUERY }],
+    variables: { gameId },
+    update,
+  });
 
   const validationSchema = useMemo(
     () =>
@@ -177,7 +134,7 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
               city: yup.string(),
               id: yup.string(),
             })
-            .typeError("Home team cannot be blank"),
+            .typeError('Home team cannot be blank'),
           awayTeam: yup
             .object()
             .shape({
@@ -185,19 +142,19 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
               city: yup.string().required(),
               id: yup.string().required(),
             })
-            .typeError("Away team cannot be blank"),
+            .typeError('Away team cannot be blank'),
           spread: yup.string().matches(/^$|[-+]?[0-9]*\.?[0-9]+$/, {
-            message: "Spread must be a number",
+            message: 'Spread must be a number',
           }),
           isHomeWinner: yup.boolean(),
           isAwayWinner: yup.boolean(),
         })
-        .test("customTest", null, (obj) => {
+        .test('customTest', null, (obj) => {
           if (obj.isHomeWinner && obj.isAwayWinner) {
             return new yup.ValidationError(
-              "Only one team can be the winner of a game",
+              'Only one team can be the winner of a game',
               null,
-              "isWinner"
+              'isWinner'
             );
           }
           return true;
@@ -216,9 +173,9 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
     register,
     reset,
   } = useForm<Inputs>({
-    mode: "onSubmit",
+    mode: 'onSubmit',
     resolver,
-    reValidateMode: "onSubmit",
+    reValidateMode: 'onSubmit',
     defaultValues: {
       spread,
       homeTeam,
@@ -250,7 +207,7 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
   const handleDeleteGame = async () => {
     await deleteGame().catch(console.error);
     router.push({
-      pathname: "/manage-games/[season]/[week]",
+      pathname: '/manage-games/[season]/[week]',
       query: {
         season,
         week,
@@ -313,7 +270,7 @@ function FormFields({
             <ValidationError>{errors.homeTeam.message}</ValidationError>
           )}
         </div>
-        <div style={{ marginTop: "29px" }}>
+        <div style={{ marginTop: '29px' }}>
           <Controller
             control={control}
             name="isHomeWinner"
@@ -335,7 +292,7 @@ function FormFields({
         <Label>Spread</Label>
         <Input
           placeholder="Ex. -4"
-          {...register("spread")}
+          {...register('spread')}
           disabled={isSubmitting}
         />
         {errors.spread && (
@@ -363,7 +320,7 @@ function FormFields({
             <ValidationError>{errors.awayTeam.message}</ValidationError>
           )}
         </div>
-        <div style={{ marginTop: "29px" }}>
+        <div style={{ marginTop: '29px' }}>
           <Controller
             control={control}
             name="isAwayWinner"
@@ -389,7 +346,7 @@ function FormFields({
       <FooterWrapper>
         <ButtonWrapper>
           <Button type="submit" disabled={!isDirty || isLoading}>
-            Sav{isSubmitting ? "ing" : "e"} Game
+            Sav{isSubmitting ? 'ing' : 'e'} Game
           </Button>
           {isSubmitSuccessful &&
             !updateGameError &&
@@ -397,7 +354,7 @@ function FormFields({
             !isDirty && <Tile type="success">Saved!</Tile>}
         </ButtonWrapper>
         <DeleteGameButton type="button" onClick={handleDeleteGame}>
-          <Icon name={"Trash2"} size={18} />
+          <Icon name={'Trash2'} size={18} />
           <span>Delete Game</span>
         </DeleteGameButton>
       </FooterWrapper>
@@ -500,11 +457,11 @@ const Button = styled.button`
   font-size: 1.4rem;
   padding: 8px 32px;
   background: ${(props) =>
-    props.disabled ? "var(--gray500)" : "var(--black)"};
+    props.disabled ? 'var(--gray500)' : 'var(--black)'};
   color: white;
   border-radius: 3px;
   box-shadow: ${(props) =>
-    props.disabled ? "none" : "0px 4px 4px rgba(0, 0, 0, 0.25)"};
+    props.disabled ? 'none' : '0px 4px 4px rgba(0, 0, 0, 0.25)'};
   border: none;
 `;
 

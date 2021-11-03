@@ -1,0 +1,22 @@
+ mutation createGame(
+    $season: String
+    $slug: String
+    $week: ID!
+    $homeTeamId: ID!
+    $awayTeamId: ID!
+    $spread: Float
+  ) {
+    createGame(
+      data: {
+        season: $season
+        slug: $slug
+        week: { connect: { id: $week } }
+        homeTeam: { connect: { id: $homeTeamId } }
+        awayTeam: { connect: { id: $awayTeamId } }
+        spread: $spread
+      }
+    ) {
+      id
+      slug
+    }
+  }

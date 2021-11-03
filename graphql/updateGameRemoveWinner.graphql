@@ -1,0 +1,12 @@
+mutation updateGameRemoveWinner($gameId: ID!, $spread: Float) {
+    updateGame(
+      where: { id: $gameId }
+      data: { winner: { disconnect: true }, spread: $spread }
+    ) {
+      id
+      winner {
+        id
+      }
+      spread
+    }
+  }

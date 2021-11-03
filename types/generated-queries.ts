@@ -928,6 +928,52 @@ export type WeekWhereUniqueInput = {
   id?: Maybe<Scalars['ID']>;
 };
 
+export type CreateGameMutationVariables = Exact<{
+  season?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  week: Scalars['ID'];
+  homeTeamId: Scalars['ID'];
+  awayTeamId: Scalars['ID'];
+  spread?: Maybe<Scalars['Float']>;
+}>;
+
+export type CreateGameMutation = {
+  __typename?: 'Mutation';
+  createGame?:
+    | { __typename?: 'Game'; id: string; slug?: string | null | undefined }
+    | null
+    | undefined;
+};
+
+export type CreateWeekMutationVariables = Exact<{
+  label?: Maybe<Scalars['String']>;
+  slug?: Maybe<Scalars['String']>;
+  season?: Maybe<Scalars['String']>;
+}>;
+
+export type CreateWeekMutation = {
+  __typename?: 'Mutation';
+  createWeek?:
+    | {
+        __typename?: 'Week';
+        id: string;
+        label?: string | null | undefined;
+        slug?: string | null | undefined;
+        season?: string | null | undefined;
+      }
+    | null
+    | undefined;
+};
+
+export type DeleteGameMutationVariables = Exact<{
+  gameId: Scalars['ID'];
+}>;
+
+export type DeleteGameMutation = {
+  __typename?: 'Mutation';
+  deleteGame?: { __typename?: 'Game'; id: string } | null | undefined;
+};
+
 export type GamesBySeasonAndWeekQueryVariables = Exact<{
   season: Scalars['String'];
   weekId: Scalars['ID'];
@@ -1114,6 +1160,220 @@ export type SignOutMutationVariables = Exact<{ [key: string]: never }>;
 
 export type SignOutMutation = { __typename?: 'Mutation'; endSession: boolean };
 
+export type UpdateGameAndWinnerMutationVariables = Exact<{
+  gameId: Scalars['ID'];
+  winnerId: Scalars['ID'];
+  spread?: Maybe<Scalars['Float']>;
+}>;
+
+export type UpdateGameAndWinnerMutation = {
+  __typename?: 'Mutation';
+  updateGame?:
+    | {
+        __typename?: 'Game';
+        id: string;
+        spread?: number | null | undefined;
+        winner?: { __typename?: 'Team'; id: string } | null | undefined;
+      }
+    | null
+    | undefined;
+};
+
+export type UpdateGameRemoveWinnerMutationVariables = Exact<{
+  gameId: Scalars['ID'];
+  spread?: Maybe<Scalars['Float']>;
+}>;
+
+export type UpdateGameRemoveWinnerMutation = {
+  __typename?: 'Mutation';
+  updateGame?:
+    | {
+        __typename?: 'Game';
+        id: string;
+        spread?: number | null | undefined;
+        winner?: { __typename?: 'Team'; id: string } | null | undefined;
+      }
+    | null
+    | undefined;
+};
+
+export const CreateGameDocument = gql`
+  mutation createGame(
+    $season: String
+    $slug: String
+    $week: ID!
+    $homeTeamId: ID!
+    $awayTeamId: ID!
+    $spread: Float
+  ) {
+    createGame(
+      data: {
+        season: $season
+        slug: $slug
+        week: { connect: { id: $week } }
+        homeTeam: { connect: { id: $homeTeamId } }
+        awayTeam: { connect: { id: $awayTeamId } }
+        spread: $spread
+      }
+    ) {
+      id
+      slug
+    }
+  }
+`;
+export type CreateGameMutationFn = Apollo.MutationFunction<
+  CreateGameMutation,
+  CreateGameMutationVariables
+>;
+
+/**
+ * __useCreateGameMutation__
+ *
+ * To run a mutation, you first call `useCreateGameMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateGameMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createGameMutation, { data, loading, error }] = useCreateGameMutation({
+ *   variables: {
+ *      season: // value for 'season'
+ *      slug: // value for 'slug'
+ *      week: // value for 'week'
+ *      homeTeamId: // value for 'homeTeamId'
+ *      awayTeamId: // value for 'awayTeamId'
+ *      spread: // value for 'spread'
+ *   },
+ * });
+ */
+export function useCreateGameMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateGameMutation,
+    CreateGameMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<CreateGameMutation, CreateGameMutationVariables>(
+    CreateGameDocument,
+    options
+  );
+}
+export type CreateGameMutationHookResult = ReturnType<
+  typeof useCreateGameMutation
+>;
+export type CreateGameMutationResult =
+  Apollo.MutationResult<CreateGameMutation>;
+export type CreateGameMutationOptions = Apollo.BaseMutationOptions<
+  CreateGameMutation,
+  CreateGameMutationVariables
+>;
+export const CreateWeekDocument = gql`
+  mutation createWeek($label: String, $slug: String, $season: String) {
+    createWeek(data: { label: $label, slug: $slug, season: $season }) {
+      id
+      label
+      slug
+      season
+    }
+  }
+`;
+export type CreateWeekMutationFn = Apollo.MutationFunction<
+  CreateWeekMutation,
+  CreateWeekMutationVariables
+>;
+
+/**
+ * __useCreateWeekMutation__
+ *
+ * To run a mutation, you first call `useCreateWeekMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateWeekMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createWeekMutation, { data, loading, error }] = useCreateWeekMutation({
+ *   variables: {
+ *      label: // value for 'label'
+ *      slug: // value for 'slug'
+ *      season: // value for 'season'
+ *   },
+ * });
+ */
+export function useCreateWeekMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateWeekMutation,
+    CreateWeekMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<CreateWeekMutation, CreateWeekMutationVariables>(
+    CreateWeekDocument,
+    options
+  );
+}
+export type CreateWeekMutationHookResult = ReturnType<
+  typeof useCreateWeekMutation
+>;
+export type CreateWeekMutationResult =
+  Apollo.MutationResult<CreateWeekMutation>;
+export type CreateWeekMutationOptions = Apollo.BaseMutationOptions<
+  CreateWeekMutation,
+  CreateWeekMutationVariables
+>;
+export const DeleteGameDocument = gql`
+  mutation deleteGame($gameId: ID!) {
+    deleteGame(where: { id: $gameId }) {
+      id
+    }
+  }
+`;
+export type DeleteGameMutationFn = Apollo.MutationFunction<
+  DeleteGameMutation,
+  DeleteGameMutationVariables
+>;
+
+/**
+ * __useDeleteGameMutation__
+ *
+ * To run a mutation, you first call `useDeleteGameMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteGameMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteGameMutation, { data, loading, error }] = useDeleteGameMutation({
+ *   variables: {
+ *      gameId: // value for 'gameId'
+ *   },
+ * });
+ */
+export function useDeleteGameMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteGameMutation,
+    DeleteGameMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<DeleteGameMutation, DeleteGameMutationVariables>(
+    DeleteGameDocument,
+    options
+  );
+}
+export type DeleteGameMutationHookResult = ReturnType<
+  typeof useDeleteGameMutation
+>;
+export type DeleteGameMutationResult =
+  Apollo.MutationResult<DeleteGameMutation>;
+export type DeleteGameMutationOptions = Apollo.BaseMutationOptions<
+  DeleteGameMutation,
+  DeleteGameMutationVariables
+>;
 export const GamesBySeasonAndWeekDocument = gql`
   query gamesBySeasonAndWeek($season: String!, $weekId: ID!) {
     games(
@@ -1669,4 +1929,121 @@ export type SignOutMutationResult = Apollo.MutationResult<SignOutMutation>;
 export type SignOutMutationOptions = Apollo.BaseMutationOptions<
   SignOutMutation,
   SignOutMutationVariables
+>;
+export const UpdateGameAndWinnerDocument = gql`
+  mutation updateGameAndWinner($gameId: ID!, $winnerId: ID!, $spread: Float) {
+    updateGame(
+      where: { id: $gameId }
+      data: { winner: { connect: { id: $winnerId } }, spread: $spread }
+    ) {
+      id
+      winner {
+        id
+      }
+      spread
+    }
+  }
+`;
+export type UpdateGameAndWinnerMutationFn = Apollo.MutationFunction<
+  UpdateGameAndWinnerMutation,
+  UpdateGameAndWinnerMutationVariables
+>;
+
+/**
+ * __useUpdateGameAndWinnerMutation__
+ *
+ * To run a mutation, you first call `useUpdateGameAndWinnerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateGameAndWinnerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateGameAndWinnerMutation, { data, loading, error }] = useUpdateGameAndWinnerMutation({
+ *   variables: {
+ *      gameId: // value for 'gameId'
+ *      winnerId: // value for 'winnerId'
+ *      spread: // value for 'spread'
+ *   },
+ * });
+ */
+export function useUpdateGameAndWinnerMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateGameAndWinnerMutation,
+    UpdateGameAndWinnerMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateGameAndWinnerMutation,
+    UpdateGameAndWinnerMutationVariables
+  >(UpdateGameAndWinnerDocument, options);
+}
+export type UpdateGameAndWinnerMutationHookResult = ReturnType<
+  typeof useUpdateGameAndWinnerMutation
+>;
+export type UpdateGameAndWinnerMutationResult =
+  Apollo.MutationResult<UpdateGameAndWinnerMutation>;
+export type UpdateGameAndWinnerMutationOptions = Apollo.BaseMutationOptions<
+  UpdateGameAndWinnerMutation,
+  UpdateGameAndWinnerMutationVariables
+>;
+export const UpdateGameRemoveWinnerDocument = gql`
+  mutation updateGameRemoveWinner($gameId: ID!, $spread: Float) {
+    updateGame(
+      where: { id: $gameId }
+      data: { winner: { disconnect: true }, spread: $spread }
+    ) {
+      id
+      winner {
+        id
+      }
+      spread
+    }
+  }
+`;
+export type UpdateGameRemoveWinnerMutationFn = Apollo.MutationFunction<
+  UpdateGameRemoveWinnerMutation,
+  UpdateGameRemoveWinnerMutationVariables
+>;
+
+/**
+ * __useUpdateGameRemoveWinnerMutation__
+ *
+ * To run a mutation, you first call `useUpdateGameRemoveWinnerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateGameRemoveWinnerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateGameRemoveWinnerMutation, { data, loading, error }] = useUpdateGameRemoveWinnerMutation({
+ *   variables: {
+ *      gameId: // value for 'gameId'
+ *      spread: // value for 'spread'
+ *   },
+ * });
+ */
+export function useUpdateGameRemoveWinnerMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateGameRemoveWinnerMutation,
+    UpdateGameRemoveWinnerMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateGameRemoveWinnerMutation,
+    UpdateGameRemoveWinnerMutationVariables
+  >(UpdateGameRemoveWinnerDocument, options);
+}
+export type UpdateGameRemoveWinnerMutationHookResult = ReturnType<
+  typeof useUpdateGameRemoveWinnerMutation
+>;
+export type UpdateGameRemoveWinnerMutationResult =
+  Apollo.MutationResult<UpdateGameRemoveWinnerMutation>;
+export type UpdateGameRemoveWinnerMutationOptions = Apollo.BaseMutationOptions<
+  UpdateGameRemoveWinnerMutation,
+  UpdateGameRemoveWinnerMutationVariables
 >;
