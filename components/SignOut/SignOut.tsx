@@ -1,9 +1,8 @@
-import { useMutation } from "@apollo/client";
-import gql from "graphql-tag";
-import styled from "styled-components";
-import { CURRENT_PLAYER_QUERY } from "../../lib/usePlayer";
-import Icon from "../Icon";
-// import { NavLinks as MobileNavLinks } from "../MobileMenu";
+import { useMutation } from '@apollo/client';
+import gql from 'graphql-tag';
+import styled from 'styled-components';
+import Icon from '../Icon';
+import { refetchPlayerQuery } from '../../types/generated-queries';
 
 const SIGN_OUT_MUTATION = gql`
   mutation {
@@ -13,11 +12,11 @@ const SIGN_OUT_MUTATION = gql`
 
 export default function SignOut() {
   const [signOut] = useMutation(SIGN_OUT_MUTATION, {
-    refetchQueries: [{ query: CURRENT_PLAYER_QUERY }],
+    refetchQueries: [refetchPlayerQuery()],
   });
   return (
     <StyledButton type="button" onClick={signOut}>
-      <Icon name={"LogOut"} />
+      <Icon name={'LogOut'} />
       Sign Out
     </StyledButton>
   );

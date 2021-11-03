@@ -1,12 +1,12 @@
-import React from "react";
-import { useMutation, useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import { Spread, List, FieldWrapper, GameListWrapper } from "./PicksStyles";
-import TeamBlock from "../TeamBlock";
-import Spacer from "../Spacer";
-import { spreadToString } from "../../utils/spreadToString";
-import { usePlayer } from "../../lib/usePlayer";
-import useWeekSelect from "../../lib/useWeekSelect";
+import React from 'react';
+import { useMutation, useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import { Spread, List, FieldWrapper, GameListWrapper } from './PicksStyles';
+import TeamBlock from '../TeamBlock';
+import Spacer from '../Spacer';
+import { spreadToString } from '../../utils/spreadToString';
+import { usePlayer } from '../../lib/usePlayer';
+import useWeekSelect from '../../lib/useWeekSelect';
 
 const pickFragment = gql`
   fragment PickFragment on Pick {
@@ -53,8 +53,10 @@ const MAKE_PICK_MUTATION = gql`
 `;
 
 function Picks() {
-  const { id } = usePlayer();
-  const playerId = id;
+  const player = usePlayer();
+  if (!player) return null;
+
+  const playerId = player.id;
 
   return (
     <div>

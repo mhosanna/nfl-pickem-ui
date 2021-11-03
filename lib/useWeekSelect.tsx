@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import { season } from "../config";
-import Select from "../components/Select";
+import { useEffect, useState } from 'react';
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import { season } from '../config';
+import Select from '../components/Select';
 
 const gameFragment = gql`
   fragment GameFragment on Game {
@@ -47,7 +47,7 @@ export default function useWeekSelect(initial = {}) {
     variables: { season },
   });
 
-  const [dropdownLabel, setDropdownLabel] = useState("");
+  const [dropdownLabel, setDropdownLabel] = useState('');
   const [selectedWeek, setSelectedWeek] = useState(null);
 
   useEffect(() => {

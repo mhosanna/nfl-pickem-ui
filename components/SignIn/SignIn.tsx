@@ -1,11 +1,11 @@
-import gql from "graphql-tag";
-import { useMutation } from "@apollo/client";
-import { useForm } from "react-hook-form";
-import { CURRENT_PLAYER_QUERY } from "../../lib/usePlayer";
-import ErrorMessage from "../ErrorMessage";
-import styled from "styled-components";
-import Spacer from "../Spacer";
-import Tile from "../Tile";
+import gql from 'graphql-tag';
+import { useMutation } from '@apollo/client';
+import { useForm } from 'react-hook-form';
+import ErrorMessage from '../ErrorMessage';
+import styled from 'styled-components';
+import Spacer from '../Spacer';
+import Tile from '../Tile';
+import { refetchPlayerQuery } from '../../types/generated-queries';
 
 const SIGNIN_MUTATION = gql`
   mutation SIGNIN_MUTATION($email: String!, $password: String!) {
@@ -30,7 +30,7 @@ function SignIn() {
     SIGNIN_MUTATION,
     {
       // refetch the currently logged in Player
-      refetchQueries: [{ query: CURRENT_PLAYER_QUERY }],
+      refetchQueries: [refetchPlayerQuery()],
     }
   );
   const {
@@ -49,7 +49,7 @@ function SignIn() {
 
   const error =
     data?.authenticatePlayerWithPassword.__typename ===
-    "PlayerAuthenticationWithPasswordFailure"
+    'PlayerAuthenticationWithPasswordFailure'
       ? data?.authenticatePlayerWithPassword
       : undefined;
   return (
@@ -61,7 +61,7 @@ function SignIn() {
         <InputWrapper>
           <Label htmlFor="email">Email</Label>
           <Input
-            {...register("email", { required: true })}
+            {...register('email', { required: true })}
             type="email"
             id="email"
             name="email"
@@ -75,7 +75,7 @@ function SignIn() {
         <InputWrapper>
           <Label htmlFor="password">Password</Label>
           <Input
-            {...register("password", { required: true })}
+            {...register('password', { required: true })}
             type="password"
             id="password"
             name="password"
@@ -91,7 +91,7 @@ function SignIn() {
           Sign In
         </Button>
         {data?.authenticatePlayerWithPassword.__typename ===
-          "PlayerAuthenticationWithPasswordSuccess" && (
+          'PlayerAuthenticationWithPasswordSuccess' && (
           <>
             <Spacer size={24} />
             <Tile type="success">Success! You are now signed in</Tile>
