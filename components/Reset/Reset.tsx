@@ -1,27 +1,9 @@
-import gql from 'graphql-tag';
 import styled from 'styled-components';
-import { useMutation } from '@apollo/client';
 import { useForm } from 'react-hook-form';
 import ErrorMessage from '../ErrorMessage';
 import Spacer from '../Spacer';
 import Tile from '../Tile';
-
-const RESET_MUTATION = gql`
-  mutation RESET_MUTATION(
-    $email: String!
-    $password: String!
-    $token: String!
-  ) {
-    redeemPlayerPasswordResetToken(
-      email: $email
-      token: $token
-      password: $password
-    ) {
-      code
-      message
-    }
-  }
-`;
+import { useResetMutation } from '../../types/generated-queries';
 
 export default function Reset({ token }) {
   const {
@@ -30,8 +12,7 @@ export default function Reset({ token }) {
     register,
     reset,
   } = useForm();
-  const [resetWithToken, { data, loading, error }] =
-    useMutation(RESET_MUTATION);
+  const [resetWithToken, { data, loading, error }] = useResetMutation();
 
   const successfulError = data?.redeemPlayerPasswordResetToken?.code
     ? data?.redeemPlayerPasswordResetToken

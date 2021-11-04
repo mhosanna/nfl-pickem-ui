@@ -5,10 +5,13 @@ import styled from 'styled-components';
 import AddNewTile from '../AddNewTile';
 import Modal from '../Modal';
 import Spacer from '../Spacer';
-import { GET_WEEKS_BY_SEASON_QUERY, WeekTiles } from '../WeekTile/WeekTile';
+import { WeekTiles } from '../WeekTile/WeekTile';
 import { string_to_slug } from '../../utils/slugify';
 import ErrorMessage from '../ErrorMessage';
-import { useCreateWeekMutation } from '../../types/generated-queries';
+import {
+  useCreateWeekMutation,
+  GetWeeksBySeasonDocument,
+} from '../../types/generated-queries';
 
 type Inputs = {
   weekLabel: string;
@@ -19,7 +22,7 @@ export default function ManageWeeks({ season }) {
   const [formError, setFormError] = useState(null);
 
   const [createWeek, { loading }] = useCreateWeekMutation({
-    refetchQueries: [{ query: GET_WEEKS_BY_SEASON_QUERY }],
+    refetchQueries: [{ query: GetWeeksBySeasonDocument }],
     update(cache, { data: { createWeek } }) {
       cache.modify({
         fields: {

@@ -1,0 +1,15 @@
+  mutation signin($email: String!, $password: String!) {
+    authenticatePlayerWithPassword(email: $email, password: $password) {
+      ... on PlayerAuthenticationWithPasswordSuccess {
+        item {
+          id
+          email
+          name
+        }
+      }
+      ... on PlayerAuthenticationWithPasswordFailure {
+        code
+        message
+      }
+    }
+  }
