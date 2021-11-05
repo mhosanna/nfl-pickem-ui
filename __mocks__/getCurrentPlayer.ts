@@ -1,16 +1,16 @@
-import { CURRENT_PLAYER_QUERY } from "../lib/usePlayer";
+import { PlayerDocument } from '../types/generated-queries';
 
 export const getCurrentPlayer = {
   request: {
-    query: CURRENT_PLAYER_QUERY,
+    query: PlayerDocument,
   },
   result: {
     data: {
       authenticatedItem: {
-        __typename: "Player",
-        id: "2",
-        email: "matt@example.com",
-        name: "Matt",
+        __typename: 'Player',
+        id: '2',
+        email: 'matt@example.com',
+        name: 'Matt',
       },
     },
   },

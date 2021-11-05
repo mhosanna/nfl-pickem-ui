@@ -10,6 +10,7 @@
     "prestart": "npm run codegen",
     "start": "next start -p $PORT",
     "test": "jest --watch",
+    "coverage": "jest --watchAll --coverage",
     "codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {

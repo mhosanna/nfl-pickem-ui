@@ -14,12 +14,12 @@ import Spacer from '../Spacer';
 import Checkbox from '../Checkbox';
 import Icon from '../Icon';
 import ErrorMessage from '../ErrorMessage';
-import { GET_WEEKS_BY_SEASON_QUERY } from '../WeekTile';
 import Tile from '../Tile';
 import {
   useDeleteGameMutation,
   useUpdateGameAndWinnerMutation,
   useUpdateGameRemoveWinnerMutation,
+  GetWeeksBySeasonDocument,
 } from '../../types/generated-queries';
 
 type Team = {
@@ -118,7 +118,7 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
     { loading: updateGameRemoveLoading, error: updateRemoveError },
   ] = useUpdateGameRemoveWinnerMutation();
   const [deleteGame] = useDeleteGameMutation({
-    refetchQueries: [{ query: GET_WEEKS_BY_SEASON_QUERY }],
+    refetchQueries: [{ query: GetWeeksBySeasonDocument }],
     variables: { gameId },
     update,
   });

@@ -3,18 +3,15 @@ import { Spread, List, FieldWrapper, GameListWrapper } from './PicksStyles';
 import TeamBlock from '../TeamBlock';
 import Spacer from '../Spacer';
 import { spreadToString } from '../../utils/spreadToString';
-import { usePlayer } from '../../lib/usePlayer';
 import useWeekSelect from '../../lib/useWeekSelect';
 import {
   usePicksByWeekAndPlayerQuery,
   PicksByWeekAndPlayerDocument,
   useMakePickMutation,
+  Player,
 } from '../../types/generated-queries';
 
-function Picks() {
-  const player = usePlayer();
-  if (!player) return null;
-
+function Picks({ player }: { player: Player }) {
   const playerId = player.id;
 
   return (
@@ -24,15 +21,15 @@ function Picks() {
   );
 }
 
-const PickWrapper = ({ playerId }) => {
+const PickWrapper = ({ playerId }: { playerId: string }) => {
   const { weekSelector, selectedWeek, loading, error } = useWeekSelect();
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error</p>;
-
+  if (error) return <p>Error {error.message}</p>;
   if (!selectedWeek) {
     return <p>The season hasn't started yet. Check back soon!</p>;
   }
+
   return (
     <div>
       {weekSelector}
