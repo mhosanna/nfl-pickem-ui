@@ -69,7 +69,7 @@ export default function ManageWeeks({ season }) {
         onClick={() => setOpenModal(true)}
       />
       <Spacer size={28} />
-      <WeekTiles />
+      <WeekTiles season={season} />
       <Modal
         title="Add a New Week"
         isOpen={openModal}

@@ -1,11 +1,9 @@
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { useSeason } from '../../lib/seasonContext';
 import { useGetWeeksBySeasonQuery } from '../../types/generated-queries';
 
-export function WeekTiles() {
+export function WeekTiles({ season }) {
   const router = useRouter();
-  const { season } = useSeason();
   const {
     data: weeksInfo,
     error: weeksQueryError,

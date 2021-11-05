@@ -16,7 +16,10 @@ export default function ManageGamesPage() {
   });
 
   if (loading) return <p>Loading...</p>;
-  if (error || data.weeks.length === 0) return <p>Error</p>;
+  if (error) return <p>Error {error.message}</p>;
+  if (data.weeks.length === 0) {
+    return <p>No weeks to display.</p>;
+  }
 
   const weekData = data.weeks[0];
 

@@ -25,13 +25,18 @@ export default function ManageGamePage() {
     variables: { slug: game, season },
   });
   if (loading || gameLoading) return <p>Loading...</p>;
-  if (
-    error ||
-    gameError ||
-    gameData.games.length === 0 ||
-    data.weeks.length === 0
-  )
-    return <p>Error</p>;
+
+  if (error || gameError)
+    return <p>Error: {error ? error.message : gameError?.message}</p>;
+
+  if (gameData.games.length === 0 || data.weeks.length === 0) {
+    return (
+      <p>
+        Error:{' '}
+        {gameData.games.length === 0 ? 'game not found' : 'week not found'}
+      </p>
+    );
+  }
 
   const weekData = data.weeks[0];
   const games = gameData.games[0];
