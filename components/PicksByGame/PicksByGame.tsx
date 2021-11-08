@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import useWeekSelect from '../../lib/useWeekSelect';
-import Spacer from '../Spacer';
 import Icon from '../Icon';
 import { spreadToString } from '../../utils/spreadToString';
 import {
@@ -9,29 +7,8 @@ import {
   usePlayersBySeasonAndWeekQuery,
 } from '../../types/generated-queries';
 
-export default function PicksByGame({ season }) {
+export default function PicksByGame({ season, selectedWeek }) {
   const [selectedGame, setSelectedGame] = useState();
-  const { weekSelector, selectedWeek } = useWeekSelect();
-
-  if (!selectedWeek) {
-    return null;
-  }
-  return (
-    <>
-      <Spacer size={45} />
-      {weekSelector}
-      <Spacer size={30} />
-      <GamePicks
-        season={season}
-        selectedWeek={selectedWeek}
-        selectedGame={selectedGame}
-        setSelectedGame={setSelectedGame}
-      />
-    </>
-  );
-}
-
-function GamePicks({ season, selectedWeek, selectedGame, setSelectedGame }) {
   const { data, error, loading } = useGamesBySeasonAndWeekQuery({
     variables: { season, weekId: selectedWeek.id },
   });
@@ -40,17 +17,36 @@ function GamePicks({ season, selectedWeek, selectedGame, setSelectedGame }) {
   if (error) return <p>Error</p>;
 
   const games = data?.games;
+  if (games?.length === 0) {
+    return <p>No Games</p>;
+  }
 
   return (
-    <div>
-      <GamesList
-        season={season}
-        selectedWeek={selectedWeek}
-        games={games}
-        setGame={setSelectedGame}
-        selectedGame={selectedGame}
-      />
-    </div>
+    <List aria-label="games">
+      {games?.map((game) => {
+        const isSelected = game.id === selectedGame?.id;
+        return (
+          <div key={game.id}>
+            <Game
+              key={game.id}
+              onClick={() => setSelectedGame(game)}
+              isSelected={game.id === selectedGame?.id}
+            >
+              <span>@ {game.homeTeam.name}</span>
+              <span>{spreadToString(game.spread)}</span>
+              <span>{game.awayTeam.name}</span>
+            </Game>
+            {isSelected && (
+              <PlayerList
+                season={season}
+                selectedWeek={selectedWeek}
+                selectedGame={selectedGame}
+              />
+            )}
+          </div>
+        );
+      })}
+    </List>
   );
 }
 
@@ -73,7 +69,7 @@ function PlayerList({ season, selectedWeek, selectedGame }) {
       : 0
   );
   return (
-    <PlayerWrapper>
+    <PlayerWrapper aria-label="players">
       {sortedPlayers.map((player) => {
         const playerPick = player?.picks?.find(
           ({ game }) => game.id === selectedGame.id
@@ -145,36 +141,6 @@ const PlayerTile = styled.div`
     padding: 5px 30px;
   }
 `;
-
-function GamesList({ season, selectedWeek, games, selectedGame, setGame }) {
-  return (
-    <List>
-      {games.map((game) => {
-        const isSelected = game.id === selectedGame?.id;
-        return (
-          <>
-            <Game
-              key={game.id}
-              onClick={() => setGame(game)}
-              isSelected={game.id === selectedGame?.id}
-            >
-              <span>@ {game.homeTeam.name}</span>
-              <span>{spreadToString(game.spread)}</span>
-              <span>{game.awayTeam.name}</span>
-            </Game>
-            {isSelected && (
-              <PlayerList
-                season={season}
-                selectedWeek={selectedWeek}
-                selectedGame={selectedGame}
-              />
-            )}
-          </>
-        );
-      })}
-    </List>
-  );
-}
 
 const List = styled.ol`
   display: flex;

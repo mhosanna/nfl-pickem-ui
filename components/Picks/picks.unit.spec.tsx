@@ -8,7 +8,12 @@ import {
   getWeeksBySeasonNetworkError,
   getWeeksBySeasonGraphqlError,
 } from '../../__mocks__/getWeeksBySeason';
-import { makePick } from '../../__mocks__/makePick';
+import {
+  makeWashingtonPick,
+  makeSeattlePick,
+  deletePick,
+  pickGameWithWinner,
+} from '../../__mocks__/makePick';
 
 const player = {
   __typename: 'Player' as 'Player' | undefined,
@@ -134,7 +139,7 @@ it('adds a tag to the game winner', async () => {
   });
 });
 it('highlights the game after the player picks it', async () => {
-  const mocks = [getWeeksBySeason, getPicksByWeekEmpty, makePick];
+  const mocks = [getWeeksBySeason, getPicksByWeekEmpty, makeWashingtonPick];
   render(
     <MockedProvider mocks={mocks} addTypename={true}>
       <Picks player={player} />
@@ -157,5 +162,114 @@ it('highlights the game after the player picks it', async () => {
   );
   await waitFor(() => {
     expect(screen.getByTestId('picked-team')).toBeInTheDocument();
+  });
+});
+
+it('changes players pick if they pick new team', async () => {
+  const mocks = [
+    getWeeksBySeason,
+    getPicksByWeekEmpty,
+    makeWashingtonPick,
+    makeSeattlePick,
+  ];
+  render(
+    <MockedProvider mocks={mocks} addTypename={true}>
+      <Picks player={player} />
+    </MockedProvider>
+  );
+  await waitFor(() => {
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+  });
+  fireEvent.change(screen.getByRole('combobox'), {
+    target: { value: 'Week 1' },
+  });
+  await waitFor(() => {
+    expect(
+      screen.getByRole('button', { name: 'Washington Football Team' })
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('picked-team')).toBeNull();
+  });
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Washington Football Team' })
+  );
+  await waitFor(() => {
+    const washingtonBtn = screen.getByRole('button', {
+      name: 'Washington Football Team',
+    });
+    expect(washingtonBtn.firstChild).toHaveAttribute('data-testid');
+  });
+  fireEvent.click(screen.getByRole('button', { name: 'Seattle Seahawks' }));
+  await waitFor(() => {
+    const seattleBtn = screen.getByRole('button', {
+      name: 'Seattle Seahawks',
+    });
+    expect(seattleBtn.firstChild).toHaveAttribute('data-testid');
+  });
+});
+
+it('deletes pick if player re-clicks picked team', async () => {
+  const mocks = [
+    getWeeksBySeason,
+    getPicksByWeekEmpty,
+    makeWashingtonPick,
+    deletePick,
+  ];
+  render(
+    <MockedProvider mocks={mocks} addTypename={true}>
+      <Picks player={player} />
+    </MockedProvider>
+  );
+  await waitFor(() => {
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+  });
+  fireEvent.change(screen.getByRole('combobox'), {
+    target: { value: 'Week 1' },
+  });
+  await waitFor(() => {
+    expect(
+      screen.getByRole('button', { name: 'Washington Football Team' })
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('picked-team')).toBeNull();
+  });
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Washington Football Team' })
+  );
+  await waitFor(() => {
+    const washingtonBtn = screen.getByRole('button', {
+      name: 'Washington Football Team',
+    });
+    expect(washingtonBtn.firstChild).toHaveAttribute('data-testid');
+  });
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Washington Football Team' })
+  );
+  await waitFor(() => {
+    expect(screen.queryByTestId('picked-team')).not.toBeInTheDocument();
+  });
+});
+
+it('does not make pick if game has winner', async () => {
+  const mocks = [getWeeksBySeason, getPicksByWeekEmpty, pickGameWithWinner];
+  render(
+    <MockedProvider mocks={mocks} addTypename={true}>
+      <Picks player={player} />
+    </MockedProvider>
+  );
+  await waitFor(() => {
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+  });
+  fireEvent.change(screen.getByRole('combobox'), {
+    target: { value: 'Week 1' },
+  });
+  await waitFor(() => {
+    expect(
+      screen.getByRole('button', { name: 'Game Winner New England Patriots' })
+    ).toBeInTheDocument();
+  });
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Game Winner New England Patriots' })
+  );
+  await waitFor(() => {
+    expect(screen.queryByTestId('picked-team')).not.toBeInTheDocument();
   });
 });
