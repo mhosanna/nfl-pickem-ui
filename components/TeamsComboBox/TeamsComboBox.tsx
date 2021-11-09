@@ -32,6 +32,7 @@ export default function TeamComboBoxWrapper(props) {
 }
 
 const TeamsComboBox = ({
+  id,
   onChange,
   inputRef,
   disabled = false,
@@ -44,7 +45,7 @@ const TeamsComboBox = ({
   initialTeam = null,
 }) => (
   <Downshift
-    id="team-dropdown"
+    id={id}
     onChange={onChange}
     itemToString={itemToString}
     initialSelectedItem={initialTeam}

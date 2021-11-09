@@ -9,8 +9,10 @@ import {
 } from '../../types/generated-queries';
 
 export function GameTiles() {
-  const router = useRouter();
-  const { week } = router.query;
+  const {
+    query: { week },
+    push,
+  } = useRouter();
 
   const { data, error, loading } = useGetGamesByWeekSlugQuery({
     variables: { slug: week, season },
@@ -25,7 +27,7 @@ export function GameTiles() {
   };
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error</p>;
+  if (error) return <p>{error.message}</p>;
 
   const games = data.games;
 
@@ -56,8 +58,9 @@ export function GameTiles() {
               chooseWinner={chooseWinner(game.id)}
             />
             <EditButton
+              aria-label="edit game"
               onClick={() => {
-                router.push({
+                push({
                   pathname: '/manage-games/[season]/[week]/[game]',
                   query: {
                     season,

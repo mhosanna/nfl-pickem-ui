@@ -112,7 +112,7 @@ function NewGameForm({ handleSubmitGame, error }) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form aria-label="add new game form" onSubmit={handleSubmit(onSubmit)}>
       <FormFields
         control={control}
         register={register}
@@ -123,7 +123,7 @@ function NewGameForm({ handleSubmitGame, error }) {
   );
 }
 
-function FormFields({ control, register, errors, formError }) {
+function FormFields({ control, register, errors, formError, getValues }) {
   return (
     <>
       <ErrorMessage error={formError} />
@@ -132,7 +132,12 @@ function FormFields({ control, register, errors, formError }) {
           control={control}
           name="homeTeam"
           render={({ field: { ref, ...fieldProps } }) => (
-            <TeamsComboBox {...fieldProps} inputRef={ref} label="Home Team" />
+            <TeamsComboBox
+              {...fieldProps}
+              inputRef={ref}
+              label="Home Team"
+              id="home-team-dropdown"
+            />
           )}
           rules={{
             required: true,
@@ -144,8 +149,9 @@ function FormFields({ control, register, errors, formError }) {
       </HomeTeamInput>
       <Spacer size={24} />
       <InputWrapper>
-        <Label>Spread</Label>
+        <Label htmlFor="spread-label">Spread</Label>
         <Input
+          id="spread-label"
           placeholder="Ex. -4"
           {...register('spread', {
             pattern: /^$|[-+]?[0-9]*\.?[0-9]+$/,
@@ -161,7 +167,12 @@ function FormFields({ control, register, errors, formError }) {
           control={control}
           name="awayTeam"
           render={({ field: { ref, ...fieldProps } }) => (
-            <TeamsComboBox {...fieldProps} inputRef={ref} label="Away Team" />
+            <TeamsComboBox
+              {...fieldProps}
+              inputRef={ref}
+              label="Away Team"
+              id="away-team-dropdown"
+            />
           )}
           rules={{
             required: true,

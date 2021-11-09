@@ -955,11 +955,13 @@ export type CreateWeekMutation = {
   __typename?: 'Mutation';
   createWeek?:
     | {
-        __typename?: 'Week';
+        __typename: 'Week';
         id: string;
         label?: string | null | undefined;
         slug?: string | null | undefined;
         season?: string | null | undefined;
+        gamesCount?: number | null | undefined;
+        games?: Array<{ __typename?: 'Game'; id: string }> | null | undefined;
       }
     | null
     | undefined;
@@ -1517,10 +1519,15 @@ export type CreateGameMutationOptions = Apollo.BaseMutationOptions<
 export const CreateWeekDocument = gql`
   mutation createWeek($label: String, $slug: String, $season: String) {
     createWeek(data: { label: $label, slug: $slug, season: $season }) {
+      __typename
       id
       label
       slug
       season
+      gamesCount
+      games {
+        id
+      }
     }
   }
 `;

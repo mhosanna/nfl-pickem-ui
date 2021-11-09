@@ -4,9 +4,14 @@ mutation createWeek(
     $season: String
   ) {
     createWeek(data: { label: $label, slug: $slug, season: $season }) {
+      __typename
       id
       label
       slug
       season
+      gamesCount
+      games{
+        id
+      }
     }
   }

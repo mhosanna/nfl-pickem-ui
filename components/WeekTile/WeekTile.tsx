@@ -13,7 +13,7 @@ export function WeekTiles({ season }) {
   });
 
   if (weeksQueryLoading) return <p>Loading...</p>;
-  if (weeksQueryError) return <p>Error</p>;
+  if (weeksQueryError) return <p>{weeksQueryError.message}</p>;
 
   const weeks = weeksInfo?.weeks;
 
