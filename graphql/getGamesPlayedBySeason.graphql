@@ -1,0 +1,9 @@
+query gamesPlayedBySeason($season: String) {
+    games(
+      where: {
+        AND: [{ season: { equals: $season } }, { NOT: [{ winner: null }] }]
+      }
+    ) {
+      id
+    }
+  }

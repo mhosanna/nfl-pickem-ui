@@ -1,1 +1,1 @@
-export { default, PLAYERS_QUERY } from './PicksByPlayer';
+export { default } from './PicksByPlayer';

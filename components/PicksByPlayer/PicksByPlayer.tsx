@@ -1,102 +1,67 @@
-import { useState } from 'react';
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import useWeekSelect from '../../lib/useWeekSelect';
-import Spacer from '../Spacer';
 import Icon from '../Icon';
 import { spreadToString } from '../../utils/spreadToString';
-import { useEffect } from 'react';
+import { usePlayersBySeasonAndWeekQuery } from '../../types/generated-queries';
+import { Player } from '../../types/types';
 
-export const PLAYERS_QUERY = gql`
-  query GET_PLAYERS_BY_SEASON_AND_WEEK($season: String!, $weekId: ID!) {
-    players(
-      where: { picks: { some: { game: { season: { equals: $season } } } } }
-    ) {
-      id
-      name
-      picksCount(
-        where: {
-          AND: [
-            { game: { week: { id: { equals: $weekId } } } }
-            { isCorrect: { equals: true } }
-          ]
-        }
-      )
-      picks(where: { game: { week: { id: { equals: $weekId } } } }) {
-        id
-        isCorrect
-        picked {
-          id
-          city
-          name
-        }
-        game {
-          id
-        }
-      }
-    }
-  }
-`;
-
-export default function PicksByPlayer({ season }) {
-  const [selectedPlayer, setSelectedPlayer] = useState();
-  const { weekSelector, selectedWeek } = useWeekSelect();
-
-  if (!selectedWeek) {
-    return null;
-  }
-  return (
-    <>
-      <Spacer size={45} />
-      {weekSelector}
-      <Spacer size={32} />
-      <PlayerPicks
-        season={season}
-        selectedWeek={selectedWeek}
-        selectedPlayer={selectedPlayer}
-        setSelectedPlayer={setSelectedPlayer}
-      />
-    </>
-  );
+function rankPlayers(players: Player[]) {
+  const sortedPlayers = [...players];
+  return sortedPlayers.sort((a, b) => {
+    if (b?.picksCount && a?.picksCount) {
+      return b.picksCount - a.picksCount;
+    } else return 0;
+  });
 }
 
-function PlayerPicks({
-  season,
-  selectedWeek,
-  selectedPlayer,
-  setSelectedPlayer,
-}) {
-  const {
-    data: playersInfo,
-    error: playersQueryError,
-    loading: playersQueryLoading,
-  } = useQuery(PLAYERS_QUERY, {
+export default function PicksByPlayer({ season, selectedWeek }) {
+  const [selectedPlayer, setSelectedPlayer] = useState();
+  const { data, error, loading } = usePlayersBySeasonAndWeekQuery({
     variables: { season, weekId: selectedWeek.id },
   });
   //if week changed from dropdown, reselect the selected player
   useEffect(() => {
-    const player = playersInfo?.players.find(
+    const player = data?.players?.find(
       (player) => player.id === selectedPlayer?.id
     );
     setSelectedPlayer(player);
   }, [selectedWeek]);
 
-  if (playersQueryLoading) return <p>Loading...</p>;
-  if (playersQueryError) return <p>Error</p>;
-  const { players } = playersInfo;
-  const sortedPlayers = [...players];
-  sortedPlayers.sort((a, b) => b.picksCount - a.picksCount);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error {error.message}</p>;
+
+  const players = data?.players;
+  if (!players) {
+    return <p>The season hasn't started yet. Check back soon!</p>;
+  }
+  const sortedPlayers = rankPlayers(players);
 
   return (
-    <div>
-      <PlayerList
-        selectedWeek={selectedWeek}
-        players={sortedPlayers}
-        setPlayer={setSelectedPlayer}
-        selectedPlayer={selectedPlayer}
-      />
-    </div>
+    <List aria-label="players">
+      {sortedPlayers.map((player) => {
+        const isSelected = player.id === selectedPlayer?.id;
+        return (
+          <React.Fragment key={player.id}>
+            <ListedPlayer
+              key={player.id}
+              onClick={() => setSelectedPlayer(player)}
+              isSelected={isSelected}
+            >
+              <span>{player.name}</span>
+              <span>
+                {player.picksCount} / {selectedWeek.games.length}
+              </span>
+            </ListedPlayer>
+            {isSelected && (
+              <GameList
+                selectedWeek={selectedWeek}
+                selectedPlayer={selectedPlayer}
+              />
+            )}
+          </React.Fragment>
+        );
+      })}
+    </List>
   );
 }
 
@@ -104,7 +69,7 @@ function GameList({ selectedWeek, selectedPlayer }) {
   const playerPicks = selectedPlayer?.picks;
 
   return (
-    <GamesWrapper>
+    <GamesWrapper aria-label="games">
       {selectedWeek.games.map((g) => {
         const playerPick = playerPicks?.find(({ game }) => game.id === g.id);
         const isHomePicked = playerPick?.picked.id === g.homeTeam.id;
@@ -113,8 +78,16 @@ function GameList({ selectedWeek, selectedPlayer }) {
         const wasCorrect = hasWinner && playerPick?.picked.id === g.winner?.id;
         return (
           <GameItem key={g.id}>
-            {wasCorrect && <FloatingIcon name={'Check'} size="16" />}
-            {hasWinner && !wasCorrect && <FloatingIcon name={'X'} size="16" />}
+            {wasCorrect && (
+              <FloatingIcon
+                name={'Check'}
+                size="16"
+                data-testid="correct-pick"
+              />
+            )}
+            {hasWinner && !wasCorrect && (
+              <FloatingIcon name={'X'} size="16" data-testid="incorrect-pick" />
+            )}
             <GameTile noWinner={!hasWinner} correct={wasCorrect}>
               <TeamAbbreviation isPicked={isHomePicked}>
                 @ {g.homeTeam.abbreviation}
@@ -180,36 +153,6 @@ const GameTile = styled.div`
       : 'var(--warningLight)'};
 `;
 
-function PlayerList({ players, selectedWeek, selectedPlayer, setPlayer }) {
-  return (
-    <List>
-      {players.map((player) => {
-        const isSelected = player.id === selectedPlayer?.id;
-        return (
-          <>
-            <Player
-              key={player.id}
-              onClick={() => setPlayer(player)}
-              isSelected={isSelected}
-            >
-              <span>{player.name}</span>
-              <span>
-                {player.picksCount} / {selectedWeek.games.length}
-              </span>
-            </Player>
-            {isSelected && (
-              <GameList
-                selectedWeek={selectedWeek}
-                selectedPlayer={selectedPlayer}
-              />
-            )}
-          </>
-        );
-      })}
-    </List>
-  );
-}
-
 const List = styled.ol`
   display: flex;
   flex-direction: column;
@@ -221,7 +164,7 @@ const List = styled.ol`
   }
 `;
 
-const Player = styled.li`
+const ListedPlayer = styled.li`
   position: relative;
   display: flex;
   justify-content: space-between;

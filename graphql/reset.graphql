@@ -1,0 +1,14 @@
+mutation reset(
+    $email: String!
+    $password: String!
+    $token: String!
+  ) {
+    redeemPlayerPasswordResetToken(
+      email: $email
+      token: $token
+      password: $password
+    ) {
+      code
+      message
+    }
+  }

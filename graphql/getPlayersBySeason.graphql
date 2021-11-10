@@ -1,0 +1,11 @@
+query playersBySeason($season: String!) {
+    players(
+      where: { picks: { some: { game: { season: { equals: $season } } } } }
+    ) {
+      id
+      name
+      picks(where: { isCorrect: { equals: true } }) {
+        id
+      }
+    }
+  }

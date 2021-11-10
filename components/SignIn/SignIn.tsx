@@ -1,38 +1,18 @@
-import gql from 'graphql-tag';
-import { useMutation } from '@apollo/client';
 import { useForm } from 'react-hook-form';
-import { CURRENT_PLAYER_QUERY } from '../../lib/usePlayer';
 import ErrorMessage from '../ErrorMessage';
 import styled from 'styled-components';
 import Spacer from '../Spacer';
 import Tile from '../Tile';
-
-const SIGNIN_MUTATION = gql`
-  mutation SIGNIN_MUTATION($email: String!, $password: String!) {
-    authenticatePlayerWithPassword(email: $email, password: $password) {
-      ... on PlayerAuthenticationWithPasswordSuccess {
-        item {
-          id
-          email
-          name
-        }
-      }
-      ... on PlayerAuthenticationWithPasswordFailure {
-        code
-        message
-      }
-    }
-  }
-`;
+import {
+  refetchPlayerQuery,
+  useSigninMutation,
+} from '../../types/generated-queries';
 
 function SignIn() {
-  const [signIn, { data, error: networkError, loading }] = useMutation(
-    SIGNIN_MUTATION,
-    {
-      // refetch the currently logged in Player
-      refetchQueries: [{ query: CURRENT_PLAYER_QUERY }],
-    }
-  );
+  const [signIn, { data, error: networkError, loading }] = useSigninMutation({
+    // refetch the currently logged in Player
+    refetchQueries: [refetchPlayerQuery()],
+  });
   const {
     handleSubmit,
     formState: { errors },
@@ -102,7 +82,7 @@ function SignIn() {
   );
 }
 
-export { SignIn, SIGNIN_MUTATION };
+export { SignIn };
 
 const FormWrapper = styled.div`
   border: 2px solid var(--black);

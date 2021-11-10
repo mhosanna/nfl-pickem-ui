@@ -1,0 +1,5 @@
+mutation deleteGame($gameId: ID!) {
+    deleteGame(where: { id: $gameId }) {
+      id
+    }
+  }

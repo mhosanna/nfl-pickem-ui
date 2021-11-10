@@ -1,20 +1,6 @@
-import { gql, useQuery } from '@apollo/client';
-
-const CURRENT_PLAYER_QUERY = gql`
-  query CURRENT_PLAYER_QUERY {
-    authenticatedItem {
-      ... on Player {
-        id
-        email
-        name
-      }
-    }
-  }
-`;
+import { usePlayerQuery } from '../types/generated-queries';
 
 export function usePlayer() {
-  const { data } = useQuery(CURRENT_PLAYER_QUERY);
+  const { data } = usePlayerQuery();
   return data?.authenticatedItem;
 }
-
-export { CURRENT_PLAYER_QUERY };

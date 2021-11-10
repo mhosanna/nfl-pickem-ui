@@ -1,49 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import { season } from '../config';
 import Select from '../components/Select';
-
-const gameFragment = gql`
-  fragment GameFragment on Game {
-    homeTeam {
-      id
-      name
-      city
-      abbreviation
-    }
-    awayTeam {
-      id
-      name
-      city
-      abbreviation
-    }
-    week {
-      id
-    }
-    spread
-    winner {
-      id
-    }
-  }
-`;
-
-export const WEEKS_BY_SEASON_QUERY = gql`
-  query GET_ALL_WEEKS_BY_SEASON($season: String) {
-    weeks(where: { season: { equals: $season } }, orderBy: { id: desc }) {
-      id
-      label
-      games {
-        id
-        ...GameFragment
-      }
-    }
-  }
-  ${gameFragment}
-`;
+import { useGetWeeksBySeasonQuery } from '../types/generated-queries';
 
 export default function useWeekSelect(initial = {}) {
-  const { data, error, loading } = useQuery(WEEKS_BY_SEASON_QUERY, {
+  const { data, error, loading } = useGetWeeksBySeasonQuery({
     variables: { season },
   });
 

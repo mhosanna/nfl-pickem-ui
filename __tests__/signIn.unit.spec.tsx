@@ -14,9 +14,12 @@ it('tells you where you are', async () => {
       <SignInPage />
     </MockedProvider>
   );
-  expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(
-    'Sign Into Your Account'
-  );
+  expect(
+    screen.getByRole('heading', { level: 2, name: 'Sign Into Your Account' })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole('heading', { level: 2, name: 'Request a Password Reset' })
+  ).toBeInTheDocument();
 });
 
 it('does nothing if logged in successfully', async () => {
@@ -39,21 +42,21 @@ it('does nothing if logged in successfully', async () => {
   await waitFor(() => {
     expect(screen.getByLabelText('Password')).toHaveValue('password');
   });
-  const signInButton = screen.getByRole('button');
+  const signInButton = screen.getByRole('button', { name: 'Sign In' });
 
   fireEvent.click(signInButton);
 
   await waitFor(() => {
-    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(
-      'Sign Into Your Account'
-    );
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Sign Into Your Account' })
+    ).toBeInTheDocument();
     expect(screen.getByLabelText('Email')).toHaveValue('');
     expect(screen.getByLabelText('Password')).toHaveValue('');
   });
 });
 
 it('displays an error if network error', async () => {
-  //mock console error so it doesn't show during tes
+  //mock console error so it doesn't show during test
   const networkError = console.error;
   console.error = jest.fn();
 
@@ -70,7 +73,7 @@ it('displays an error if network error', async () => {
   fireEvent.change(emailInput, { target: { value: 'matt@example.com' } });
   fireEvent.change(passwordInput, { target: { value: 'password' } });
 
-  const signInButton = screen.getByRole('button');
+  const signInButton = screen.getByRole('button', { name: 'Sign In' });
 
   fireEvent.click(signInButton);
   await waitFor(() => {
@@ -94,7 +97,7 @@ it('displays an error if bad username or password', async () => {
   fireEvent.change(emailInput, { target: { value: 'matt@example.com' } });
   fireEvent.change(passwordInput, { target: { value: 'password' } });
 
-  const signInButton = screen.getByRole('button');
+  const signInButton = screen.getByRole('button', { name: 'Sign In' });
 
   fireEvent.click(signInButton);
   await waitFor(() => {

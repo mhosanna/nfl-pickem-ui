@@ -1,30 +1,34 @@
-import { ApolloProvider } from '@apollo/client';
+import { ReactNode } from 'react';
+import type { AppProps, AppLayoutProps } from 'next/app';
+import { ApolloClient, ApolloProvider } from '@apollo/client';
 import Page from '../components/PageShell';
 import GlobalStyles from '../components/GlobalStyles/GlobalStyles';
 import { SeasonProvider } from '../lib/seasonContext';
 import { ThemeProvider } from 'styled-components';
-import { QUERIES } from '../constants';
+import { myTheme } from '../constants';
 import withData from '../lib/withData';
 
-function App({ Component, pageProps, apollo }) {
+type ApolloProps = {
+  apollo: ApolloClient<any>;
+};
+type ApolloAppProps = ApolloProps & AppLayoutProps & AppProps;
+
+function App({ Component, pageProps, apollo }: ApolloAppProps) {
+  const getLayout = Component.getLayout || ((page: ReactNode) => page);
   return (
     <>
       <GlobalStyles />
       <ApolloProvider client={apollo}>
-        <ThemeProvider theme={{ queries: QUERIES }}>
+        <ThemeProvider theme={myTheme}>
           <SeasonProvider>
-            <Page>{useLayout({ Component, pageProps })}</Page>
+            <Page>
+              <>{getLayout(<Component {...pageProps} />)}</>
+            </Page>
           </SeasonProvider>
         </ThemeProvider>
       </ApolloProvider>
     </>
   );
-}
-
-function useLayout({ Component, pageProps }) {
-  const getLayout = Component.getLayout || ((page) => page);
-
-  return getLayout(<Component {...pageProps} />);
 }
 
 export default withData(App);
