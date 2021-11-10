@@ -1,6 +1,6 @@
-import { useRouter } from "next/router";
-import RequestReset from "../components/RequestReset";
-import Reset from "../components/Reset";
+import { useRouter } from 'next/router';
+import RequestReset from '../components/RequestReset';
+import Reset from '../components/Reset';
 
 export default function ResetPage() {
   const { query } = useRouter();
@@ -13,7 +13,7 @@ export default function ResetPage() {
     );
   }
   return (
-    <div style={{ maxWidth: "700px" }}>
+    <div style={{ maxWidth: '700px' }}>
       <Reset token={query.token} />
     </div>
   );

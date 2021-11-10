@@ -1,1 +1,1 @@
-export { default } from "./TeamBlock";
+export { default } from './TeamBlock';

@@ -1,5 +1,5 @@
-import * as React from "react";
-import { season as configSeason } from "../config";
+import * as React from 'react';
+import { season as configSeason } from '../config';
 
 type Dispatch = React.Dispatch<React.SetStateAction<string>>;
 type State = string;
@@ -21,7 +21,7 @@ function SeasonProvider({ children }: SeasonProviderProps) {
 function useSeason() {
   const context = React.useContext(SeasonContext);
   if (context === undefined) {
-    throw new Error("useSeason must be used within a SeasonProvider");
+    throw new Error('useSeason must be used within a SeasonProvider');
   }
   return context;
 }

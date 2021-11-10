@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
-import { useQuery } from "@apollo/client";
-import Downshift from "downshift";
-import gql from "graphql-tag";
-import styled from "styled-components";
-import Icon from "../Icon";
+import { useState, useEffect } from 'react';
+import { useQuery } from '@apollo/client';
+import Downshift from 'downshift';
+import gql from 'graphql-tag';
+import styled from 'styled-components';
+import Icon from '../Icon';
 
 const GET_ALL_TEAMS = gql`
   query GET_ALL_TEAMS {
@@ -28,7 +28,7 @@ export default function TeamComboBoxWrapper(props) {
     }
   }, [data]);
 
-  const itemToString = (item) => (item ? item.city + " " + item.name : "");
+  const itemToString = (item) => (item ? item.city + ' ' + item.name : '');
 
   return (
     <TeamsComboBox
@@ -88,7 +88,7 @@ const TeamsComboBox = ({
               onClick={clearSelection}
               aria-label="clear selection"
             >
-              <Icon name={"X"} />
+              <Icon name={'X'} />
             </ControllerButton>
           ) : (
             <ControllerButton {...getToggleButtonProps()}>
@@ -108,7 +108,7 @@ const TeamsComboBox = ({
                     disabled,
                     style: {
                       backgroundColor:
-                        highlightedIndex === index ? "var(--gray50)" : "white",
+                        highlightedIndex === index ? 'var(--gray50)' : 'white',
                     },
                   })}
                   key={`${item}${index}`}
@@ -142,11 +142,11 @@ const Input = styled.input`
   min-height: 1.8rem;
   padding: 1rem;
   background-color: ${(props) =>
-    props.disabled ? "var(--transparentGray15)" : "none"};
+    props.disabled ? 'var(--transparentGray15)' : 'none'};
   color: ${(props) =>
-    props.disabled ? "var(--gray500)" : "rgba(0, 0, 0, 0.87)"};
+    props.disabled ? 'var(--gray500)' : 'rgba(0, 0, 0, 0.87)'};
   border: 2px solid var(--black);
-  border-radius: ${(props) => (props.isOpen ? "3px 3px 0px 0px" : "3px")};
+  border-radius: ${(props) => (props.isOpen ? '3px 3px 0px 0px' : '3px')};
 `;
 
 const ControllerButton = styled.button`
@@ -155,7 +155,7 @@ const ControllerButton = styled.button`
   position: absolute;
   right: -12px;
   top: 10px;
-  cursor: ${(props) => (props.disabled ? "inherit" : "pointer")};
+  cursor: ${(props) => (props.disabled ? 'inherit' : 'pointer')};
 `;
 
 const Menu = styled.ul`

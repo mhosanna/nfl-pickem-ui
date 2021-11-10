@@ -1,8 +1,8 @@
-import { useQuery } from "@apollo/client";
-import { useRouter } from "next/router";
-import gql from "graphql-tag";
-import styled from "styled-components";
-import { useSeason } from "../../lib/seasonContext";
+import { useQuery } from '@apollo/client';
+import { useRouter } from 'next/router';
+import gql from 'graphql-tag';
+import styled from 'styled-components';
+import { useSeason } from '../../lib/seasonContext';
 
 const gameFragment = gql`
   fragment GameFragment on Game {
@@ -68,7 +68,7 @@ export function WeekTiles() {
             key={week.id}
             onClick={() => {
               router.push({
-                pathname: "/manage-games/[season]/[week]",
+                pathname: '/manage-games/[season]/[week]',
                 query: {
                   season,
                   week: week.slug,

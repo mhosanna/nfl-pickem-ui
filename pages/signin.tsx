@@ -1,6 +1,6 @@
-import styled from "styled-components";
-import { SignIn } from "../components/SignIn";
-import RequestReset from "../components/RequestReset";
+import styled from 'styled-components';
+import { SignIn } from '../components/SignIn';
+import RequestReset from '../components/RequestReset';
 
 const GridStyles = styled.div`
   display: grid;

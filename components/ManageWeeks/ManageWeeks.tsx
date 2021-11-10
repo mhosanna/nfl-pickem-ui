@@ -1,14 +1,14 @@
-import { useState } from "react";
-import { useMutation } from "@apollo/client";
-import { useForm, SubmitHandler } from "react-hook-form";
-import gql from "graphql-tag";
-import styled from "styled-components";
-import AddNewTile from "../AddNewTile";
-import Modal from "../Modal";
-import Spacer from "../Spacer";
-import { GET_WEEKS_BY_SEASON_QUERY, WeekTiles } from "../WeekTile/WeekTile";
-import { string_to_slug } from "../../utils/slugify";
-import ErrorMessage from "../ErrorMessage";
+import { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import gql from 'graphql-tag';
+import styled from 'styled-components';
+import AddNewTile from '../AddNewTile';
+import Modal from '../Modal';
+import Spacer from '../Spacer';
+import { GET_WEEKS_BY_SEASON_QUERY, WeekTiles } from '../WeekTile/WeekTile';
+import { string_to_slug } from '../../utils/slugify';
+import ErrorMessage from '../ErrorMessage';
 
 type Inputs = {
   weekLabel: string;
@@ -117,7 +117,7 @@ function NewWeekForm({ handleSubmitWeek, error, loading }) {
         <Label>Week Label</Label>
         <Input
           placeholder="Ex. Week 1"
-          {...register("weekLabel", { required: true })}
+          {...register('weekLabel', { required: true })}
         />
         {errors.weekLabel && (
           <ValidationError>Week label cannot be blank</ValidationError>

@@ -1,7 +1,7 @@
-import React from "react";
-import styled from "styled-components";
-import Icon from "../Icon";
-import { getDisplayedValue } from "./Select.helpers";
+import React from 'react';
+import styled from 'styled-components';
+import Icon from '../Icon';
+import { getDisplayedValue } from './Select.helpers';
 
 export default function Select({ label, value, onChange, children }) {
   const displayedValue = getDisplayedValue(value, children);
@@ -13,7 +13,7 @@ export default function Select({ label, value, onChange, children }) {
       </NativeSelect>
       <PresentationalBit>
         {displayedValue}
-        <IconWrapper style={{ "--size": 24 + "px" }}>
+        <IconWrapper style={{ '--size': 24 + 'px' }}>
           <Icon name="ChevronDown" />
         </IconWrapper>
       </PresentationalBit>

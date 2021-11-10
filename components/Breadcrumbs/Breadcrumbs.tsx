@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import Link from "next/link";
+import React from 'react';
+import styled from 'styled-components';
+import Link from 'next/link';
 
 const Breadcrumbs = ({ children }) => {
   return <Wrapper>{children}</Wrapper>;
@@ -25,7 +25,7 @@ const CrumbWrapper = styled.div`
   &:not(:first-of-type) {
     margin-left: 8px;
     &::before {
-      content: "/";
+      content: '/';
       margin-right: 8px;
       color: var(--black);
     }

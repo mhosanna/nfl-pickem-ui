@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import styled from "styled-components";
-import useWeekSelect from "../../lib/useWeekSelect";
-import Spacer from "../Spacer";
-import Icon from "../Icon";
-import { spreadToString } from "../../utils/spreadToString";
-import { PLAYERS_QUERY } from "../PicksByPlayer";
+import { useState } from 'react';
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import styled from 'styled-components';
+import useWeekSelect from '../../lib/useWeekSelect';
+import Spacer from '../Spacer';
+import Icon from '../Icon';
+import { spreadToString } from '../../utils/spreadToString';
+import { PLAYERS_QUERY } from '../PicksByPlayer';
 
 const GAMES_QUERY = gql`
   query GET_GAMES_BY_SEASON_AND_WEEK($season: String!, $weekId: ID!) {
@@ -113,8 +113,8 @@ function PlayerList({ season, selectedWeek, selectedGame }) {
         const wasCorrect = !!playerPick?.isCorrect;
         return (
           <PlayerItem key={player.id}>
-            {wasCorrect && <FloatingIcon name={"Check"} size="16" />}
-            {hasWinner && !wasCorrect && <FloatingIcon name={"X"} size="16" />}
+            {wasCorrect && <FloatingIcon name={'Check'} size="16" />}
+            {hasWinner && !wasCorrect && <FloatingIcon name={'X'} size="16" />}
             <PlayerTile noWinner={!hasWinner} correct={wasCorrect}>
               <span>{player.name}</span>
               <span>{playerPick?.picked.name}</span>
@@ -166,10 +166,10 @@ const PlayerTile = styled.div`
   font-size: 1.6rem;
   background-color: ${(props) =>
     props.noWinner
-      ? "var(--background)"
+      ? 'var(--background)'
       : props.correct
-      ? "var(--success)"
-      : "var(--warningLight)"};
+      ? 'var(--success)'
+      : 'var(--warningLight)'};
 
   @media ${(props) => props.theme.queries.tabletAndSmaller} {
     justify-content: space-evenly;
@@ -228,18 +228,18 @@ const Game = styled.li`
   font-size: 1.8rem;
   font-weight: 500;
   background-color: ${(props) =>
-    props.isSelected ? "var(--black)" : "initial"};
-  color: ${(props) => (props.isSelected ? "white" : "initial")};
+    props.isSelected ? 'var(--black)' : 'initial'};
+  color: ${(props) => (props.isSelected ? 'white' : 'initial')};
 
   width: 45%;
 
   &:hover {
     background-color: ${(props) =>
-      props.isSelected ? "var(--black)" : "var(--backgroundHover)"};
+      props.isSelected ? 'var(--black)' : 'var(--backgroundHover)'};
   }
   &::after {
-    display: ${(props) => (props.isSelected ? "initial" : "none")};
-    content: ">";
+    display: ${(props) => (props.isSelected ? 'initial' : 'none')};
+    content: '>';
     position: absolute;
     right: -25px;
     top: -5px;
