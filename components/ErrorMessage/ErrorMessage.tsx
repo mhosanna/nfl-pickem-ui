@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const ErrorMessage = ({ error }) => {
   if (!error || !error.message) return null;
@@ -11,7 +11,7 @@ const ErrorMessage = ({ error }) => {
       <ErrorStyles key={i}>
         <p data-test="graphql-error">
           <strong>Oops!</strong>
-          {error.message.replace("GraphQL error: ", "")}
+          {error.message.replace('GraphQL error: ', '')}
         </p>
       </ErrorStyles>
     ));
@@ -20,7 +20,7 @@ const ErrorMessage = ({ error }) => {
     <ErrorStyles>
       <p data-test="graphql-error">
         <strong>Oops!</strong>
-        {error.message.replace("GraphQL error: ", "")}
+        {error.message.replace('GraphQL error: ', '')}
       </p>
     </ErrorStyles>
   );

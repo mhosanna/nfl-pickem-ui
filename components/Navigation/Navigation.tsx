@@ -1,11 +1,11 @@
-import { useState } from "react";
-import styled from "styled-components";
-import NavLink from "../Navigation-Link";
-import { season } from "../../config";
-import { usePlayer } from "../../lib/usePlayer";
-import SignOut from "../SignOut";
-import Icon from "../Icon";
-import MobileMenu from "../MobileMenu";
+import { useState } from 'react';
+import styled from 'styled-components';
+import NavLink from '../Navigation-Link';
+import { season } from '../../config';
+import { usePlayer } from '../../lib/usePlayer';
+import SignOut from '../SignOut';
+import Icon from '../Icon';
+import MobileMenu from '../MobileMenu';
 
 export default function Navigation() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -21,7 +21,7 @@ export default function Navigation() {
               <NavLink linkName="My Picks" href="/picks" icon="CheckSquare" />
               <NavLink
                 linkName="Picks & Results"
-                href={{ pathname: "/game-results", query: { by: "player" } }}
+                href={{ pathname: '/game-results', query: { by: 'player' } }}
                 icon="Star"
               />
               <NavLink
@@ -46,7 +46,7 @@ export default function Navigation() {
       </DesktopNav>
       <MobileAction>
         <MenuButton onClick={() => setShowMobileMenu(true)}>
-          <Icon name={"Menu"} size={36} />
+          <Icon name={'Menu'} size={36} />
         </MenuButton>
       </MobileAction>
       <MobileMenu
@@ -84,7 +84,7 @@ const Logo = styled.h1`
   margin-bottom: 56px;
 
   ::after {
-    content: "!";
+    content: '!';
     font-family: var(--logo-font);
     font-weight: 400;
     font-size: 4.8rem;

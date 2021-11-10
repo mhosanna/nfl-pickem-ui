@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import { usePlayer } from "../../lib/usePlayer";
-import RequestReset from "../RequestReset";
-import { SignIn } from "../SignIn";
+import styled from 'styled-components';
+import { usePlayer } from '../../lib/usePlayer';
+import RequestReset from '../RequestReset';
+import { SignIn } from '../SignIn';
 
 export default function PleaseSignIn({ children }) {
   const me = usePlayer();

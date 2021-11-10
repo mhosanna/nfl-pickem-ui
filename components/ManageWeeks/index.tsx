@@ -1,1 +1,1 @@
-export { default } from "./ManageWeeks";
+export { default } from './ManageWeeks';

@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import Icon from "../Icon";
+import styled from 'styled-components';
+import Icon from '../Icon';
 
 export default function TeamBlock({
   id,
@@ -12,10 +12,10 @@ export default function TeamBlock({
 }) {
   let Component;
   let WinFlag;
-  if (field === "home") {
+  if (field === 'home') {
     Component = HomeBlock;
     WinFlag = HomeFlag;
-  } else if (field === "away") {
+  } else if (field === 'away') {
     Component = AwayBlock;
     WinFlag = AwayFlag;
   } else {
@@ -26,10 +26,10 @@ export default function TeamBlock({
       <Component isPicked={isPicked} onClick={() => makePick(id)}>
         {isWinner && <WinFlag>Game Winner</WinFlag>}
         {isPicked && (
-          <PickedIcon name={"CheckSquare"} data-testid="picked-team" />
+          <PickedIcon name={'CheckSquare'} data-testid="picked-team" />
         )}
         <TeamName>
-          <span style={{ fontWeight: "bold" }}>{city}</span>
+          <span style={{ fontWeight: 'bold' }}>{city}</span>
           <span>{name}</span>
         </TeamName>
       </Component>
@@ -65,8 +65,8 @@ const BlockBase = styled.button`
   width: 50%;
   height: 80px;
   background-color: ${(props) =>
-    props.isPicked ? "var(--black)" : "var(--background)"};
-  color: ${(props) => (props.isPicked ? "white" : "initial")};
+    props.isPicked ? 'var(--black)' : 'var(--background)'};
+  color: ${(props) => (props.isPicked ? 'white' : 'initial')};
   border-radius: 3px;
   font-size: clamp(1rem, 4vw, 1.8rem);
   line-height: 1;
@@ -84,18 +84,18 @@ const BlockBase = styled.button`
 `;
 
 const HomeBlock = styled(BlockBase)`
-  padding: ${(props) => (props.isPicked ? "0px 24px" : "0px 60px")};
+  padding: ${(props) => (props.isPicked ? '0px 24px' : '0px 60px')};
 
   @media ${(props) => props.theme.queries.tabletAndSmaller} {
-    padding: ${(props) => (props.isPicked ? "0px 40px 0px 8px" : "0px 40px")};
+    padding: ${(props) => (props.isPicked ? '0px 40px 0px 8px' : '0px 40px')};
   }
 `;
 
 const AwayBlock = styled(BlockBase)`
-  padding-left: ${(props) => (props.isPicked ? "74px" : "110px")};
+  padding-left: ${(props) => (props.isPicked ? '74px' : '110px')};
 
   @media ${(props) => props.theme.queries.tabletAndSmaller} {
-    padding-left: ${(props) => (props.isPicked ? "50px" : "79px")};
+    padding-left: ${(props) => (props.isPicked ? '50px' : '79px')};
   }
 `;
 

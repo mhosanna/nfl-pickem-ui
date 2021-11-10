@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import styled from "styled-components";
-import useWeekSelect from "../../lib/useWeekSelect";
-import Spacer from "../Spacer";
-import Icon from "../Icon";
-import { spreadToString } from "../../utils/spreadToString";
-import { useEffect } from "react";
+import { useState } from 'react';
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import styled from 'styled-components';
+import useWeekSelect from '../../lib/useWeekSelect';
+import Spacer from '../Spacer';
+import Icon from '../Icon';
+import { spreadToString } from '../../utils/spreadToString';
+import { useEffect } from 'react';
 
 export const PLAYERS_QUERY = gql`
   query GET_PLAYERS_BY_SEASON_AND_WEEK($season: String!, $weekId: ID!) {
@@ -113,8 +113,8 @@ function GameList({ selectedWeek, selectedPlayer }) {
         const wasCorrect = hasWinner && playerPick?.picked.id === g.winner?.id;
         return (
           <GameItem key={g.id}>
-            {wasCorrect && <FloatingIcon name={"Check"} size="16" />}
-            {hasWinner && !wasCorrect && <FloatingIcon name={"X"} size="16" />}
+            {wasCorrect && <FloatingIcon name={'Check'} size="16" />}
+            {hasWinner && !wasCorrect && <FloatingIcon name={'X'} size="16" />}
             <GameTile noWinner={!hasWinner} correct={wasCorrect}>
               <TeamAbbreviation isPicked={isHomePicked}>
                 @ {g.homeTeam.abbreviation}
@@ -142,7 +142,7 @@ const FloatingIcon = styled(Icon)`
 `;
 
 const TeamAbbreviation = styled.span`
-  font-weight: ${(props) => (props.isPicked ? "800" : "initial")};
+  font-weight: ${(props) => (props.isPicked ? '800' : 'initial')};
 `;
 
 const GamesWrapper = styled.ul`
@@ -174,10 +174,10 @@ const GameTile = styled.div`
   font-size: 1.6rem;
   background-color: ${(props) =>
     props.noWinner
-      ? "var(--background)"
+      ? 'var(--background)'
       : props.correct
-      ? "var(--success)"
-      : "var(--warningLight)"};
+      ? 'var(--success)'
+      : 'var(--warningLight)'};
 `;
 
 function PlayerList({ players, selectedWeek, selectedPlayer, setPlayer }) {
@@ -230,18 +230,18 @@ const Player = styled.li`
   font-size: 2rem;
   font-weight: 500;
   background-color: ${(props) =>
-    props.isSelected ? "var(--black)" : "initial"};
-  color: ${(props) => (props.isSelected ? "white" : "initial")};
+    props.isSelected ? 'var(--black)' : 'initial'};
+  color: ${(props) => (props.isSelected ? 'white' : 'initial')};
 
   width: 35%;
 
   &:hover {
     background-color: ${(props) =>
-      props.isSelected ? "var(--black)" : "var(--backgroundHover)"};
+      props.isSelected ? 'var(--black)' : 'var(--backgroundHover)'};
   }
   &::after {
-    display: ${(props) => (props.isSelected ? "initial" : "none")};
-    content: ">";
+    display: ${(props) => (props.isSelected ? 'initial' : 'none')};
+    content: '>';
     position: absolute;
     right: -25px;
     top: 2px;

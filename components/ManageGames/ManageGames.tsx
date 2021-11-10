@@ -1,16 +1,16 @@
-import React from "react";
-import AddNewTile from "../AddNewTile";
-import Spacer from "../Spacer";
-import Modal from "../Modal";
-import { GameTiles } from "../GameTiles";
-import gql from "graphql-tag";
-import styled from "styled-components";
-import { useMutation } from "@apollo/client";
-import { string_to_slug } from "../../utils/slugify";
-import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import TeamsComboBox from "../TeamsComboBox";
-import ErrorMessage from "../ErrorMessage";
-import { GET_GAMES_BY_WEEK_SLUG } from "../GameTiles";
+import React from 'react';
+import AddNewTile from '../AddNewTile';
+import Spacer from '../Spacer';
+import Modal from '../Modal';
+import { GameTiles } from '../GameTiles';
+import gql from 'graphql-tag';
+import styled from 'styled-components';
+import { useMutation } from '@apollo/client';
+import { string_to_slug } from '../../utils/slugify';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import TeamsComboBox from '../TeamsComboBox';
+import ErrorMessage from '../ErrorMessage';
+import { GET_GAMES_BY_WEEK_SLUG } from '../GameTiles';
 
 type Team = {
   __typeName: string;
@@ -77,7 +77,7 @@ export default function ManageGames({ weekId, season }) {
   });
 
   async function SubmitNewGame(data: Inputs) {
-    const slug = string_to_slug(data.homeTeam.name + " " + data.awayTeam.name);
+    const slug = string_to_slug(data.homeTeam.name + ' ' + data.awayTeam.name);
 
     await createGame({
       variables: {
@@ -170,7 +170,7 @@ function FormFields({ control, register, errors, formError }) {
         <Label>Spread</Label>
         <Input
           placeholder="Ex. -4"
-          {...register("spread", {
+          {...register('spread', {
             pattern: /^$|[-+]?[0-9]*\.?[0-9]+$/,
           })}
         />

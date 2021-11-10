@@ -1,10 +1,10 @@
-import { ApolloProvider } from "@apollo/client";
-import Page from "../components/PageShell";
-import GlobalStyles from "../components/GlobalStyles/GlobalStyles";
-import { SeasonProvider } from "../lib/seasonContext";
-import { ThemeProvider } from "styled-components";
-import { QUERIES } from "../constants";
-import withData from "../lib/withData";
+import { ApolloProvider } from '@apollo/client';
+import Page from '../components/PageShell';
+import GlobalStyles from '../components/GlobalStyles/GlobalStyles';
+import { SeasonProvider } from '../lib/seasonContext';
+import { ThemeProvider } from 'styled-components';
+import { QUERIES } from '../constants';
+import withData from '../lib/withData';
 
 function App({ Component, pageProps, apollo }) {
   return (

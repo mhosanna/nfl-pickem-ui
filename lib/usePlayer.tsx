@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery } from '@apollo/client';
 
 const CURRENT_PLAYER_QUERY = gql`
   query CURRENT_PLAYER_QUERY {

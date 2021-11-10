@@ -1,1 +1,1 @@
-export { default } from "./AddNewTile";
+export { default } from './AddNewTile';

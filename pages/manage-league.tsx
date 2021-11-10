@@ -1,5 +1,5 @@
-import PageHeading from "../components/PageHeading";
-import { season } from "../config";
+import PageHeading from '../components/PageHeading';
+import { season } from '../config';
 
 export default function ManageLeaguePage() {
   return (
