@@ -20,8 +20,7 @@ function createClient({
       headers: {
         ...init.headers,
         'Access-Control-Allow-Origin': '*',
-        // eslint-disable-next-line prettier/prettier
-        Cookie: headers?.cookie ?? "",
+        Cookie: headers?.cookie ?? '',
       },
     }).then((response) => response);
   };
