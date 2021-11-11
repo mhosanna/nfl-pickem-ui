@@ -8,14 +8,8 @@ export default function PicksPage() {
     <>
       <PageHeading heading="Make Your Picks" season={season} />
       <PleaseSignIn>
-        <Picks player={defaultPlayer} />
+        <Picks />
       </PleaseSignIn>
     </>
   );
 }
-
-// PleaseSignIn will _always_ pass the logged in player
-// Picks requires a player, but default player will never be used.
-const defaultPlayer = {
-  id: '0',
-};

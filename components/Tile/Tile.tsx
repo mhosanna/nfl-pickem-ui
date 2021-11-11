@@ -19,7 +19,7 @@ export default function Tile({ type, children }: AppProps) {
   );
 }
 
-const TileStyle = styled.div<{ type: TileType }>`
+const TileStyle = styled.div`
   display: flex;
   align-items: center;
   gap: 2px;

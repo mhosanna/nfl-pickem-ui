@@ -83,7 +83,6 @@ export default function ManageGames({ weekId, season }) {
       <Spacer size={28} />
       <GameTiles />
       <Modal
-        id="add-game-modal"
         title="Add a New Game"
         isOpen={openModal}
         handleDismiss={() => {
@@ -124,7 +123,7 @@ function NewGameForm({ handleSubmitGame, error }) {
   );
 }
 
-function FormFields({ control, register, errors, formError }) {
+function FormFields({ control, register, errors, formError, getValues }) {
   return (
     <>
       <ErrorMessage error={formError} />

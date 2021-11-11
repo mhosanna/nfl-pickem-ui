@@ -15,22 +15,17 @@ function rankPlayers(players: Player[]) {
 }
 
 export default function PicksByPlayer({ season, selectedWeek }) {
-  const [selectedPlayer, setSelectedPlayer] = useState({ id: '0' });
+  const [selectedPlayer, setSelectedPlayer] = useState();
   const { data, error, loading } = usePlayersBySeasonAndWeekQuery({
     variables: { season, weekId: selectedWeek.id },
   });
-
   //if week changed from dropdown, reselect the selected player
   useEffect(() => {
-    if (data?.players) {
-      const player = data.players.find(
-        (player) => player.id === selectedPlayer.id
-      );
-      if (player) {
-        setSelectedPlayer(player);
-      }
-    }
-  }, [selectedWeek, data]);
+    const player = data?.players?.find(
+      (player) => player.id === selectedPlayer?.id
+    );
+    setSelectedPlayer(player);
+  }, [selectedWeek]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error {error.message}</p>;
@@ -44,7 +39,7 @@ export default function PicksByPlayer({ season, selectedWeek }) {
   return (
     <List aria-label="players">
       {sortedPlayers.map((player) => {
-        const isSelected = player.id === selectedPlayer.id;
+        const isSelected = player.id === selectedPlayer?.id;
         return (
           <React.Fragment key={player.id}>
             <ListedPlayer
@@ -119,7 +114,7 @@ const FloatingIcon = styled(Icon)`
   left: 8px;
 `;
 
-const TeamAbbreviation = styled.span<{ isPicked: boolean }>`
+const TeamAbbreviation = styled.span`
   font-weight: ${(props) => (props.isPicked ? '800' : 'initial')};
 `;
 
@@ -141,7 +136,7 @@ const GamesWrapper = styled.ul`
   }
 `;
 
-const GameTile = styled.div<{ noWinner: boolean; correct: boolean }>`
+const GameTile = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -169,7 +164,7 @@ const List = styled.ol`
   }
 `;
 
-const ListedPlayer = styled.li<{ isSelected: boolean }>`
+const ListedPlayer = styled.li`
   position: relative;
   display: flex;
   justify-content: space-between;

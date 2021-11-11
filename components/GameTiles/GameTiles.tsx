@@ -14,10 +14,8 @@ export function GameTiles() {
     push,
   } = useRouter();
 
-  const weekParam = Array.isArray(week) ? week[0] : week;
-
   const { data, error, loading } = useGetGamesByWeekSlugQuery({
-    variables: { slug: weekParam, season },
+    variables: { slug: week, season },
   });
   const [selectWinner, { error: selectWinnerError }] =
     useSelectGameWinnerMutation();
@@ -138,7 +136,7 @@ const SpreadCircle = styled.div`
   border: 1px solid var(--black);
 `;
 
-const BaseTeam = styled.button<{ isWinner: boolean }>`
+const BaseTeam = styled.button`
   flex: 1;
   height: 100%;
   line-height: 80px;

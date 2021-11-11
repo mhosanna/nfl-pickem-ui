@@ -57,7 +57,7 @@ const SubNav = styled.nav`
   gap: 10rem;
 `;
 
-export const NavLink = styled.a<{ active?: boolean }>`
+export const NavLink = styled.a`
   text-decoration: none;
   color: ${(props) => (props.active ? 'black' : 'var(--grey)')};
   cursor: pointer;
