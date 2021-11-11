@@ -4,10 +4,10 @@ import Icon from '../Icon';
 
 const MOBILE_BREAKPOINT = 550;
 
-export default function Modal({ isOpen, handleDismiss, title, children }) {
+export default function Modal({ id, isOpen, handleDismiss, title, children }) {
   return (
     <Overlay isOpen={isOpen} onDismiss={handleDismiss}>
-      <Content aria-label={title}>
+      <Content id={id} aria-label={title}>
         <Header>
           <Title>{title}</Title>
           <CloseButton onClick={handleDismiss}>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Icon from '../Icon';
 import { spreadToString } from '../../utils/spreadToString';
@@ -8,7 +8,7 @@ import {
 } from '../../types/generated-queries';
 
 export default function PicksByGame({ season, selectedWeek }) {
-  const [selectedGame, setSelectedGame] = useState();
+  const [selectedGame, setSelectedGame] = useState({ id: '0' });
   const { data, error, loading } = useGamesBySeasonAndWeekQuery({
     variables: { season, weekId: selectedWeek.id },
   });
@@ -24,13 +24,13 @@ export default function PicksByGame({ season, selectedWeek }) {
   return (
     <List aria-label="games">
       {games?.map((game) => {
-        const isSelected = game.id === selectedGame?.id;
+        const isSelected = game.id === selectedGame.id;
         return (
-          <div key={game.id}>
+          <React.Fragment key={game.id}>
             <Game
               key={game.id}
               onClick={() => setSelectedGame(game)}
-              isSelected={game.id === selectedGame?.id}
+              isSelected={game.id === selectedGame.id}
             >
               <span>@ {game.homeTeam.name}</span>
               <span>{spreadToString(game.spread)}</span>
@@ -43,7 +43,7 @@ export default function PicksByGame({ season, selectedWeek }) {
                 selectedGame={selectedGame}
               />
             )}
-          </div>
+          </React.Fragment>
         );
       })}
     </List>
@@ -120,7 +120,7 @@ const PlayerWrapper = styled.ul`
   }
 `;
 
-const PlayerTile = styled.div`
+const PlayerTile = styled.div<{ noWinner: boolean; correct: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -153,7 +153,7 @@ const List = styled.ol`
   }
 `;
 
-const Game = styled.li`
+const Game = styled.li<{ isSelected: boolean }>`
   position: relative;
   display: flex;
   justify-content: space-between;

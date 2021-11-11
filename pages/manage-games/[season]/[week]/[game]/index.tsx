@@ -14,15 +14,19 @@ export default function ManageGamePage() {
     query: { season, week, game },
   } = useRouter();
 
+  const weekParam = Array.isArray(week) ? week[0] : week;
+  const seasonParam = Array.isArray(season) ? season[0] : season;
+  const gameParam = Array.isArray(game) ? game[0] : game;
+
   const { data, error, loading } = useGetWeekBySlugQuery({
-    variables: { slug: week, season },
+    variables: { slug: weekParam, season: seasonParam },
   });
   const {
     data: gameData,
     error: gameError,
     loading: gameLoading,
   } = useGetGameBySlugQuery({
-    variables: { slug: game, season },
+    variables: { slug: gameParam, season: seasonParam },
   });
   if (loading || gameLoading) return <p>Loading...</p>;
 

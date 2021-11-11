@@ -21,7 +21,7 @@ const HiddenCheckbox = styled.input.attrs({ type: 'checkbox' })`
   width: 1px;
 `;
 
-const StyledCheckbox = styled.div`
+const StyledCheckbox = styled.div<{ disabled: boolean; checked: boolean }>`
   width: 16px;
   height: 16px;
   border: ${(props) =>

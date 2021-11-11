@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect } from 'react';
 import Downshift from 'downshift';
 import styled from 'styled-components';
@@ -124,7 +125,7 @@ const Label = styled.label`
   font-weight: bold;
 `;
 
-const Input = styled.input`
+const Input = styled.input<{ isOpen?: boolean }>`
   width: 95%;
   display: inline-block;
   font-size: 1.8rem;
