@@ -11,8 +11,11 @@ export default function ManageGamesPage() {
     query: { season, week },
   } = useRouter();
 
+  const weekParam = Array.isArray(week) ? week[0] : week;
+  const seasonParam = Array.isArray(season) ? season[0] : season;
+
   const { data, error, loading } = useGetWeekBySlugQuery({
-    variables: { slug: week, season },
+    variables: { slug: weekParam, season: seasonParam },
   });
 
   if (loading) return <p>Loading...</p>;

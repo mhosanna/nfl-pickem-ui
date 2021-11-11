@@ -16,7 +16,7 @@ const Wrapper = styled.div`
   gap: 12px;
 `;
 
-const StyledHeading = styled.h2`
+const StyledHeading = styled.h2<{ size: number }>`
   font-family: var(--body-font);
   font-size: ${(props) => props.size}rem;
   line-height: 1;
@@ -37,7 +37,7 @@ const StyledHeading = styled.h2`
   }
 `;
 
-const Underline = styled.div`
+const Underline = styled.div<{ isActive: boolean }>`
   display: ${(props) => (props.isActive ? 'inline' : 'none')};
   width: 140px;
   height: 4px;
