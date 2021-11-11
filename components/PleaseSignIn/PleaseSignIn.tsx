@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import { usePlayer } from '../../lib/usePlayer';
 import RequestReset from '../RequestReset';
@@ -13,7 +12,7 @@ export default function PleaseSignIn({ children }) {
         <RequestReset />
       </GridStyles>
     );
-  return <>{React.cloneElement(children, { player: me })}</>;
+  return children;
 }
 
 const GridStyles = styled.div`

@@ -5,14 +5,12 @@ import Modal from '../Modal';
 import { GameTiles } from '../GameTiles';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
+import { useMutation } from '@apollo/client';
 import { string_to_slug } from '../../utils/slugify';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import TeamsComboBox from '../TeamsComboBox';
 import ErrorMessage from '../ErrorMessage';
-import {
-  useCreateGameMutation,
-  GetGamesByWeekSlugDocument,
-} from '../../types/generated-queries';
+import { GET_GAMES_BY_WEEK_SLUG } from '../GameTiles';
 
 type Team = {
   __typeName: string;
@@ -27,12 +25,37 @@ type Inputs = {
   spread: string;
 };
 
+const CREATE_GAME_MUTATION = gql`
+  mutation CREATE_GAME_BY_WEEK(
+    $season: String
+    $slug: String
+    $week: ID!
+    $homeTeamId: ID!
+    $awayTeamId: ID!
+    $spread: Float
+  ) {
+    createGame(
+      data: {
+        season: $season
+        slug: $slug
+        week: { connect: { id: $week } }
+        homeTeam: { connect: { id: $homeTeamId } }
+        awayTeam: { connect: { id: $awayTeamId } }
+        spread: $spread
+      }
+    ) {
+      id
+      slug
+    }
+  }
+`;
+
 export default function ManageGames({ weekId, season }) {
   const [openModal, setOpenModal] = React.useState(false);
   const [formError, setFormError] = React.useState(null);
 
-  const [createGame] = useCreateGameMutation({
-    refetchQueries: [{ query: GetGamesByWeekSlugDocument }],
+  const [createGame] = useMutation(CREATE_GAME_MUTATION, {
+    refetchQueries: [{ query: GET_GAMES_BY_WEEK_SLUG }],
     update(cache, { data: { createGame } }) {
       cache.modify({
         fields: {
@@ -112,7 +135,7 @@ function NewGameForm({ handleSubmitGame, error }) {
   };
 
   return (
-    <form aria-label="add new game form" onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <FormFields
         control={control}
         register={register}
@@ -123,7 +146,7 @@ function NewGameForm({ handleSubmitGame, error }) {
   );
 }
 
-function FormFields({ control, register, errors, formError, getValues }) {
+function FormFields({ control, register, errors, formError }) {
   return (
     <>
       <ErrorMessage error={formError} />
@@ -132,12 +155,7 @@ function FormFields({ control, register, errors, formError, getValues }) {
           control={control}
           name="homeTeam"
           render={({ field: { ref, ...fieldProps } }) => (
-            <TeamsComboBox
-              {...fieldProps}
-              inputRef={ref}
-              label="Home Team"
-              id="home-team-dropdown"
-            />
+            <TeamsComboBox {...fieldProps} inputRef={ref} label="Home Team" />
           )}
           rules={{
             required: true,
@@ -149,9 +167,8 @@ function FormFields({ control, register, errors, formError, getValues }) {
       </HomeTeamInput>
       <Spacer size={24} />
       <InputWrapper>
-        <Label htmlFor="spread-label">Spread</Label>
+        <Label>Spread</Label>
         <Input
-          id="spread-label"
           placeholder="Ex. -4"
           {...register('spread', {
             pattern: /^$|[-+]?[0-9]*\.?[0-9]+$/,
@@ -167,12 +184,7 @@ function FormFields({ control, register, errors, formError, getValues }) {
           control={control}
           name="awayTeam"
           render={({ field: { ref, ...fieldProps } }) => (
-            <TeamsComboBox
-              {...fieldProps}
-              inputRef={ref}
-              label="Away Team"
-              id="away-team-dropdown"
-            />
+            <TeamsComboBox {...fieldProps} inputRef={ref} label="Away Team" />
           )}
           rules={{
             required: true,

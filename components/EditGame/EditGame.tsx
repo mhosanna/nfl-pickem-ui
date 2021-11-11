@@ -8,19 +8,16 @@ import {
 } from 'react-hook-form';
 import styled from 'styled-components';
 import * as yup from 'yup';
+import gql from 'graphql-tag';
 import PageTitle from '../PageTItle';
 import TeamsComboBox from '../TeamsComboBox';
 import Spacer from '../Spacer';
 import Checkbox from '../Checkbox';
 import Icon from '../Icon';
+import { useMutation } from '@apollo/client';
 import ErrorMessage from '../ErrorMessage';
+import { GET_WEEKS_BY_SEASON_QUERY } from '../WeekTile';
 import Tile from '../Tile';
-import {
-  useDeleteGameMutation,
-  useUpdateGameAndWinnerMutation,
-  useUpdateGameRemoveWinnerMutation,
-  GetWeeksBySeasonDocument,
-} from '../../types/generated-queries';
 
 type Team = {
   __typeName: string;
@@ -36,6 +33,49 @@ type Inputs = {
   isHomeWinner: boolean;
   isAwayWinner: boolean;
 };
+
+const UPDATE_SPREAD_AND_WINNER_MUTATION = gql`
+  mutation UPDATE_GAME_AND_WINNER(
+    $gameId: ID!
+    $winnerId: ID!
+    $spread: Float
+  ) {
+    updateGame(
+      where: { id: $gameId }
+      data: { winner: { connect: { id: $winnerId } }, spread: $spread }
+    ) {
+      id
+      winner {
+        id
+      }
+      spread
+    }
+  }
+`;
+
+const UPDATE_SPREAD_REMOVE_WINNER_MUTATION = gql`
+  mutation UPDATE_GAME_REMOVE_WINNER($gameId: ID!, $spread: Float) {
+    updateGame(
+      where: { id: $gameId }
+      data: { winner: { disconnect: true }, spread: $spread }
+    ) {
+      id
+      winner {
+        id
+      }
+      spread
+    }
+  }
+`;
+
+const DELETE_GAME_MUTATION = gql`
+  mutation DELETE_GAME_MUTATION($gameId: ID!) {
+    deleteGame(where: { id: $gameId }) {
+      id
+    }
+  }
+`;
+
 export default function EditGame({ game }) {
   return (
     <>
@@ -112,16 +152,19 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
   const router = useRouter();
   const { week, season } = router.query;
   const [updateGame, { loading: updateGameLoading, error: updateGameError }] =
-    useUpdateGameAndWinnerMutation();
+    useMutation(UPDATE_SPREAD_AND_WINNER_MUTATION);
   const [
     updateGameRemoveWinner,
     { loading: updateGameRemoveLoading, error: updateRemoveError },
-  ] = useUpdateGameRemoveWinnerMutation();
-  const [deleteGame] = useDeleteGameMutation({
-    refetchQueries: [{ query: GetWeeksBySeasonDocument }],
-    variables: { gameId },
-    update,
-  });
+  ] = useMutation(UPDATE_SPREAD_REMOVE_WINNER_MUTATION);
+  const [deleteGame, { error: deleteGameError }] = useMutation(
+    DELETE_GAME_MUTATION,
+    {
+      refetchQueries: [{ query: GET_WEEKS_BY_SEASON_QUERY }],
+      variables: { gameId },
+      update,
+    }
+  );
 
   const validationSchema = useMemo(
     () =>

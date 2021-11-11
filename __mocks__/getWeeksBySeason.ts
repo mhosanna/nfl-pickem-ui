@@ -1,49 +1,37 @@
-import { GetWeeksBySeasonDocument } from '../types/generated-queries';
+import { WEEKS_BY_SEASON_QUERY } from '../lib/useWeekSelect';
 import { GraphQLError } from 'graphql';
 
 export const getWeeksBySeason = {
   request: {
-    query: GetWeeksBySeasonDocument,
-    variables: { season: '2021' },
+    query: WEEKS_BY_SEASON_QUERY,
+    variables: { season: '2020' },
   },
   result: {
     data: {
-      weeks: [
+      allWeeks: [
         {
           __typename: 'Week',
           id: '22',
           label: 'Week 8',
           games: [],
-          gamesCount: 0,
-          season: '2021',
-          slug: 'week-8',
         },
         {
           __typename: 'Week',
           id: '21',
           label: 'Week 7',
           games: [],
-          gamesCount: 0,
-          season: '2021',
-          slug: 'week-7',
         },
         {
           __typename: 'Week',
           id: '20',
           label: 'Week 6',
           games: [],
-          gamesCount: 0,
-          season: '2021',
-          slug: 'week-6',
         },
         {
           __typename: 'Week',
           id: '19',
           label: 'Week 5',
           games: [],
-          gamesCount: 0,
-          season: '2021',
-          slug: 'week-5',
         },
         {
           __typename: 'Week',
@@ -58,14 +46,12 @@ export const getWeeksBySeason = {
                 id: '2',
                 name: 'Falcons',
                 city: 'Atlanta',
-                abbreviation: 'ATL',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '15',
                 name: 'Jaguars',
                 city: 'Jacksonville',
-                abbreviation: 'JAX',
               },
               week: {
                 __typename: 'Week',
@@ -73,12 +59,8 @@ export const getWeeksBySeason = {
               },
               spread: 12,
               winner: null,
-              slug: 'falcons-jaguars',
             },
           ],
-          gamesCount: 1,
-          season: '2021',
-          slug: 'week-4',
         },
         {
           __typename: 'Week',
@@ -93,14 +75,12 @@ export const getWeeksBySeason = {
                 id: '21',
                 name: 'Vikings',
                 city: 'Minnesota',
-                abbreviation: 'MIN',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '5',
                 name: 'Panthers',
                 city: 'Carolina',
-                abbreviation: 'CAR',
               },
               week: {
                 __typename: 'Week',
@@ -108,7 +88,6 @@ export const getWeeksBySeason = {
               },
               spread: 12,
               winner: null,
-              slug: 'vikings-panthers',
             },
             {
               __typename: 'Game',
@@ -118,14 +97,12 @@ export const getWeeksBySeason = {
                 id: '22',
                 name: 'Patriots',
                 city: 'New England',
-                abbreviation: 'NE',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '29',
                 name: 'Seahawks',
                 city: 'Seattle',
-                abbreviation: 'SEA',
               },
               week: {
                 __typename: 'Week',
@@ -133,7 +110,6 @@ export const getWeeksBySeason = {
               },
               spread: 12,
               winner: null,
-              slug: 'patriots-seahawks',
             },
             {
               __typename: 'Game',
@@ -143,14 +119,12 @@ export const getWeeksBySeason = {
                 id: '17',
                 name: 'Raiders',
                 city: 'Las Vegas',
-                abbreviation: 'LVR',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '28',
                 name: '49ers',
                 city: 'San Francisco',
-                abbreviation: 'SAN',
               },
               week: {
                 __typename: 'Week',
@@ -158,7 +132,6 @@ export const getWeeksBySeason = {
               },
               spread: -10.5,
               winner: null,
-              slug: 'raiders-49ers',
             },
             {
               __typename: 'Game',
@@ -168,14 +141,12 @@ export const getWeeksBySeason = {
                 id: '20',
                 name: 'Dolphins',
                 city: 'Miami',
-                abbreviation: 'MIA',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '9',
                 name: 'Cowboys',
                 city: 'Dallas',
-                abbreviation: 'DAL',
               },
               week: {
                 __typename: 'Week',
@@ -183,7 +154,6 @@ export const getWeeksBySeason = {
               },
               spread: 12,
               winner: null,
-              slug: 'dolphins-cowboys',
             },
             {
               __typename: 'Game',
@@ -193,14 +163,12 @@ export const getWeeksBySeason = {
                 id: '25',
                 name: 'Jets',
                 city: 'New York',
-                abbreviation: 'NYJ',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '30',
                 name: 'Buccaneers',
                 city: 'Tampa Bay',
-                abbreviation: 'TB',
               },
               week: {
                 __typename: 'Week',
@@ -208,7 +176,6 @@ export const getWeeksBySeason = {
               },
               spread: -1,
               winner: null,
-              slug: 'jets-buccaneers',
             },
             {
               __typename: 'Game',
@@ -218,14 +185,12 @@ export const getWeeksBySeason = {
                 id: '3',
                 name: 'Ravens',
                 city: 'Baltimore',
-                abbreviation: 'BAL',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '2',
                 name: 'Falcons',
                 city: 'Atlanta',
-                abbreviation: 'ATL',
               },
               week: {
                 __typename: 'Week',
@@ -233,7 +198,6 @@ export const getWeeksBySeason = {
               },
               spread: 0,
               winner: null,
-              slug: 'ravens-falcons',
             },
             {
               __typename: 'Game',
@@ -243,14 +207,12 @@ export const getWeeksBySeason = {
                 id: '23',
                 name: 'Saints',
                 city: 'New Orleans',
-                abbreviation: 'NO',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '7',
                 name: 'Bengals',
                 city: 'Cincinnati',
-                abbreviation: 'CIN',
               },
               week: {
                 __typename: 'Week',
@@ -258,7 +220,6 @@ export const getWeeksBySeason = {
               },
               spread: -10,
               winner: null,
-              slug: 'saints-bengals',
             },
             {
               __typename: 'Game',
@@ -268,14 +229,12 @@ export const getWeeksBySeason = {
                 id: '11',
                 name: 'Lions',
                 city: 'Detroit',
-                abbreviation: 'DET',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '22',
                 name: 'Patriots',
                 city: 'New England',
-                abbreviation: 'NE',
               },
               week: {
                 __typename: 'Week',
@@ -283,12 +242,8 @@ export const getWeeksBySeason = {
               },
               spread: 16,
               winner: null,
-              slug: 'lions-patriots',
             },
           ],
-          gamesCount: 8,
-          season: '2021',
-          slug: 'week-4',
         },
         {
           __typename: 'Week',
@@ -303,14 +258,12 @@ export const getWeeksBySeason = {
                 id: '6',
                 name: 'Bears',
                 city: 'Chicago',
-                abbreviation: 'CHI',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '25',
                 name: 'Jets',
                 city: 'New York',
-                abbreviation: 'NYJ',
               },
               week: {
                 __typename: 'Week',
@@ -318,7 +271,6 @@ export const getWeeksBySeason = {
               },
               spread: 8,
               winner: null,
-              slug: 'bears-jets',
             },
             {
               __typename: 'Game',
@@ -328,14 +280,12 @@ export const getWeeksBySeason = {
                 id: '10',
                 name: 'Broncos',
                 city: 'Denver',
-                abbreviation: 'DEN',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '31',
                 name: 'Titans',
                 city: 'Tennessee',
-                abbreviation: 'TEN',
               },
               week: {
                 __typename: 'Week',
@@ -343,7 +293,6 @@ export const getWeeksBySeason = {
               },
               spread: 5,
               winner: null,
-              slug: 'broncos-titans',
             },
             {
               __typename: 'Game',
@@ -353,14 +302,12 @@ export const getWeeksBySeason = {
                 id: '9',
                 name: 'Cowboys',
                 city: 'Dallas',
-                abbreviation: 'DAL',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '12',
                 name: 'Packers',
                 city: 'Green Bay',
-                abbreviation: 'GB',
               },
               week: {
                 __typename: 'Week',
@@ -368,7 +315,6 @@ export const getWeeksBySeason = {
               },
               spread: -10,
               winner: null,
-              slug: 'cowboys-packers',
             },
             {
               __typename: 'Game',
@@ -378,14 +324,12 @@ export const getWeeksBySeason = {
                 id: '6',
                 name: 'Bears',
                 city: 'Chicago',
-                abbreviation: 'CHI',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '2',
                 name: 'Falcons',
                 city: 'Atlanta',
-                abbreviation: 'ATL',
               },
               week: {
                 __typename: 'Week',
@@ -393,12 +337,8 @@ export const getWeeksBySeason = {
               },
               spread: 2,
               winner: null,
-              slug: 'bears-falcons',
             },
           ],
-          gamesCount: 4,
-          season: '2021',
-          slug: 'week-2',
         },
         {
           __typename: 'Week',
@@ -413,14 +353,12 @@ export const getWeeksBySeason = {
                 id: '29',
                 name: 'Seahawks',
                 city: 'Seattle',
-                abbreviation: 'SEA',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '32',
                 name: 'Football Team',
                 city: 'Washington',
-                abbreviation: 'WAS',
               },
               week: {
                 __typename: 'Week',
@@ -428,7 +366,6 @@ export const getWeeksBySeason = {
               },
               spread: -1.5,
               winner: null,
-              slug: 'seahawks-football-team',
             },
             {
               __typename: 'Game',
@@ -438,14 +375,12 @@ export const getWeeksBySeason = {
                 id: '17',
                 name: 'Raiders',
                 city: 'Las Vegas',
-                abbreviation: 'LVR',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '28',
                 name: '49ers',
                 city: 'San Francisco',
-                abbreviation: 'SAN',
               },
               week: {
                 __typename: 'Week',
@@ -453,7 +388,6 @@ export const getWeeksBySeason = {
               },
               spread: 2,
               winner: null,
-              slug: 'raiders-49ers',
             },
             {
               __typename: 'Game',
@@ -463,14 +397,12 @@ export const getWeeksBySeason = {
                 id: '13',
                 name: 'Texans',
                 city: 'Houston',
-                abbreviation: 'HOU',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '19',
                 name: 'Rams',
                 city: 'Los Angeles',
-                abbreviation: 'LAR',
               },
               week: {
                 __typename: 'Week',
@@ -478,7 +410,6 @@ export const getWeeksBySeason = {
               },
               spread: -14,
               winner: null,
-              slug: 'texans-rams',
             },
             {
               __typename: 'Game',
@@ -488,14 +419,12 @@ export const getWeeksBySeason = {
                 id: '6',
                 name: 'Bears',
                 city: 'Chicago',
-                abbreviation: 'CHI',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '7',
                 name: 'Bengals',
                 city: 'Cincinnati',
-                abbreviation: 'CIN',
               },
               week: {
                 __typename: 'Week',
@@ -503,7 +432,6 @@ export const getWeeksBySeason = {
               },
               spread: 10,
               winner: null,
-              slug: 'bears-bengals',
             },
             {
               __typename: 'Game',
@@ -513,14 +441,12 @@ export const getWeeksBySeason = {
                 id: '1',
                 name: 'Cardinals',
                 city: 'Arizona',
-                abbreviation: 'ARI',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '18',
                 name: 'Chargers',
                 city: 'Los Angeles',
-                abbreviation: 'LAC',
               },
               week: {
                 __typename: 'Week',
@@ -528,7 +454,6 @@ export const getWeeksBySeason = {
               },
               spread: -1,
               winner: null,
-              slug: 'cardinals-chargers',
             },
             {
               __typename: 'Game',
@@ -538,14 +463,12 @@ export const getWeeksBySeason = {
                 id: '22',
                 name: 'Patriots',
                 city: 'New England',
-                abbreviation: 'NE',
               },
               awayTeam: {
                 __typename: 'Team',
                 id: '23',
                 name: 'Saints',
                 city: 'New Orleans',
-                abbreviation: 'NO',
               },
               week: {
                 __typename: 'Week',
@@ -556,44 +479,28 @@ export const getWeeksBySeason = {
                 __typename: 'Team',
                 id: '22',
               },
-              slug: 'patriots-saints',
             },
           ],
-          gamesCount: 6,
-          season: '2021',
-          slug: 'week-1',
         },
       ],
     },
   },
 };
 
-export const getWeeksBySeasonNoWeeks = {
-  request: {
-    query: GetWeeksBySeasonDocument,
-    variables: { season: '2021' },
-  },
-  result: {
-    data: {
-      weeks: [],
-    },
-  },
-};
-
 export const getWeeksBySeasonNetworkError = {
   request: {
-    query: GetWeeksBySeasonDocument,
-    variables: { season: '2021' },
+    query: WEEKS_BY_SEASON_QUERY,
+    variables: { season: '2020' },
   },
-  error: new Error('[Network error]: An error occurred'),
+  error: new Error('An error occurred'),
 };
 
 export const getWeeksBySeasonGraphqlError = {
   request: {
-    query: GetWeeksBySeasonDocument,
-    variables: { season: '2021' },
+    query: WEEKS_BY_SEASON_QUERY,
+    variables: { season: '2020' },
   },
   result: {
-    errors: [new GraphQLError('[GraphQL error]: Error!')],
+    errors: [new GraphQLError('Error!')],
   },
 };

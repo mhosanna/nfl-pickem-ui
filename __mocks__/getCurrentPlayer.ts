@@ -1,8 +1,8 @@
-import { PlayerDocument } from '../types/generated-queries';
+import { CURRENT_PLAYER_QUERY } from '../lib/usePlayer';
 
 export const getCurrentPlayer = {
   request: {
-    query: PlayerDocument,
+    query: CURRENT_PLAYER_QUERY,
   },
   result: {
     data: {

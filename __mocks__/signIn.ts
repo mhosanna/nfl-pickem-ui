@@ -1,8 +1,8 @@
-import { SigninDocument } from '../types/generated-queries';
+import { SIGNIN_MUTATION } from '../components/SignIn';
 
 export const signInSuccess = {
   request: {
-    query: SigninDocument,
+    query: SIGNIN_MUTATION,
     variables: { email: 'matt@example.com', password: 'password' },
   },
   result: {
@@ -22,7 +22,7 @@ export const signInSuccess = {
 
 export const signInBadPassword = {
   request: {
-    query: SigninDocument,
+    query: SIGNIN_MUTATION,
     variables: { email: 'matt@example.com', password: 'password' },
   },
   result: {
@@ -39,7 +39,7 @@ export const signInBadPassword = {
 
 export const signInNetworkError = {
   request: {
-    query: SigninDocument,
+    query: SIGNIN_MUTATION,
     variables: { email: 'matt@example.com', password: 'password' },
   },
   error: new Error('An error occurred'),

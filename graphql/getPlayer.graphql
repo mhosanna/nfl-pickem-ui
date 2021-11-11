@@ -1,9 +1,0 @@
-query Player {
-  authenticatedItem {
-    ... on Player {
-      id
-      email
-      name
-    }
-  }
-}

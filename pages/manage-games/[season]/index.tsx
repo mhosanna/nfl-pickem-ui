@@ -10,15 +10,13 @@ export default function ManageWeeksPage() {
     <>
       <PageHeading heading="Manage Games" season={season} />
       <PleaseSignIn>
-        <>
-          <Breadcrumbs>
-            <Breadcrumbs.Crumb href={`/manage-games/${season}`}>
-              {season} Season
-            </Breadcrumbs.Crumb>
-          </Breadcrumbs>
-          <Spacer size={14} />
-          <ManageWeeks season={season} />
-        </>
+        <Breadcrumbs>
+          <Breadcrumbs.Crumb href={`/manage-games/${season}`}>
+            {season} Season
+          </Breadcrumbs.Crumb>
+        </Breadcrumbs>
+        <Spacer size={14} />
+        <ManageWeeks season={season} />
       </PleaseSignIn>
     </>
   );

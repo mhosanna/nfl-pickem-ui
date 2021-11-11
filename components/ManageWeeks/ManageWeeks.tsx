@@ -1,28 +1,40 @@
 import { useState } from 'react';
+import { useMutation } from '@apollo/client';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
 import AddNewTile from '../AddNewTile';
 import Modal from '../Modal';
 import Spacer from '../Spacer';
-import { WeekTiles } from '../WeekTile/WeekTile';
+import { GET_WEEKS_BY_SEASON_QUERY, WeekTiles } from '../WeekTile/WeekTile';
 import { string_to_slug } from '../../utils/slugify';
 import ErrorMessage from '../ErrorMessage';
-import {
-  useCreateWeekMutation,
-  GetWeeksBySeasonDocument,
-} from '../../types/generated-queries';
 
 type Inputs = {
   weekLabel: string;
 };
 
+const CREATE_WEEK_MUTATION = gql`
+  mutation CREATE_WEEK_BY_SEASON(
+    $label: String
+    $slug: String
+    $season: String
+  ) {
+    createWeek(data: { label: $label, slug: $slug, season: $season }) {
+      id
+      label
+      slug
+      season
+    }
+  }
+`;
+
 export default function ManageWeeks({ season }) {
   const [openModal, setOpenModal] = useState(false);
   const [formError, setFormError] = useState(null);
 
-  const [createWeek, { loading }] = useCreateWeekMutation({
-    refetchQueries: [{ query: GetWeeksBySeasonDocument }],
+  const [createWeek, { loading }] = useMutation(CREATE_WEEK_MUTATION, {
+    refetchQueries: [{ query: GET_WEEKS_BY_SEASON_QUERY }],
     update(cache, { data: { createWeek } }) {
       cache.modify({
         fields: {
@@ -39,7 +51,7 @@ export default function ManageWeeks({ season }) {
                 }
               `,
             });
-            return [newWeekRef, ...existingWeeks];
+            return [...existingWeeks, newWeekRef];
           },
         },
       });
@@ -69,9 +81,8 @@ export default function ManageWeeks({ season }) {
         onClick={() => setOpenModal(true)}
       />
       <Spacer size={28} />
-      <WeekTiles season={season} />
+      <WeekTiles />
       <Modal
-        id="add-week-modal"
         title="Add a New Week"
         isOpen={openModal}
         handleDismiss={() => {
@@ -100,12 +111,11 @@ function NewWeekForm({ handleSubmitWeek, error, loading }) {
     handleSubmitWeek(data);
   };
   return (
-    <form aria-label="add new week form" onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <ErrorMessage error={error} />
       <InputWrapper>
-        <Label htmlFor="week-label">Week Label</Label>
+        <Label>Week Label</Label>
         <Input
-          id="week-label"
           placeholder="Ex. Week 1"
           {...register('weekLabel', { required: true })}
         />

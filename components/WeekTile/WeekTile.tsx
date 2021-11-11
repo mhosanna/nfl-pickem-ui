@@ -1,21 +1,64 @@
+import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
+import gql from 'graphql-tag';
 import styled from 'styled-components';
-import { useGetWeeksBySeasonQuery } from '../../types/generated-queries';
+import { useSeason } from '../../lib/seasonContext';
 
-export function WeekTiles({ season }) {
+const gameFragment = gql`
+  fragment GameFragment on Game {
+    homeTeam {
+      id
+      name
+      city
+    }
+    awayTeam {
+      id
+      name
+      city
+    }
+    week {
+      id
+    }
+    spread
+    winner {
+      id
+    }
+  }
+`;
+
+const GET_WEEKS_BY_SEASON_QUERY = gql`
+  query GET_WEEKS_BY_SEASON($season: String) {
+    weeks(where: { season: { equals: $season } }) {
+      id
+      label
+      slug
+      season
+      gamesCount
+      games {
+        id
+        slug
+        ...GameFragment
+      }
+    }
+  }
+  ${gameFragment}
+`;
+
+export function WeekTiles() {
   const router = useRouter();
+  const { season } = useSeason();
   const {
     data: weeksInfo,
     error: weeksQueryError,
     loading: weeksQueryLoading,
-  } = useGetWeeksBySeasonQuery({
+  } = useQuery(GET_WEEKS_BY_SEASON_QUERY, {
     variables: { season },
   });
 
   if (weeksQueryLoading) return <p>Loading...</p>;
-  if (weeksQueryError) return <p>{weeksQueryError.message}</p>;
+  if (weeksQueryError) return <p>Error</p>;
 
-  const weeks = weeksInfo?.weeks;
+  const { weeks } = weeksInfo;
 
   return (
     <WeekListWrapper>
@@ -72,3 +115,5 @@ const WeekGameCount = styled.p`
   font-size: 1.2rem;
   color: var(--gray700);
 `;
+
+export { GET_WEEKS_BY_SEASON_QUERY };

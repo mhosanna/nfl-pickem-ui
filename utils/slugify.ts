@@ -4,9 +4,9 @@ function string_to_slug(str) {
   str = str.toLowerCase();
 
   // remove accents, swap ñ for n, etc
-  const from = 'àáäâèéëêìíïîòóöôùúüûñç·/_,:;';
-  const to = 'aaaaeeeeiiiioooouuuunc------';
-  for (let i = 0, l = from.length; i < l; i++) {
+  var from = 'àáäâèéëêìíïîòóöôùúüûñç·/_,:;';
+  var to = 'aaaaeeeeiiiioooouuuunc------';
+  for (var i = 0, l = from.length; i < l; i++) {
     str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
   }
 

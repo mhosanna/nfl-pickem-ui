@@ -1,24 +1,66 @@
+import { useQuery, useMutation } from '@apollo/client';
 import { useRouter } from 'next/router';
+import gql from 'graphql-tag';
 import styled from 'styled-components';
 import { season } from '../../config';
 import Icon from '../Icon';
 import { spreadToString } from '../../utils/spreadToString';
-import {
-  useSelectGameWinnerMutation,
-  useGetGamesByWeekSlugQuery,
-} from '../../types/generated-queries';
+
+const GET_GAMES_BY_WEEK_SLUG = gql`
+  query GET_GAMES_BY_WEEK_SLUG($slug: String, $season: String) {
+    games(
+      where: {
+        AND: [
+          { season: { equals: $season } }
+          { week: { slug: { equals: $slug } } }
+        ]
+      }
+    ) {
+      id
+      slug
+      homeTeam {
+        id
+        name
+        city
+        abbreviation
+      }
+      awayTeam {
+        id
+        name
+        city
+        abbreviation
+      }
+      spread
+      winner {
+        id
+      }
+    }
+  }
+`;
+
+const SELECT_GAME_WINNER = gql`
+  mutation SELECT_GAME_WINNER($gameId: ID!, $winnerId: ID!) {
+    updateGame(
+      where: { id: $gameId }
+      data: { winner: { connect: { id: $winnerId } } }
+    ) {
+      id
+      winner {
+        id
+      }
+    }
+  }
+`;
 
 export function GameTiles() {
-  const {
-    query: { week },
-    push,
-  } = useRouter();
+  const router = useRouter();
+  const { week } = router.query;
 
-  const { data, error, loading } = useGetGamesByWeekSlugQuery({
+  const { data, error, loading } = useQuery(GET_GAMES_BY_WEEK_SLUG, {
     variables: { slug: week, season },
   });
   const [selectWinner, { error: selectWinnerError }] =
-    useSelectGameWinnerMutation();
+    useMutation(SELECT_GAME_WINNER);
 
   const chooseWinner = (gameId) => async (winnerId) => {
     selectWinner({
@@ -27,7 +69,7 @@ export function GameTiles() {
   };
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error.message}</p>;
+  if (error) return <p>Error</p>;
 
   const games = data.games;
 
@@ -58,9 +100,8 @@ export function GameTiles() {
               chooseWinner={chooseWinner(game.id)}
             />
             <EditButton
-              aria-label="edit game"
               onClick={() => {
-                push({
+                router.push({
                   pathname: '/manage-games/[season]/[week]/[game]',
                   query: {
                     season,
@@ -189,3 +230,5 @@ const GameTile = styled.div`
   position: relative;
   text-align: center;
 `;
+
+export { GET_GAMES_BY_WEEK_SLUG };

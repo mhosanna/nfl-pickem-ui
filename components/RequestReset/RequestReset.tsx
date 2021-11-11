@@ -1,9 +1,19 @@
+import gql from 'graphql-tag';
 import styled from 'styled-components';
+import { useMutation } from '@apollo/client';
 import { useForm } from 'react-hook-form';
 import ErrorMessage from '../ErrorMessage';
 import Spacer from '../Spacer';
 import Icon from '../Icon';
-import { useRequestResetMutation } from '../../types/generated-queries';
+
+const REQUEST_RESET_MUTATION = gql`
+  mutation REQUEST_RESET_MUTATION($email: String!) {
+    sendPlayerPasswordResetLink(email: $email) {
+      code
+      message
+    }
+  }
+`;
 
 export default function RequestReset() {
   const {
@@ -12,7 +22,9 @@ export default function RequestReset() {
     register,
     reset,
   } = useForm();
-  const [resetPassword, { data, loading, error }] = useRequestResetMutation();
+  const [resetPassword, { data, loading, error }] = useMutation(
+    REQUEST_RESET_MUTATION
+  );
   async function onSubmit(data) {
     await resetPassword({
       variables: data,

@@ -1,7 +1,0 @@
- query getTeams {
-    teams(orderBy: [{ city: asc }]) {
-      id
-      city
-      name
-    }
-  }

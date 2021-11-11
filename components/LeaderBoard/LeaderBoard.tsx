@@ -1,61 +1,61 @@
-import { TableStyles } from './styles';
-import {
-  usePlayersBySeasonQuery,
-  useGamesPlayedBySeasonQuery,
-  Player,
-} from '../../types/generated-queries';
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import styled from 'styled-components';
 
-function rankPlayers(players: Player[]) {
-  // //copy array
-  const sortedPlayers = [...players];
+const PLAYERS_QUERY = gql`
+  query GET_PLAYERS_BY_SEASON($season: String!) {
+    players(
+      where: { picks: { some: { game: { season: { equals: $season } } } } }
+    ) {
+      id
+      name
+      picks(where: { isCorrect: { equals: true } }) {
+        id
+      }
+    }
+  }
+`;
 
-  //we are only returning picks that were correct, so compare length of array
-  return sortedPlayers.sort((a, b) => {
-    if (b?.picks && a?.picks) {
-      return b.picks.length - a.picks.length;
-    } else return 0;
-  });
-}
+const GAMES_PLAYED_QUERY = gql`
+  query GET_ALL_PLAYED_GAMES_BY_SEASON($season: String) {
+    games(
+      where: {
+        AND: [{ season: { equals: $season } }, { NOT: [{ winner: null }] }]
+      }
+    ) {
+      id
+    }
+  }
+`;
 
-function LeaderBoard({ season }: { season: string }) {
-  //this returns a players' correct picks only!
+function LeaderBoard({ season }) {
   const {
     data: playersInfo,
     error: playersQueryError,
     loading: playersQueryLoading,
-  } = usePlayersBySeasonQuery({
+  } = useQuery(PLAYERS_QUERY, {
     variables: { season },
   });
-  // returns games from season with game winners
   const {
     data: gamesInfo,
     error: gamesQueryError,
     loading: gamesQueryLoading,
-  } = useGamesPlayedBySeasonQuery({
+  } = useQuery(GAMES_PLAYED_QUERY, {
     variables: { season },
   });
 
   if (playersQueryLoading || gamesQueryLoading) return <p>Loading...</p>;
-  if (playersQueryError || gamesQueryError)
-    return (
-      <p>
-        Error:{' '}
-        {playersQueryError
-          ? playersQueryError.message
-          : gamesQueryError?.message}
-      </p>
-    );
+  if (playersQueryError || gamesQueryError) return <p>Error</p>;
+  const { players } = playersInfo;
+  const sortedPlayers = [...players];
 
-  const players = playersInfo?.players;
-  if (!players) {
-    return <p>The season hasn't started yet. Check back soon!</p>;
-  }
+  //we are only returning picks that were correct, so compare length of array
+  sortedPlayers.sort((a, b) => b.picks.length - a.picks.length);
 
-  const rankedPlayers = rankPlayers(players);
+  const { games } = gamesInfo;
+  const totalPlayedGames = games.length;
 
-  const gamesWithWinner = gamesInfo?.games?.length;
-
-  if (!gamesWithWinner) {
+  if (totalPlayedGames === 0) {
     return <p>The season hasn't started yet. Check back soon!</p>;
   }
 
@@ -71,15 +71,14 @@ function LeaderBoard({ season }: { season: string }) {
           </tr>
         </thead>
         <tbody>
-          {rankedPlayers.map((player, idx) => {
-            //players query returns only correct picks, so just count length
-            const correctPicks = player?.picks?.length;
+          {sortedPlayers.map((player, idx) => {
+            const correctPicks = player.picks.length;
             return (
               <tr key={player.id}>
                 <td>{idx + 1}</td>
                 <td>{player.name}</td>
                 <td>{correctPicks}</td>
-                <td>{gamesWithWinner}</td>
+                <td>{totalPlayedGames}</td>
               </tr>
             );
           })}
@@ -89,4 +88,38 @@ function LeaderBoard({ season }: { season: string }) {
   );
 }
 
-export { LeaderBoard };
+export { LeaderBoard, PLAYERS_QUERY, GAMES_PLAYED_QUERY };
+
+const TableStyles = styled.table`
+  border-collapse: collapse;
+  width: 90%;
+  max-width: 800px;
+  thead {
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  tbody {
+    font-weight: 600;
+    font-size: 2rem;
+  }
+  td,
+  th {
+    text-align: left;
+    padding: 8px 24px 0px 8px;
+  }
+  th:last-child,
+  td:last-child {
+    padding-right: 0px;
+  }
+  th:first-child,
+  td:first-child {
+    padding-left: 0px;
+  }
+
+  @media ${(props) => props.theme.queries.tabletAndSmaller} {
+    th {
+      line-height: 1.3;
+    }
+  }
+`;

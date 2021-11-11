@@ -1,25 +1,26 @@
-import { PicksByWeekAndPlayerDocument } from '../types/generated-queries';
+import { PICKS_BY_WEEK_QUERY } from '../components/Picks';
+import { GraphQLError } from 'graphql';
 
 export const getPicksByWeekEmpty = {
   request: {
-    query: PicksByWeekAndPlayerDocument,
+    query: PICKS_BY_WEEK_QUERY,
     variables: { weekId: '1', playerId: '2' },
   },
   result: {
     data: {
-      picks: [],
+      allPicks: [],
     },
   },
 };
 
 export const getPicksByWeekAfterPick = {
   request: {
-    query: PicksByWeekAndPlayerDocument,
+    query: PICKS_BY_WEEK_QUERY,
     variables: { weekId: '1', playerId: '2' },
   },
   result: {
     data: {
-      picks: [
+      allPicks: [
         {
           __typename: 'Pick',
           id: '77',

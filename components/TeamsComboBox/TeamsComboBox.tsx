@@ -1,11 +1,22 @@
 import { useState, useEffect } from 'react';
+import { useQuery } from '@apollo/client';
 import Downshift from 'downshift';
+import gql from 'graphql-tag';
 import styled from 'styled-components';
 import Icon from '../Icon';
-import { useGetTeamsQuery } from '../../types/generated-queries';
+
+const GET_ALL_TEAMS = gql`
+  query GET_ALL_TEAMS {
+    teams(orderBy: [{ city: asc }]) {
+      id
+      city
+      name
+    }
+  }
+`;
 
 export default function TeamComboBoxWrapper(props) {
-  const { data, error, loading } = useGetTeamsQuery();
+  const { data, error, loading } = useQuery(GET_ALL_TEAMS);
   const [allItems, setAllItems] = useState([]);
   const [inputItems, setInputItems] = useState([]);
 
@@ -32,7 +43,6 @@ export default function TeamComboBoxWrapper(props) {
 }
 
 const TeamsComboBox = ({
-  id,
   onChange,
   inputRef,
   disabled = false,
@@ -45,7 +55,7 @@ const TeamsComboBox = ({
   initialTeam = null,
 }) => (
   <Downshift
-    id={id}
+    id="team-dropdown"
     onChange={onChange}
     itemToString={itemToString}
     initialSelectedItem={initialTeam}
