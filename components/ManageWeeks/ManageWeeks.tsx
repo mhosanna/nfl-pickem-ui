@@ -39,7 +39,7 @@ export default function ManageWeeks({ season }) {
                 }
               `,
             });
-            return [newWeekRef, ...existingWeeks];
+            return [...existingWeeks, newWeekRef];
           },
         },
       });
