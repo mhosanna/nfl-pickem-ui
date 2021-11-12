@@ -10,7 +10,7 @@ import { makePick } from '../__mocks__/makePick';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
 
-it('tells you where you are', async () => {
+xit('tells you where you are', async () => {
   render(
     <MockedProvider mocks={[]} addTypename={false}>
       <PicksPage />
@@ -20,7 +20,7 @@ it('tells you where you are', async () => {
     'Make Your Picks'
   );
 });
-it('displays login form if player is not logged in', async () => {
+xit('displays login form if player is not logged in', async () => {
   render(
     <MockedProvider mocks={[]} addTypename={false}>
       <PicksPage />
@@ -30,7 +30,7 @@ it('displays login form if player is not logged in', async () => {
     'Sign Into Your Account'
   );
 });
-it('displays loading if weeks data not yet returned', async () => {
+xit('displays loading if weeks data not yet returned', async () => {
   const mocks = [getCurrentPlayer];
   render(
     <MockedProvider mocks={mocks} addTypename={false}>
@@ -42,7 +42,7 @@ it('displays loading if weeks data not yet returned', async () => {
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 });
-it('displays error if network error returning week data', async () => {
+xit('displays error if network error returning week data', async () => {
   const mocks = [getCurrentPlayer, getWeeksBySeasonNetworkError];
   render(
     <MockedProvider mocks={mocks} addTypename={false}>
@@ -54,7 +54,7 @@ it('displays error if network error returning week data', async () => {
     expect(screen.getByText('Error')).toBeInTheDocument();
   });
 });
-it('displays error if graphql error returning week data', async () => {
+xit('displays error if graphql error returning week data', async () => {
   const mocks = [getCurrentPlayer, getWeeksBySeasonGraphqlError];
   render(
     <MockedProvider mocks={mocks} addTypename={false}>
@@ -66,7 +66,7 @@ it('displays error if graphql error returning week data', async () => {
     expect(screen.getByText('Error')).toBeInTheDocument();
   });
 });
-it('displays dropdown with weeks that exist in a season', async () => {
+xit('displays dropdown with weeks that exist in a season', async () => {
   const mocks = [getCurrentPlayer, getWeeksBySeason];
   render(
     <MockedProvider mocks={mocks} addTypename={false}>
@@ -80,7 +80,7 @@ it('displays dropdown with weeks that exist in a season', async () => {
     expect(screen.getByRole('option', { name: 'Week 8' })).toBeInTheDocument();
   });
 });
-it('displays no games found if week does not have any games', async () => {
+xit('displays no games found if week does not have any games', async () => {
   const mocks = [getCurrentPlayer, getWeeksBySeason];
   render(
     <MockedProvider mocks={mocks} addTypename={false}>
@@ -94,7 +94,7 @@ it('displays no games found if week does not have any games', async () => {
     expect(screen.getByText('No Games Found')).toBeInTheDocument();
   });
 });
-it('displays list of games in the selected week', async () => {
+xit('displays list of games in the selected week', async () => {
   const mocks = [getCurrentPlayer, getWeeksBySeason, getPicksByWeekEmpty];
   render(
     <MockedProvider mocks={mocks} addTypename={false}>
@@ -117,7 +117,7 @@ it('displays list of games in the selected week', async () => {
     ).toBeInTheDocument();
   });
 });
-it('adds a tag to the game winner', async () => {
+xit('adds a tag to the game winner', async () => {
   const mocks = [getCurrentPlayer, getWeeksBySeason, getPicksByWeekEmpty];
   render(
     <MockedProvider mocks={mocks} addTypename={false}>
@@ -140,7 +140,7 @@ it('adds a tag to the game winner', async () => {
     ).toBeInTheDocument();
   });
 });
-it('highlights the game after the player picks it', async () => {
+xit('highlights the game after the player picks it', async () => {
   const mocks = [
     getCurrentPlayer,
     getWeeksBySeason,

@@ -4,7 +4,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
 import { GraphQLError } from 'graphql';
 
-it('tells you where you are', async () => {
+xit('tells you where you are', async () => {
   render(
     <MockedProvider mocks={[]} addTypename={false}>
       <HomePage />
@@ -13,7 +13,7 @@ it('tells you where you are', async () => {
   expect(screen.getByRole('heading')).toHaveTextContent('LeaderBoard');
 });
 
-it('displays loading if data not yet returned', async () => {
+xit('displays loading if data not yet returned', async () => {
   render(
     <MockedProvider mocks={[]} addTypename={false}>
       <HomePage />
@@ -23,7 +23,7 @@ it('displays loading if data not yet returned', async () => {
   expect(screen.getByText('Loading...')).toBeVisible();
 });
 
-it('displays error if network error returning player data', async () => {
+xit('displays error if network error returning player data', async () => {
   const mocks = [
     {
       request: {
@@ -47,7 +47,7 @@ it('displays error if network error returning player data', async () => {
   });
 });
 
-it('displays error if network error returning games data', async () => {
+xit('displays error if network error returning games data', async () => {
   const mocks = [
     {
       request: {
@@ -71,7 +71,7 @@ it('displays error if network error returning games data', async () => {
   });
 });
 
-it('displays error if graphql error returning player data', async () => {
+xit('displays error if graphql error returning player data', async () => {
   const mocks = [
     {
       request: {
@@ -97,7 +97,7 @@ it('displays error if graphql error returning player data', async () => {
   });
 });
 
-it('displays error if graphql error returning games data', async () => {
+xit('displays error if graphql error returning games data', async () => {
   const mocks = [
     {
       request: {
@@ -122,7 +122,7 @@ it('displays error if graphql error returning games data', async () => {
     expect(screen.getByText('Error')).toBeInTheDocument();
   });
 });
-it('displays players sorted by picks correct', async () => {
+xit('displays players sorted by picks correct', async () => {
   const mocks = [
     {
       request: {

@@ -8,7 +8,7 @@ import {
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
 
-it('tells you where you are', async () => {
+xit('tells you where you are', async () => {
   render(
     <MockedProvider mocks={[]} addTypename={false}>
       <SignInPage />
@@ -19,7 +19,7 @@ it('tells you where you are', async () => {
   );
 });
 
-it('does nothing if logged in successfully', async () => {
+xit('does nothing if logged in successfully', async () => {
   const mocks = [signInSuccess, getCurrentPlayer];
   render(
     <MockedProvider mocks={mocks} addTypename={true}>
@@ -52,7 +52,7 @@ it('does nothing if logged in successfully', async () => {
   });
 });
 
-it('displays an error if network error', async () => {
+xit('displays an error if network error', async () => {
   //mock console error so it doesn't show during tes
   const networkError = console.error;
   console.error = jest.fn();
@@ -80,7 +80,7 @@ it('displays an error if network error', async () => {
   console.error = networkError;
 });
 
-it('displays an error if bad username or password', async () => {
+xit('displays an error if bad username or password', async () => {
   const mocks = [signInBadPassword, getCurrentPlayer];
   render(
     <MockedProvider mocks={mocks} addTypename={true}>
