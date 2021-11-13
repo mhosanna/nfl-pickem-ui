@@ -5,7 +5,6 @@ import { Spread, List, FieldWrapper, GameListWrapper } from './PicksStyles';
 import TeamBlock from '../TeamBlock';
 import Spacer from '../Spacer';
 import { spreadToString } from '../../utils/spreadToString';
-import { usePlayer } from '../../lib/usePlayer';
 import useWeekSelect from '../../lib/useWeekSelect';
 
 const pickFragment = gql`
@@ -52,9 +51,8 @@ const MAKE_PICK_MUTATION = gql`
   ${pickFragment}
 `;
 
-function Picks() {
-  const { id } = usePlayer();
-  const playerId = id;
+function Picks({ player }) {
+  const playerId = player.id;
 
   return (
     <div>
