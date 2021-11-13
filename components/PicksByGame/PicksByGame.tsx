@@ -155,7 +155,7 @@ const PlayerWrapper = styled.ul`
   }
 `;
 
-const PlayerTile = styled.div`
+const PlayerTile = styled.div<{ noWinner: boolean; correct: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -218,7 +218,7 @@ const List = styled.ol`
   }
 `;
 
-const Game = styled.li`
+const Game = styled.li<{ isSelected: boolean }>`
   position: relative;
   display: flex;
   justify-content: space-between;

@@ -60,7 +60,7 @@ const TeamName = styled.div`
   gap: 8px;
 `;
 
-const BlockBase = styled.button`
+const BlockBase = styled.button<{ isPicked: boolean }>`
   border: none;
   width: 50%;
   height: 80px;

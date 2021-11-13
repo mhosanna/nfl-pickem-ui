@@ -39,16 +39,18 @@ export default function ManageGamesPage() {
     <>
       <PageHeading heading="Manage Games" season={season} />
       <PleaseSignIn>
-        <Breadcrumbs>
-          <Breadcrumbs.Crumb href={`/manage-games/${season}`}>
-            {season} Season
-          </Breadcrumbs.Crumb>
-          <Breadcrumbs.Crumb href={`/manage-games/${season}/${week}`}>
-            {weekData.label}
-          </Breadcrumbs.Crumb>
-        </Breadcrumbs>
-        <Spacer size={14} />
-        <ManageGames weekId={weekData.id} season={season} />
+        <>
+          <Breadcrumbs>
+            <Breadcrumbs.Crumb href={`/manage-games/${season}`}>
+              {season} Season
+            </Breadcrumbs.Crumb>
+            <Breadcrumbs.Crumb href={`/manage-games/${season}/${week}`}>
+              {weekData.label}
+            </Breadcrumbs.Crumb>
+          </Breadcrumbs>
+          <Spacer size={14} />
+          <ManageGames weekId={weekData.id} season={season} />
+        </>
       </PleaseSignIn>
     </>
   );

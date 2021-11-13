@@ -13,7 +13,7 @@ export default function Select({ label, value, onChange, children }) {
       </NativeSelect>
       <PresentationalBit>
         {displayedValue}
-        <IconWrapper style={{ '--size': 24 + 'px' }}>
+        <IconWrapper size={24}>
           <Icon name="ChevronDown" />
         </IconWrapper>
       </PresentationalBit>
@@ -54,13 +54,13 @@ const PresentationalBit = styled.div`
   }
 `;
 
-const IconWrapper = styled.div`
+const IconWrapper = styled.div<{ size: number }>`
   position: absolute;
   top: 0;
   bottom: 0;
   right: 10px;
   margin: auto;
-  width: var(--size);
-  height: var(--size);
+  width: ${(props) => props.size}px;
+  height: ${(props) => props.size}px;
   pointer-events: none;
 `;
