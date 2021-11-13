@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import Downshift from 'downshift';
@@ -134,7 +136,7 @@ const Label = styled.label`
   font-weight: bold;
 `;
 
-const Input = styled.input`
+const Input = styled.input<{ isOpen?: boolean }>`
   width: 95%;
   display: inline-block;
   font-size: 1.8rem;

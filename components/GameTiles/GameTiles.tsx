@@ -177,7 +177,7 @@ const SpreadCircle = styled.div`
   border: 1px solid var(--black);
 `;
 
-const BaseTeam = styled.button`
+const BaseTeam = styled.button<{ isWinner: boolean }>`
   flex: 1;
   height: 100%;
   line-height: 80px;

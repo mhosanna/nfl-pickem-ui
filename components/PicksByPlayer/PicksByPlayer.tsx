@@ -141,7 +141,7 @@ const FloatingIcon = styled(Icon)`
   left: 8px;
 `;
 
-const TeamAbbreviation = styled.span`
+const TeamAbbreviation = styled.span<{ isPicked: boolean }>`
   font-weight: ${(props) => (props.isPicked ? '800' : 'initial')};
 `;
 
@@ -163,7 +163,7 @@ const GamesWrapper = styled.ul`
   }
 `;
 
-const GameTile = styled.div`
+const GameTile = styled.div<{ noWinner: boolean; correct: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -221,7 +221,7 @@ const List = styled.ol`
   }
 `;
 
-const Player = styled.li`
+const Player = styled.li<{ isSelected: boolean }>`
   position: relative;
   display: flex;
   justify-content: space-between;

@@ -15,8 +15,11 @@ export default function SignOut() {
   const [signOut] = useMutation(SIGN_OUT_MUTATION, {
     refetchQueries: [{ query: CURRENT_PLAYER_QUERY }],
   });
+  async function handleClick() {
+    await signOut();
+  }
   return (
-    <StyledButton type="button" onClick={signOut}>
+    <StyledButton type="button" onClick={handleClick}>
       <Icon name={'LogOut'} />
       Sign Out
     </StyledButton>

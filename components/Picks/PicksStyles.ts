@@ -23,7 +23,7 @@ const FieldWrapper = styled.div`
   }
 `;
 
-const Spread = styled.div`
+const Spread = styled.div<{ spread: string }>`
   height: 100px;
   width: 100px;
   border-radius: 50%;

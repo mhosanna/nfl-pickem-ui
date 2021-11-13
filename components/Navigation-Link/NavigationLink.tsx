@@ -12,7 +12,7 @@ interface Props {
   children: ReactElementLike;
 }
 
-const StyledLink = styled.a`
+const StyledLink = styled.a<{ active?: boolean }>`
   display: flex;
   gap: 1.8rem;
   align-items: center;
