@@ -1,10 +1,15 @@
-import HomePage from '../pages/index';
-import { PLAYERS_QUERY, GAMES_PLAYED_QUERY } from '../components/LeaderBoard';
-import { render, screen, waitFor } from '@testing-library/react';
-import { MockedProvider } from '@apollo/client/testing';
 import { GraphQLError } from 'graphql';
+import { MockedProvider } from '@apollo/client/testing';
+import { PLAYERS_QUERY, GAMES_PLAYED_QUERY } from '../components/LeaderBoard';
+import { render, screen, waitFor } from '../utils/testUtil';
+import { fakePlayer, fakeGame } from '../utils/testData';
+import HomePage from '../pages/index';
 
-xit('tells you where you are', async () => {
+const gameData = {
+  games: [fakeGame()],
+};
+
+it('tells you where you are', async () => {
   render(
     <MockedProvider mocks={[]} addTypename={false}>
       <HomePage />
@@ -13,7 +18,7 @@ xit('tells you where you are', async () => {
   expect(screen.getByRole('heading')).toHaveTextContent('LeaderBoard');
 });
 
-xit('displays loading if data not yet returned', async () => {
+it('displays loading if data not yet returned', async () => {
   render(
     <MockedProvider mocks={[]} addTypename={false}>
       <HomePage />
@@ -23,7 +28,7 @@ xit('displays loading if data not yet returned', async () => {
   expect(screen.getByText('Loading...')).toBeVisible();
 });
 
-xit('displays error if network error returning player data', async () => {
+it('displays error if network error returning player data', async () => {
   const mocks = [
     {
       request: {
@@ -41,13 +46,12 @@ xit('displays error if network error returning player data', async () => {
     </MockedProvider>
   );
 
-  await waitFor(() => {});
   await waitFor(() => {
     expect(screen.getByText('Error')).toBeInTheDocument();
   });
 });
 
-xit('displays error if network error returning games data', async () => {
+it('displays error if network error returning games data', async () => {
   const mocks = [
     {
       request: {
@@ -65,13 +69,12 @@ xit('displays error if network error returning games data', async () => {
     </MockedProvider>
   );
 
-  await waitFor(() => {});
   await waitFor(() => {
     expect(screen.getByText('Error')).toBeInTheDocument();
   });
 });
 
-xit('displays error if graphql error returning player data', async () => {
+it('displays error if graphql error returning player data', async () => {
   const mocks = [
     {
       request: {
@@ -91,13 +94,12 @@ xit('displays error if graphql error returning player data', async () => {
     </MockedProvider>
   );
 
-  await waitFor(() => {});
   await waitFor(() => {
     expect(screen.getByText('Error')).toBeInTheDocument();
   });
 });
 
-xit('displays error if graphql error returning games data', async () => {
+it('displays error if graphql error returning games data', async () => {
   const mocks = [
     {
       request: {
@@ -117,60 +119,38 @@ xit('displays error if graphql error returning games data', async () => {
     </MockedProvider>
   );
 
-  await waitFor(() => {});
   await waitFor(() => {
     expect(screen.getByText('Error')).toBeInTheDocument();
   });
 });
-xit('displays players sorted by picks correct', async () => {
+it('displays players sorted by picks correct', async () => {
+  const playerData = {
+    players: [
+      fakePlayer({ name: 'Bobby' }),
+      fakePlayer({ name: 'Glen', picks: [{ id: '1', isCorrect: true }] }),
+    ],
+  };
   const mocks = [
     {
       request: {
         query: PLAYERS_QUERY,
         variables: {
-          season: '2020',
+          season: '2021',
         },
       },
       result: {
-        data: {
-          allPlayers: [
-            {
-              __typename: 'Player',
-              id: '1',
-              name: 'Madeline',
-              picks: [],
-            },
-            {
-              __typename: 'Player',
-              id: '2',
-              name: 'Matt',
-              picks: [
-                {
-                  __typename: 'Pick',
-                  id: '31',
-                },
-              ],
-            },
-          ],
-        },
+        data: playerData,
       },
     },
     {
       request: {
         query: GAMES_PLAYED_QUERY,
         variables: {
-          season: '2020',
+          season: '2021',
         },
       },
       result: {
-        data: {
-          allGames: [
-            {
-              __typename: 'Game',
-              id: '6',
-            },
-          ],
-        },
+        data: gameData,
       },
     },
   ];
@@ -180,12 +160,15 @@ xit('displays players sorted by picks correct', async () => {
       <HomePage />
     </MockedProvider>
   );
+  await waitFor(() => {
+    expect(screen.getByRole('table')).toBeInTheDocument();
+  });
 
-  await waitFor(() => {});
-  const firstRow = screen.getByRole('cell', { name: 'Matt' }).closest('tr');
-  expect(firstRow).toBeInTheDocument();
-  const secondRow = screen
-    .getByRole('cell', { name: 'Madeline' })
-    .closest('tr');
-  expect(secondRow).toBeInTheDocument();
+  const leaderRow = screen.getAllByRole('row')[1];
+  const leaderName = leaderRow.getElementsByTagName('td')[1];
+  expect(leaderName.textContent).toBe('Glen');
+
+  const loserRow = screen.getAllByRole('row')[2];
+  const loserName = loserRow.getElementsByTagName('td')[1];
+  expect(loserName.textContent).toBe('Bobby');
 });
