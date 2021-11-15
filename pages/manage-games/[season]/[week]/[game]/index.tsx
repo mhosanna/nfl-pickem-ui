@@ -53,7 +53,7 @@ export const GET_GAME_BY_SLUG_QUERY = gql`
   }
 `;
 
-export function ManageGamePage() {
+export default function ManageGamePage() {
   const {
     query: { season, week, game },
   } = useRouter();

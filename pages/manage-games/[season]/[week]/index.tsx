@@ -21,7 +21,7 @@ export const GET_WEEK_BY_SLUG_QUERY = gql`
   }
 `;
 
-export function ManageGamesPage() {
+export default function ManageGamesPage() {
   const {
     query: { season, week },
   } = useRouter();

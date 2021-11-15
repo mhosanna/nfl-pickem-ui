@@ -2,8 +2,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { GraphQLError } from 'graphql';
 import { useRouter } from 'next/router';
 import { render, screen, waitFor } from '../utils/testUtil';
-import {
-  ManageGamesPage,
+import ManageGamesPage, {
   GET_WEEK_BY_SLUG_QUERY,
 } from '../pages/manage-games/[season]/[week]/index';
 import { CURRENT_PLAYER_QUERY } from '../lib/usePlayer';
