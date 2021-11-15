@@ -20,6 +20,7 @@ const fakeGame = (overrides = {}) => ({
   winner: null,
   spread: 1,
   picks: [],
+  slug: 'falcons-jaguars',
   ...overrides,
 });
 

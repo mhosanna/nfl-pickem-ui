@@ -2,13 +2,18 @@ import React, { ReactElement } from 'react';
 import { render, RenderOptions, RenderResult } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import { myTheme } from '../constants';
+import { SeasonProvider } from '../lib/seasonContext';
 
 type AllProvidersProps = {
   children: React.ReactElement;
 };
 
 const AllTheProviders = ({ children }: AllProvidersProps): ReactElement => {
-  return <ThemeProvider theme={myTheme}>{children}</ThemeProvider>;
+  return (
+    <ThemeProvider theme={myTheme}>
+      <SeasonProvider>{children}</SeasonProvider>
+    </ThemeProvider>
+  );
 };
 
 const customRender = (
