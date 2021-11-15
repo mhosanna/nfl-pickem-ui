@@ -7,7 +7,7 @@ import ManageGames from '../../../../components/ManageGames';
 import Spacer from '../../../../components/Spacer';
 import PleaseSignIn from '../../../../components/PleaseSignIn';
 
-const GET_WEEK_BY_SLUG_QUERY = gql`
+export const GET_WEEK_BY_SLUG_QUERY = gql`
   query GET_WEEK_BY_SLUG_QUERY($slug: String, $season: String) {
     weeks(
       where: {
