@@ -172,7 +172,7 @@ Distributed under the MIT License. See `LICENSE.md` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@madhosanna](https://twitter.com/@madhosanna) - mhosanna@gmail.com
+Madeline Dale - [@madhosanna](https://twitter.com/@madhosanna) - mhosanna@gmail.com
 
 Project Link: [https://github.com/mhosanna/nfl-pickem-ui](https://github.com/mhosanna/nfl-pickem-ui)
 
