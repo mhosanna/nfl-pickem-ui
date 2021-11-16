@@ -135,7 +135,7 @@ function NewGameForm({ handleSubmitGame, error }) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form aria-label="add new game form" onSubmit={handleSubmit(onSubmit)}>
       <FormFields
         control={control}
         register={register}
