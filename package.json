@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "NFL Pickem League. React, GraphQL, Next and Apollo",
   "private": true,
-  "license": "ISC",
+  "license": "MIT",
   "scripts": {
     "dev": "next -p 7777",
     "build": "next build",
