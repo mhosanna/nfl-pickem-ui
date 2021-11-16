@@ -16,9 +16,6 @@ const gameFragment = gql`
       name
       city
     }
-    week {
-      id
-    }
     spread
     winner {
       id
@@ -56,7 +53,7 @@ export function WeekTiles() {
   });
 
   if (weeksQueryLoading) return <p>Loading...</p>;
-  if (weeksQueryError) return <p>Error</p>;
+  if (weeksQueryError) return <p>{weeksQueryError.message}</p>;
 
   const { weeks } = weeksInfo;
 

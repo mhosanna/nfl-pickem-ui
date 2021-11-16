@@ -14,7 +14,7 @@ type Inputs = {
   weekLabel: string;
 };
 
-const CREATE_WEEK_MUTATION = gql`
+export const CREATE_WEEK_MUTATION = gql`
   mutation CREATE_WEEK_BY_SEASON(
     $label: String
     $slug: String
@@ -25,6 +25,10 @@ const CREATE_WEEK_MUTATION = gql`
       label
       slug
       season
+      games {
+        id
+      }
+      gamesCount
     }
   }
 `;
@@ -111,11 +115,12 @@ function NewWeekForm({ handleSubmitWeek, error, loading }) {
     handleSubmitWeek(data);
   };
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form aria-label="add new week form" onSubmit={handleSubmit(onSubmit)}>
       <ErrorMessage error={error} />
       <InputWrapper>
-        <Label>Week Label</Label>
+        <Label htmlFor="week-label">Week Label</Label>
         <Input
+          id="week-label"
           placeholder="Ex. Week 1"
           {...register('weekLabel', { required: true })}
         />
