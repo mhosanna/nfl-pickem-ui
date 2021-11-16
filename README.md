@@ -135,11 +135,11 @@ Each player's winning picks will be automatically calculated and the Leaderboard
 <!-- ROADMAP -->
 ## 🚦 Roadmap 🚦
 
-- [] Create an Admin Role so that only certain players with admin rights can create games and declare game winners.
-- [] Automatically create games and determine winners each week using an API data feed with betting odds.
-- [] Add the ability to email players when the games have been created, or the current leaderboard.
-- [] Add better feedback when players do certain actions. 
-- [] 🌟 Make a more exciting logo
+- [ ] Create an Admin Role so that only certain players with admin rights can create games and declare game winners.
+- [ ] Automatically create games and determine winners each week using an API data feed with betting odds.
+- [ ] Add the ability to email players when the games have been created, or the current leaderboard.
+- [ ] Add better feedback when players do certain actions. 
+- [ ] 🌟 Make a more exciting logo
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
