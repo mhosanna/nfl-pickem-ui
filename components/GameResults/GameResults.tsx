@@ -1,4 +1,4 @@
-import { useRouter } from 'next/dist/client/router';
+import { useRouter } from 'next/router';
 import PicksByPlayer from '../PicksByPlayer';
 import PicksByGame from '../PicksByGame';
 
@@ -7,7 +7,17 @@ export default function GameResults({ season }) {
     query: { by },
   } = useRouter();
 
-  if (by === 'player') return <PicksByPlayer season={season} />;
-  if (by === 'game') return <PicksByGame season={season} />;
+  if (by === 'player')
+    return (
+      <div data-testid="picks-by-player">
+        <PicksByPlayer season={season} />
+      </div>
+    );
+  if (by === 'game')
+    return (
+      <div data-testid="picks-by-game">
+        <PicksByGame season={season} />
+      </div>
+    );
   return <p>Oops! This page doesn't exist</p>;
 }
