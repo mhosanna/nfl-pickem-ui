@@ -52,7 +52,6 @@ xit('displays error if network error returning game data', async () => {
   await waitFor(() => {
     expect(screen.getByText(/[Network Error]/i)).toBeInTheDocument();
   });
-  screen.debug();
 });
 xit('displays error if graphql error returning game data', async () => {
   const picksByGameMockGraphqlError = [
