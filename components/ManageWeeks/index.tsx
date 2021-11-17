@@ -1,1 +1,1 @@
-export { default } from './ManageWeeks';
+export { default, CREATE_WEEK_MUTATION } from './ManageWeeks';

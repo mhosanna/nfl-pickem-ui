@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
@@ -46,6 +46,7 @@ export default function PicksByPlayer({ season }) {
   if (!selectedWeek) {
     return null;
   }
+
   return (
     <>
       <Spacer size={45} />
@@ -83,7 +84,8 @@ function PlayerPicks({
   }, [selectedWeek]);
 
   if (playersQueryLoading) return <p>Loading...</p>;
-  if (playersQueryError) return <p>Error</p>;
+  if (playersQueryError) return <p>{playersQueryError.message}</p>;
+
   const { players } = playersInfo;
   const sortedPlayers = [...players];
   sortedPlayers.sort((a, b) => b.picksCount - a.picksCount);
@@ -104,7 +106,7 @@ function GameList({ selectedWeek, selectedPlayer }) {
   const playerPicks = selectedPlayer?.picks;
 
   return (
-    <GamesWrapper>
+    <GamesWrapper aria-label="games">
       {selectedWeek.games.map((g) => {
         const playerPick = playerPicks?.find(({ game }) => game.id === g.id);
         const isHomePicked = playerPick?.picked.id === g.homeTeam.id;
@@ -182,11 +184,11 @@ const GameTile = styled.div<{ noWinner: boolean; correct: boolean }>`
 
 function PlayerList({ players, selectedWeek, selectedPlayer, setPlayer }) {
   return (
-    <List>
+    <List aria-label="players">
       {players.map((player) => {
         const isSelected = player.id === selectedPlayer?.id;
         return (
-          <>
+          <React.Fragment key={player.id}>
             <Player
               key={player.id}
               onClick={() => setPlayer(player)}
@@ -203,7 +205,7 @@ function PlayerList({ players, selectedWeek, selectedPlayer, setPlayer }) {
                 selectedPlayer={selectedPlayer}
               />
             )}
-          </>
+          </React.Fragment>
         );
       })}
     </List>

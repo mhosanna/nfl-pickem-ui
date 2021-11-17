@@ -69,7 +69,7 @@ export function GameTiles() {
   };
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error</p>;
+  if (error) return <p>{error.message}</p>;
 
   const games = data.games;
 
@@ -100,6 +100,7 @@ export function GameTiles() {
               chooseWinner={chooseWinner(game.id)}
             />
             <EditButton
+              aria-label="edit game"
               onClick={() => {
                 router.push({
                   pathname: '/manage-games/[season]/[week]/[game]',
