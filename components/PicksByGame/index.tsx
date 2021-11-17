@@ -1,1 +1,1 @@
-export { default } from './PicksByGame';
+export { default, GAMES_QUERY } from './PicksByGame';

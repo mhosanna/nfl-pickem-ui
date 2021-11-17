@@ -9,6 +9,7 @@ const fakePlayer = (overrides = {}) => ({
   name: casual.first_name,
   email: casual.email,
   picks: [],
+  picksCount: 0,
   ...overrides,
 });
 
@@ -46,6 +47,7 @@ const fakePick = (overrides = {}) => ({
   player: fakePlayer(),
   game: fakeGame(),
   picked: fakeHomeTeam(),
+  isCorrect: true,
   ...overrides,
 });
 

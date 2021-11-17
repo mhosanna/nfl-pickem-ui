@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
@@ -8,7 +8,7 @@ import Icon from '../Icon';
 import { spreadToString } from '../../utils/spreadToString';
 import { PLAYERS_QUERY } from '../PicksByPlayer';
 
-const GAMES_QUERY = gql`
+export const GAMES_QUERY = gql`
   query GET_GAMES_BY_SEASON_AND_WEEK($season: String!, $weekId: ID!) {
     games(
       where: {
@@ -71,7 +71,7 @@ function GamePicks({ season, selectedWeek, selectedGame, setSelectedGame }) {
   });
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error</p>;
+  if (error) return <p>{error.message}</p>;
 
   const { games } = data;
 
@@ -93,7 +93,7 @@ function PlayerList({ season, selectedWeek, selectedGame }) {
     variables: { season, weekId: selectedWeek.id },
   });
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error</p>;
+  if (error) return <p>{error.message}</p>;
   const { players } = data;
   const sortedPlayers = [...players];
   sortedPlayers.sort((a, b) =>
@@ -104,7 +104,7 @@ function PlayerList({ season, selectedWeek, selectedGame }) {
       : 0
   );
   return (
-    <PlayerWrapper>
+    <PlayerWrapper aria-label="players">
       {sortedPlayers.map((player) => {
         const playerPick = player?.picks.find(
           ({ game }) => game.id === selectedGame.id
@@ -179,11 +179,11 @@ const PlayerTile = styled.div<{ noWinner: boolean; correct: boolean }>`
 
 function GamesList({ season, selectedWeek, games, selectedGame, setGame }) {
   return (
-    <List>
+    <List aria-label="games">
       {games.map((game) => {
         const isSelected = game.id === selectedGame?.id;
         return (
-          <>
+          <React.Fragment key={game.id}>
             <Game
               key={game.id}
               onClick={() => setGame(game)}
@@ -200,7 +200,7 @@ function GamesList({ season, selectedWeek, games, selectedGame, setGame }) {
                 selectedGame={selectedGame}
               />
             )}
-          </>
+          </React.Fragment>
         );
       })}
     </List>
