@@ -1,4 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
+import { Player } from '../types/app';
 
 const CURRENT_PLAYER_QUERY = gql`
   query CURRENT_PLAYER_QUERY {
@@ -12,8 +13,13 @@ const CURRENT_PLAYER_QUERY = gql`
   }
 `;
 
-export function usePlayer() {
-  const { data } = useQuery(CURRENT_PLAYER_QUERY);
+interface authenicatedItemType {
+  authenticatedItem: Player | null;
+}
+
+export function usePlayer(): Player | null | undefined {
+  const { data } = useQuery<authenicatedItemType>(CURRENT_PLAYER_QUERY);
+
   return data?.authenticatedItem;
 }
 
