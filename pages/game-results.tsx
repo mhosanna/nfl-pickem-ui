@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -38,7 +39,12 @@ function ResultsSubMenu() {
   );
 }
 
-const ActiveLink = ({ children, href }) => {
+interface Props {
+  href: { pathname: string; query: { by: string } };
+  children: ReactElement;
+}
+
+const ActiveLink = ({ children, href }: Props) => {
   const { query } = useRouter();
   const child = React.Children.only(children);
 
@@ -63,7 +69,7 @@ export const NavLink = styled.a<{ active?: boolean }>`
   cursor: pointer;
 `;
 
-GameResultsPage.getLayout = function getLayout(page) {
+GameResultsPage.getLayout = function getLayout(page: ReactElement) {
   return (
     <>
       {page}
