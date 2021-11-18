@@ -78,6 +78,7 @@ export default function ManageGames({ weekId, season }) {
 
   async function SubmitNewGame(data: Inputs) {
     const slug = string_to_slug(data.homeTeam.name + ' ' + data.awayTeam.name);
+    const spread = parseFloat(data.spread);
 
     await createGame({
       variables: {
@@ -86,7 +87,7 @@ export default function ManageGames({ weekId, season }) {
         week: weekId,
         homeTeamId: data.homeTeam.id,
         awayTeamId: data.awayTeam.id,
-        spread: parseFloat(data.spread),
+        spread,
       },
     })
       .then(() => {

@@ -49,7 +49,7 @@ export interface Game {
   picksCount?: number;
   season: string;
   slug: string;
-  spread?: float;
+  spread?: Maybe<number>;
   week?: Week;
-  winner?: Team;
+  winner?: Maybe<Team>;
 }
