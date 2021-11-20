@@ -2,11 +2,17 @@ import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 
-const Breadcrumbs = ({ children }) => {
+const Breadcrumbs = ({ children }: { children: React.ReactElement }) => {
   return <Wrapper>{children}</Wrapper>;
 };
 
-Breadcrumbs.Crumb = ({ href, children }) => {
+Breadcrumbs.Crumb = ({
+  href,
+  children,
+}: {
+  children: string[];
+  href: string;
+}) => {
   return (
     <CrumbWrapper>
       <Link href={href} passHref>
