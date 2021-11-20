@@ -1,11 +1,6 @@
 import styled from 'styled-components';
 import Icon from '../Icon';
 
-const CheckboxContainer = styled.div`
-  /* display: inline-block;
-  vertical-align: middle; */
-`;
-
 // Hide checkbox visually but remain accessible to screen readers.
 // Source: https://polished.js.org/docs/#hidevisually
 const HiddenCheckbox = styled.input.attrs({ type: 'checkbox' })`
@@ -39,9 +34,16 @@ const StyledCheckbox = styled.div<{ disabled: boolean; checked: boolean }>`
   }
 `;
 
-const Checkbox = ({ checked, ...props }) => {
+const Checkbox = ({
+  checked,
+  ...props
+}: {
+  checked: boolean;
+  disabled: boolean;
+  onChange(event: React.ChangeEvent<HTMLInputElement>): void;
+}) => {
   return (
-    <CheckboxContainer>
+    <div>
       <HiddenCheckbox checked={checked} {...props} />
       <StyledCheckbox checked={checked} disabled={props.disabled}>
         <Icon
@@ -52,7 +54,7 @@ const Checkbox = ({ checked, ...props }) => {
           style={{ display: 'block', margin: 'auto' }}
         />
       </StyledCheckbox>
-    </CheckboxContainer>
+    </div>
   );
 };
 export default Checkbox;
