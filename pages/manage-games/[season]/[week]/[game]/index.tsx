@@ -58,8 +58,11 @@ export default function ManageGamePage() {
     query: { season, week, game },
   } = useRouter();
 
+  const weekParam = Array.isArray(week) ? week[0] : week;
+  const seasonParam = Array.isArray(season) ? season[0] : (season as string);
+
   const { data, error, loading } = useQuery(GET_WEEK_BY_SLUG_QUERY, {
-    variables: { slug: week, season },
+    variables: { slug: weekParam, season: seasonParam },
   });
   const {
     data: gameData,
@@ -93,7 +96,7 @@ export default function ManageGamePage() {
         <>
           <Breadcrumbs>
             <Breadcrumbs.Crumb href={`/manage-games/${season}`}>
-              {season} Season
+              {seasonParam} Season
             </Breadcrumbs.Crumb>
             <Breadcrumbs.Crumb href={`/manage-games/${season}/${week}`}>
               {weekData.label}

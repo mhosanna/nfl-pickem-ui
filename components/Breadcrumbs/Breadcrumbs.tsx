@@ -2,7 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 
-const Breadcrumbs = ({ children }: { children: React.ReactElement }) => {
+const Breadcrumbs = ({
+  children,
+}: {
+  children: React.ReactElement | React.ReactElement[];
+}) => {
   return <Wrapper>{children}</Wrapper>;
 };
 
@@ -10,7 +14,7 @@ Breadcrumbs.Crumb = ({
   href,
   children,
 }: {
-  children: string[];
+  children: string | string[];
   href: string;
 }) => {
   return (
