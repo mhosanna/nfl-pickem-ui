@@ -1,21 +1,32 @@
+import { ApolloError } from '@apollo/client';
 import styled from 'styled-components';
 
-const ErrorMessage = ({ error }) => {
+interface ErrorMessageProps {
+  error:
+    | ApolloError
+    | UserAuthenticationWithPasswordFailure
+    | RedeemUserPasswordResetTokenResult
+    | undefined;
+}
+
+interface UserAuthenticationWithPasswordFailure {
+  message: string;
+}
+
+interface RedeemUserPasswordResetTokenResult {
+  code: PasswordResetRedemptionErrorCode;
+  message: string;
+}
+
+enum PasswordResetRedemptionErrorCode {
+  FAILURE,
+  TOKEN_EXPIRED,
+  TOKEN_REDEEMED,
+}
+
+const ErrorMessage = ({ error }: ErrorMessageProps) => {
   if (!error || !error.message) return null;
-  if (
-    error.networkError &&
-    error.networkError.result &&
-    error.networkError.result.errors.length
-  ) {
-    return error.networkError.result.errors.map((error, i) => (
-      <ErrorStyles key={i}>
-        <p data-test="graphql-error">
-          <strong>Oops!</strong>
-          {error.message.replace('GraphQL error: ', '')}
-        </p>
-      </ErrorStyles>
-    ));
-  }
+
   return (
     <ErrorStyles>
       <p data-test="graphql-error">
