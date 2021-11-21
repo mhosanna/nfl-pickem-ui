@@ -1,7 +1,14 @@
 import styled from 'styled-components';
 import Icon from '../Icon';
+import { IconName } from '../Icon/Icon';
 
-export default function AddNewTile({ label, icon, onClick }) {
+interface AddNewTileProps {
+  label: string;
+  icon: IconName;
+  onClick(event: React.MouseEvent<HTMLButtonElement>): void;
+}
+
+export default function AddNewTile({ label, icon, onClick }: AddNewTileProps) {
   return (
     <StyledTile onClick={onClick}>
       <Icon name={icon} />

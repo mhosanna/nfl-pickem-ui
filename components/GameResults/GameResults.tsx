@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import PicksByPlayer from '../PicksByPlayer';
 import PicksByGame from '../PicksByGame';
 
-export default function GameResults({ season }) {
+export default function GameResults({ season }: { season: string }) {
   const {
     query: { by },
   } = useRouter();

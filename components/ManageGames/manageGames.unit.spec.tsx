@@ -40,7 +40,7 @@ beforeEach(() => {
 it('tells you where you are', () => {
   render(
     <MockedProvider mocks={[]} addTypename={false}>
-      <ManageGames weekId="1" season="2021" />
+      <ManageGames weekId="1" weekSlug="week-1" season="2021" />
     </MockedProvider>
   );
   expect(screen.getByText('Add New Game')).toBeInTheDocument();
@@ -59,7 +59,7 @@ it('displays network error if error loading games', async () => {
   ];
   render(
     <MockedProvider mocks={gamesMockWithNetworkError} addTypename={false}>
-      <ManageGames weekId="1" season="2021" />
+      <ManageGames weekId="1" weekSlug="week-1" season="2021" />
     </MockedProvider>
   );
   await waitFor(() => {
@@ -83,7 +83,7 @@ it('displays graphql error if error loading games', async () => {
   ];
   render(
     <MockedProvider mocks={gamesMockWithGraphqlError} addTypename={false}>
-      <ManageGames weekId="1" season="2021" />
+      <ManageGames weekId="1" weekSlug="week-1" season="2021" />
     </MockedProvider>
   );
   await waitFor(() => {
@@ -94,7 +94,7 @@ it('displays graphql error if error loading games', async () => {
 it('displays tiles for each game in week', async () => {
   render(
     <MockedProvider mocks={gamesMock} addTypename={false}>
-      <ManageGames weekId="1" season="2021" />
+      <ManageGames weekId="1" weekSlug="week-1" season="2021" />
     </MockedProvider>
   );
   await waitFor(() => {
@@ -112,7 +112,7 @@ it('routes user to manage game page when they click a game tile', async () => {
 
   render(
     <MockedProvider mocks={gamesMock} addTypename={false}>
-      <ManageGames weekId="1" season="2021" />
+      <ManageGames weekId="1" weekSlug="week-1" season="2021" />
     </MockedProvider>
   );
   await waitFor(() => {
@@ -127,7 +127,7 @@ it('routes user to manage game page when they click a game tile', async () => {
 it('opens modal when user clicks Add New Game', async () => {
   render(
     <MockedProvider mocks={gamesMock} addTypename={false}>
-      <ManageGames weekId="1" season="2021" />
+      <ManageGames weekId="1" weekSlug="week-1" season="2021" />
     </MockedProvider>
   );
   fireEvent.click(screen.getByRole('button', { name: 'Add New Game' }));
@@ -143,7 +143,7 @@ it('opens modal when user clicks Add New Game', async () => {
 xit('creates new game when user fills out form and submits form', async () => {
   render(
     <MockedProvider mocks={gamesMock} addTypename={false}>
-      <ManageGames weekId="1" season="2021" />
+      <ManageGames weekId="1" weekSlug="week-1" season="2021" />
     </MockedProvider>
   );
   fireEvent.click(screen.getByRole('button', { name: 'Add New Game' }));
@@ -176,7 +176,7 @@ xit('creates new game when user fills out form and submits form', async () => {
 xit('displays an error when error creating new week', async () => {
   render(
     <MockedProvider mocks={gamesMock} addTypename={false}>
-      <ManageGames weekId="1" season="2021" />
+      <ManageGames weekId="1" weekSlug="week-1" season="2021" />
     </MockedProvider>
   );
   fireEvent.click(screen.getByRole('button', { name: 'Add New Game' }));

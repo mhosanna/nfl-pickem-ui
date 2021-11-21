@@ -18,20 +18,15 @@ import { useMutation } from '@apollo/client';
 import ErrorMessage from '../ErrorMessage';
 import { GET_WEEKS_BY_SEASON_QUERY } from '../WeekTile';
 import Tile from '../Tile';
-
-type Team = {
-  __typeName: string;
-  name: string;
-  city: string;
-  id: string;
-};
+import { Game, Maybe, Team } from '../../types/app';
 
 type Inputs = {
   homeTeam: Team;
   awayTeam: Team;
-  spread: string;
+  spread: Maybe<string>;
   isHomeWinner: boolean;
   isAwayWinner: boolean;
+  isWinner: boolean;
 };
 
 const UPDATE_SPREAD_AND_WINNER_MUTATION = gql`
@@ -76,16 +71,16 @@ const DELETE_GAME_MUTATION = gql`
   }
 `;
 
-export default function EditGame({ game }) {
+export default function EditGame({ game }: { game: Game }) {
   return (
     <>
       <PageTitle>
         <span>
-          {game.homeTeam.city} {game.homeTeam.name}
+          {game.homeTeam?.city} {game.homeTeam?.name}
         </span>
         <span>vs</span>
         <span>
-          {game.awayTeam.city} {game.awayTeam.name}
+          {game.awayTeam?.city} {game.awayTeam?.name}
         </span>
       </PageTitle>
       <Spacer size={32} />
@@ -100,7 +95,7 @@ export default function EditGame({ game }) {
   );
 }
 
-const useYupValidationResolver = (validationSchema) =>
+const useYupValidationResolver = (validationSchema: any) =>
   useCallback(
     async (data) => {
       try {
@@ -116,7 +111,7 @@ const useYupValidationResolver = (validationSchema) =>
         return {
           values: {},
           errors: errors.inner.reduce(
-            (allErrors, currentError) => ({
+            (allErrors: any, currentError: any) => ({
               ...allErrors,
               [currentError.path]: {
                 type: currentError.type ?? 'validation',
@@ -131,7 +126,7 @@ const useYupValidationResolver = (validationSchema) =>
     [validationSchema]
   );
 
-const getWinnerId = (data) => {
+const getWinnerId = (data: Inputs) => {
   //if no checkbox selected, no winner
   if (!data.isAwayWinner && !data.isHomeWinner) {
     return null;
@@ -144,11 +139,25 @@ const getWinnerId = (data) => {
   }
 };
 
-function update(cache, payload) {
+function update(cache: any, payload: any) {
   cache.evict(cache.identify(payload.data.deleteGame));
 }
 
-function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
+interface editGameFormProps {
+  gameId: string;
+  homeTeam?: Team;
+  awayTeam?: Team;
+  spread?: Maybe<number>;
+  gameWinner?: Maybe<Team>;
+}
+
+function EditGameForm({
+  gameId,
+  homeTeam,
+  awayTeam,
+  spread,
+  gameWinner,
+}: editGameFormProps) {
   const router = useRouter();
   const { week, season } = router.query;
   const [updateGame, { loading: updateGameLoading, error: updateGameError }] =
@@ -192,7 +201,7 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
           isHomeWinner: yup.boolean(),
           isAwayWinner: yup.boolean(),
         })
-        .test('customTest', null, (obj) => {
+        .test('isWinner', {}, (obj) => {
           if (obj.isHomeWinner && obj.isAwayWinner) {
             return new yup.ValidationError(
               'Only one team can be the winner of a game',
@@ -205,7 +214,8 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
     []
   );
   const resolver = useYupValidationResolver(validationSchema);
-  const isWinner = (teamId) => {
+  const isWinner = (teamId: string | null | undefined) => {
+    if (!teamId) return false;
     if (teamId === gameWinner?.id) return true;
     return false;
   };
@@ -220,11 +230,12 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
     resolver,
     reValidateMode: 'onSubmit',
     defaultValues: {
-      spread,
+      spread: spread?.toString(),
       homeTeam,
       awayTeam,
-      isHomeWinner: isWinner(homeTeam.id),
-      isAwayWinner: isWinner(awayTeam.id),
+      isHomeWinner: isWinner(homeTeam?.id),
+      isAwayWinner: isWinner(awayTeam?.id),
+      isWinner: true,
     },
   });
 
@@ -233,7 +244,7 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
   });
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const spread = parseFloat(data.spread);
+    const spread = data.spread ? parseFloat(data.spread) : null;
     const winnerId = getWinnerId(data);
     if (winnerId) {
       await updateGame({ variables: { gameId, winnerId, spread } }).catch(
@@ -259,149 +270,122 @@ function EditGameForm({ gameId, homeTeam, awayTeam, spread, gameWinner }) {
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate={true}>
-      <FormFields
-        control={control}
-        register={register}
-        errors={errors}
-        homeTeam={homeTeam}
-        awayTeam={awayTeam}
-        isSubmitting={isSubmitting}
-        isSubmitSuccessful={isSubmitSuccessful}
-        isLoading={updateGameLoading || updateGameRemoveLoading}
-        isDirty={isDirty}
-        updateGameError={updateGameError}
-        updateRemoveError={updateRemoveError}
-        handleDeleteGame={handleDeleteGame}
-      />
+      <Wrapper>
+        <ErrorMessage error={updateGameError || updateRemoveError} />
+        <HomeTeamInput>
+          <div>
+            <Controller
+              control={control}
+              name="homeTeam"
+              render={({ field: { ref, ...fieldProps } }) => (
+                <TeamsComboBox
+                  {...fieldProps}
+                  inputRef={ref}
+                  label="Home Team"
+                  initialTeam={homeTeam}
+                  disabled={true}
+                />
+              )}
+            />
+            {errors.homeTeam && (
+              <ValidationError>{errors.homeTeam.id?.message}</ValidationError>
+            )}
+          </div>
+          <div style={{ marginTop: '29px' }}>
+            <Controller
+              control={control}
+              name="isHomeWinner"
+              render={({ field: { onChange, value } }) => (
+                <CheckboxWrapper>
+                  <Checkbox
+                    checked={value}
+                    onChange={(e) => onChange(e.target.checked)}
+                    disabled={isSubmitting}
+                  />
+                  <CheckboxLabel>Matchup Winner</CheckboxLabel>
+                </CheckboxWrapper>
+              )}
+            />
+          </div>
+        </HomeTeamInput>
+        <Spacer size={24} />
+        <InputWrapper>
+          <Label>Spread</Label>
+          <Input
+            placeholder="Ex. -4"
+            {...register('spread')}
+            disabled={isSubmitting}
+          />
+          {errors.spread && (
+            <ValidationError>{errors.spread.message}</ValidationError>
+          )}
+        </InputWrapper>
+
+        <Spacer size={24} />
+        <AwayTeamInput>
+          <div>
+            <Controller
+              control={control}
+              name="awayTeam"
+              render={({ field: { ref, ...fieldProps } }) => (
+                <TeamsComboBox
+                  {...fieldProps}
+                  inputRef={ref}
+                  label="Away Team"
+                  initialTeam={awayTeam}
+                  disabled={true}
+                />
+              )}
+            />
+            {errors.awayTeam && (
+              <ValidationError>{errors.awayTeam.id?.message}</ValidationError>
+            )}
+          </div>
+          <div style={{ marginTop: '29px' }}>
+            <Controller
+              control={control}
+              name="isAwayWinner"
+              render={({ field: { onChange, value } }) => (
+                <CheckboxWrapper>
+                  <Checkbox
+                    checked={value}
+                    onChange={(e) => onChange(e.target.checked)}
+                    disabled={isSubmitting}
+                  />
+                  <CheckboxLabel>Matchup Winner</CheckboxLabel>
+                </CheckboxWrapper>
+              )}
+            />
+          </div>
+        </AwayTeamInput>
+        <FormErrors>
+          {errors.isWinner && (
+            <ValidationError>{errors.isWinner.message}</ValidationError>
+          )}
+        </FormErrors>
+        <Spacer size={50} />
+        <FooterWrapper>
+          <ButtonWrapper>
+            <Button
+              type="submit"
+              disabled={
+                !isDirty || updateGameLoading || updateGameRemoveLoading
+              }
+            >
+              Sav{isSubmitting ? 'ing' : 'e'} Game
+            </Button>
+            {isSubmitSuccessful &&
+              !updateGameError &&
+              !updateRemoveError &&
+              !isDirty && <Tile type="success">Saved!</Tile>}
+          </ButtonWrapper>
+          <DeleteGameButton type="button" onClick={handleDeleteGame}>
+            <Icon name={'Trash2'} size={18} />
+            <span>Delete Game</span>
+          </DeleteGameButton>
+        </FooterWrapper>
+      </Wrapper>
     </form>
-  );
-}
-
-function FormFields({
-  control,
-  register,
-  errors,
-  homeTeam,
-  awayTeam,
-  isSubmitting,
-  isSubmitSuccessful,
-  isLoading,
-  isDirty,
-  updateGameError,
-  updateRemoveError,
-  handleDeleteGame,
-}) {
-  return (
-    <Wrapper>
-      <ErrorMessage error={updateGameError || updateRemoveError} />
-      <HomeTeamInput>
-        <div>
-          <Controller
-            control={control}
-            name="homeTeam"
-            render={({ field: { ref, ...fieldProps } }) => (
-              <TeamsComboBox
-                {...fieldProps}
-                inputRef={ref}
-                label="Home Team"
-                initialTeam={homeTeam}
-                disabled={true}
-              />
-            )}
-          />
-          {errors.homeTeam && (
-            <ValidationError>{errors.homeTeam.message}</ValidationError>
-          )}
-        </div>
-        <div style={{ marginTop: '29px' }}>
-          <Controller
-            control={control}
-            name="isHomeWinner"
-            render={({ field: { onChange, value } }) => (
-              <CheckboxWrapper>
-                <Checkbox
-                  checked={value}
-                  onChange={(e) => onChange(e.target.checked)}
-                  disabled={isSubmitting}
-                />
-                <CheckboxLabel>Matchup Winner</CheckboxLabel>
-              </CheckboxWrapper>
-            )}
-          />
-        </div>
-      </HomeTeamInput>
-      <Spacer size={24} />
-      <InputWrapper>
-        <Label>Spread</Label>
-        <Input
-          placeholder="Ex. -4"
-          {...register('spread')}
-          disabled={isSubmitting}
-        />
-        {errors.spread && (
-          <ValidationError>{errors.spread.message}</ValidationError>
-        )}
-      </InputWrapper>
-
-      <Spacer size={24} />
-      <AwayTeamInput>
-        <div>
-          <Controller
-            control={control}
-            name="awayTeam"
-            render={({ field: { ref, ...fieldProps } }) => (
-              <TeamsComboBox
-                {...fieldProps}
-                inputRef={ref}
-                label="Away Team"
-                initialTeam={awayTeam}
-                disabled={true}
-              />
-            )}
-          />
-          {errors.awayTeam && (
-            <ValidationError>{errors.awayTeam.message}</ValidationError>
-          )}
-        </div>
-        <div style={{ marginTop: '29px' }}>
-          <Controller
-            control={control}
-            name="isAwayWinner"
-            render={({ field: { onChange, value } }) => (
-              <CheckboxWrapper>
-                <Checkbox
-                  checked={value}
-                  onChange={(e) => onChange(e.target.checked)}
-                  disabled={isSubmitting}
-                />
-                <CheckboxLabel>Matchup Winner</CheckboxLabel>
-              </CheckboxWrapper>
-            )}
-          />
-        </div>
-      </AwayTeamInput>
-      <FormErrors>
-        {errors.isWinner && (
-          <ValidationError>{errors.isWinner.message}</ValidationError>
-        )}
-      </FormErrors>
-      <Spacer size={50} />
-      <FooterWrapper>
-        <ButtonWrapper>
-          <Button type="submit" disabled={!isDirty || isLoading}>
-            Sav{isSubmitting ? 'ing' : 'e'} Game
-          </Button>
-          {isSubmitSuccessful &&
-            !updateGameError &&
-            !updateRemoveError &&
-            !isDirty && <Tile type="success">Saved!</Tile>}
-        </ButtonWrapper>
-        <DeleteGameButton type="button" onClick={handleDeleteGame}>
-          <Icon name={'Trash2'} size={18} />
-          <span>Delete Game</span>
-        </DeleteGameButton>
-      </FooterWrapper>
-    </Wrapper>
   );
 }
 

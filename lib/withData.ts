@@ -1,12 +1,20 @@
-import { ApolloClient, ApolloLink, InMemoryCache } from '@apollo/client';
+import {
+  ApolloClient,
+  ApolloLink,
+  InMemoryCache,
+  NormalizedCacheObject,
+} from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import { createHttpLink } from '@apollo/client/link/http';
 import { getDataFromTree } from '@apollo/client/react/ssr';
-import withApollo from 'next-with-apollo';
+import { withApollo, InitApolloOptions } from 'next-with-apollo';
 import { endpoint, prodEndpoint } from '../config';
 
-function createClient({ headers, initialState }) {
-  const enhancedFetch = (url, init) => {
+function createClient({
+  headers,
+  initialState,
+}: InitApolloOptions<NormalizedCacheObject>) {
+  const enhancedFetch = (url: RequestInfo, init: RequestInit) => {
     return fetch(url, {
       ...init,
       headers: {

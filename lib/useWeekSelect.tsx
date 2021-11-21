@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import { season } from '../config';
 import Select from '../components/Select';
+import { Week } from '../types/app';
 
 const gameFragment = gql`
   fragment GameFragment on Game {
@@ -42,13 +43,16 @@ export const WEEKS_BY_SEASON_QUERY = gql`
   ${gameFragment}
 `;
 
-export default function useWeekSelect(initial = {}) {
-  const { data, error, loading } = useQuery(WEEKS_BY_SEASON_QUERY, {
+export default function useWeekSelect() {
+  const { data, error, loading } = useQuery<
+    { weeks: Week[] },
+    { season: string }
+  >(WEEKS_BY_SEASON_QUERY, {
     variables: { season },
   });
 
   const [dropdownLabel, setDropdownLabel] = useState('');
-  const [selectedWeek, setSelectedWeek] = useState(null);
+  const [selectedWeek, setSelectedWeek] = useState<Week | null>(null);
 
   useEffect(() => {
     if (data) {
@@ -70,7 +74,9 @@ export default function useWeekSelect(initial = {}) {
     <Select
       label="Select a Week"
       value={dropdownLabel}
-      onChange={(ev) => setDropdownLabel(ev.target.value)}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+        setDropdownLabel(e.target.value)
+      }
     >
       {data?.weeks.map((week) => {
         return (

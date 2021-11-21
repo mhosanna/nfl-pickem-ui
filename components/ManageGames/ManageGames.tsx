@@ -50,7 +50,17 @@ const CREATE_GAME_MUTATION = gql`
   }
 `;
 
-export default function ManageGames({ weekId, season }) {
+interface ManageGamesProps {
+  weekId: string;
+  weekSlug: string;
+  season: string;
+}
+
+export default function ManageGames({
+  weekId,
+  weekSlug,
+  season,
+}: ManageGamesProps) {
   const [openModal, setOpenModal] = React.useState(false);
   const [formError, setFormError] = React.useState(null);
 
@@ -105,7 +115,7 @@ export default function ManageGames({ weekId, season }) {
         onClick={() => setOpenModal(true)}
       />
       <Spacer size={28} />
-      <GameTiles />
+      <GameTiles week={weekSlug} />
       <Modal
         title="Add a New Game"
         isOpen={openModal}

@@ -5,6 +5,15 @@ import styled from 'styled-components';
 import { season } from '../../config';
 import Icon from '../Icon';
 import { spreadToString } from '../../utils/spreadToString';
+import { Game } from '../../types/app';
+
+interface GamesData {
+  games: Game[];
+}
+interface GamesVars {
+  slug: string;
+  season: string;
+}
 
 const GET_GAMES_BY_WEEK_SLUG = gql`
   query GET_GAMES_BY_WEEK_SLUG($slug: String, $season: String) {
@@ -52,13 +61,14 @@ const SELECT_GAME_WINNER = gql`
   }
 `;
 
-export function GameTiles() {
+export function GameTiles({ week }: { week: string }) {
   const router = useRouter();
-  const { week } = router.query;
-
-  const { data, error, loading } = useQuery(GET_GAMES_BY_WEEK_SLUG, {
-    variables: { slug: week, season },
-  });
+  const { data, error, loading } = useQuery<GamesData, GamesVars>(
+    GET_GAMES_BY_WEEK_SLUG,
+    {
+      variables: { slug: week, season },
+    }
+  );
   const [selectWinner, { error: selectWinnerError }] =
     useMutation(SELECT_GAME_WINNER);
 
@@ -71,22 +81,25 @@ export function GameTiles() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error.message}</p>;
 
-  const games = data.games;
+  let games;
+  if (data) {
+    games = data.games;
+  }
 
   return (
     <GameListWrapper>
-      {games.map((game) => {
-        const isWinner = (teamId) => {
+      {games?.map((game) => {
+        const isWinner = (teamId: string) => {
           if (teamId === game.winner?.id) return true;
           return false;
         };
         return (
           <GameTile key={game.id}>
             <TeamBlock
-              id={game.homeTeam.id}
+              id={game.homeTeam?.id}
               field={'home'}
-              abbreviation={game.homeTeam.abbreviation}
-              isWinner={isWinner(game.homeTeam.id)}
+              abbreviation={game.homeTeam?.abbreviation}
+              isWinner={isWinner(game.homeTeam?.id)}
               chooseWinner={chooseWinner(game.id)}
             />
             <Spread>

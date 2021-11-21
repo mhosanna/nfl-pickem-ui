@@ -2,7 +2,7 @@ export type Maybe<T> = T | null;
 export interface Player {
   __typename?: 'Player';
   email: string;
-  id: number;
+  id: string;
   name: string;
   password?: string;
   picks?: Pick[];
@@ -12,7 +12,7 @@ export interface Player {
 export interface Pick {
   __typename?: 'Pick';
   game?: Maybe<Game>;
-  id: number;
+  id: string;
   isCorrect?: boolean;
   picked?: Maybe<Team>;
   player?: Maybe<Player>;
@@ -24,7 +24,7 @@ export interface Team {
   city: string;
   conference?: string;
   division?: string;
-  id: number;
+  id: string;
   name: string;
 }
 
@@ -33,7 +33,7 @@ export interface Week {
   createdAt?: string;
   games?: Game[];
   gamesCount?: number;
-  id: number;
+  id: string;
   label: string;
   season: string;
   slug: string;
@@ -44,7 +44,7 @@ export interface Game {
   awayTeam?: Team;
   createdAt?: string;
   homeTeam?: Team;
-  id: number;
+  id: string;
   picks?: Pick[];
   picksCount?: number;
   season: string;
