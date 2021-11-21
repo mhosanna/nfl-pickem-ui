@@ -6,6 +6,15 @@ import Breadcrumbs from '../../../../components/Breadcrumbs';
 import ManageGames from '../../../../components/ManageGames';
 import Spacer from '../../../../components/Spacer';
 import PleaseSignIn from '../../../../components/PleaseSignIn';
+import { Week } from '../../../../types/app';
+
+interface WeeksData {
+  weeks: Week[];
+}
+interface WeeksVars {
+  slug: string;
+  season: string;
+}
 
 export const GET_WEEK_BY_SLUG_QUERY = gql`
   query GET_WEEK_BY_SLUG_QUERY($slug: String, $season: String) {
@@ -27,14 +36,19 @@ export default function ManageGamesPage() {
   } = useRouter();
 
   const weekParam = Array.isArray(week) ? week[0] : week;
-  const seasonParam = Array.isArray(season) ? season[0] : (season as string);
+  const seasonParam = Array.isArray(season) ? season[0] : season;
 
-  const { data, error, loading } = useQuery(GET_WEEK_BY_SLUG_QUERY, {
-    variables: { slug: weekParam, season: seasonParam },
-  });
+  if (!weekParam || !seasonParam) return <p>Error</p>;
+
+  const { data, error, loading } = useQuery<WeeksData, WeeksVars>(
+    GET_WEEK_BY_SLUG_QUERY,
+    {
+      variables: { slug: weekParam, season: seasonParam },
+    }
+  );
 
   if (loading) return <p>Loading...</p>;
-  if (error || data.weeks.length === 0) return <p>Error</p>;
+  if (error || !data || data?.weeks.length === 0) return <p>Error</p>;
 
   const weekData = data.weeks[0];
 
@@ -52,7 +66,11 @@ export default function ManageGamesPage() {
             </Breadcrumbs.Crumb>
           </Breadcrumbs>
           <Spacer size={14} />
-          <ManageGames weekId={weekData.id} season={season} />
+          <ManageGames
+            weekId={weekData.id}
+            weekSlug={weekParam}
+            season={seasonParam}
+          />
         </>
       </PleaseSignIn>
     </>
