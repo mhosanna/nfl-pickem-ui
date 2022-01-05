@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import { Spread, List, FieldWrapper, GameListWrapper } from './PicksStyles';
@@ -115,7 +115,10 @@ function GamesList({ playerId, selectedWeek }) {
 }
 
 function Game({ game, playerId, playersPick }) {
-  const [pick] = useMutation(MAKE_PICK_MUTATION, {
+  //used to properly apply status-related icons
+  const [clickedTeamId, setClickedTeamId] = useState(null);
+
+  const [pick, result] = useMutation(MAKE_PICK_MUTATION, {
     update(cache, { data }) {
       const newPickFromResponse = data?.upsertPicks;
       //if trying to pick game with a winner do nothing
@@ -151,12 +154,14 @@ function Game({ game, playerId, playersPick }) {
   });
 
   const makePick = (gameId, playerId) => async (teamId) => {
+    setClickedTeamId(teamId);
     await pick({
       variables: { player: playerId, game: gameId, team: teamId },
-    });
+    }).catch(console.error);
   };
 
   const spreadString = spreadToString(game.spread);
+  const hasWinner = game.winner ? true : false;
 
   return (
     <React.Fragment key={game.id}>
@@ -169,6 +174,8 @@ function Game({ game, playerId, playersPick }) {
           isWinner={game.homeTeam.id === game.winner?.id}
           isPicked={game.homeTeam.id === playersPick?.picked?.id ? true : false}
           makePick={makePick(game.id, playerId)}
+          wasClicked={game.homeTeam.id === clickedTeamId && !hasWinner}
+          pickStatus={result}
         />
         <TeamBlock
           id={game.awayTeam.id}
@@ -178,6 +185,8 @@ function Game({ game, playerId, playersPick }) {
           isWinner={game.awayTeam.id === game.winner?.id}
           isPicked={game.awayTeam.id === playersPick?.picked?.id ? true : false}
           makePick={makePick(game.id, playerId)}
+          wasClicked={game.awayTeam.id === clickedTeamId && !hasWinner}
+          pickStatus={result}
         />
         <Spread spread={spreadString} />
       </List>

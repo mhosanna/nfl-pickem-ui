@@ -213,6 +213,127 @@ it('adds a tag to the game winner', async () => {
     ).toBeInTheDocument();
   });
 });
+it('shows loading spinner after player picks a team before data is returned', async () => {
+  const picksMockWithGamesAndPickLoading = [
+    {
+      request: {
+        query: WEEKS_BY_SEASON_QUERY,
+        variables: { season },
+      },
+      result: {
+        data: {
+          weeks: [fakeWeek({ id: '123', games: [game] })],
+        },
+      },
+    },
+    {
+      request: {
+        query: PICKS_BY_WEEK_QUERY,
+        variables: { weekId: '123', playerId: '123' },
+      },
+      result: {
+        data: {
+          picks: [],
+        },
+      },
+    },
+    {
+      request: {
+        query: MAKE_PICK_MUTATION,
+        variables: { player: '123', game: game.id, team: game.homeTeam.id },
+      },
+      result: {
+        loading: true,
+        data: {
+          upsertPicks: null,
+        },
+      },
+    },
+  ];
+  render(
+    <MockedProvider mocks={picksMockWithGamesAndPickLoading} addTypename={true}>
+      <Picks player={player} />
+    </MockedProvider>
+  );
+  await waitFor(() => {
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+  });
+  fireEvent.change(screen.getByRole('combobox'), {
+    target: { value: 'Week 1' },
+  });
+  await waitFor(() => {
+    expect(
+      screen.getByRole('button', { name: 'Atlanta Falcons' })
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('picked-team')).toBeNull();
+  });
+  fireEvent.click(screen.getByRole('button', { name: 'Atlanta Falcons' }));
+  await waitFor(() => {
+    expect(screen.getByTestId('pick-loading')).toBeInTheDocument();
+  });
+});
+it('shows alert icon if error returned after making pick', async () => {
+  //mock console error so it doesn't show during test
+  const networkError = console.error;
+  console.error = jest.fn();
+
+  const picksMockWithGamesAndPickLoading = [
+    {
+      request: {
+        query: WEEKS_BY_SEASON_QUERY,
+        variables: { season },
+      },
+      result: {
+        data: {
+          weeks: [fakeWeek({ id: '123', games: [game] })],
+        },
+      },
+    },
+    {
+      request: {
+        query: PICKS_BY_WEEK_QUERY,
+        variables: { weekId: '123', playerId: '123' },
+      },
+      result: {
+        data: {
+          picks: [],
+        },
+      },
+    },
+    {
+      request: {
+        query: MAKE_PICK_MUTATION,
+        variables: { player: '123', game: game.id, team: game.homeTeam.id },
+      },
+      result: {
+        errors: [new GraphQLError('[GraphQL error]: Error!')],
+      },
+    },
+  ];
+  render(
+    <MockedProvider mocks={picksMockWithGamesAndPickLoading} addTypename={true}>
+      <Picks player={player} />
+    </MockedProvider>
+  );
+  await waitFor(() => {
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+  });
+  fireEvent.change(screen.getByRole('combobox'), {
+    target: { value: 'Week 1' },
+  });
+  await waitFor(() => {
+    expect(
+      screen.getByRole('button', { name: 'Atlanta Falcons' })
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('picked-team')).toBeNull();
+  });
+  fireEvent.click(screen.getByRole('button', { name: 'Atlanta Falcons' }));
+  await waitFor(() => {
+    expect(screen.getByTestId('pick-error')).toBeInTheDocument();
+  });
+
+  console.error = networkError;
+});
 it('highlights the game after the player picks it', async () => {
   const picksMockWithGamesAndPick = [
     {
