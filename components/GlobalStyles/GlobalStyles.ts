@@ -130,6 +130,18 @@ html {
     line-height:2;
   }
 
+  .spinner {
+    animation: 3s infinite linear spinner;
+  }
+  @keyframes spinner {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg)
+    }
+  }
+    
 `;
 
 export default GlobalStyles;

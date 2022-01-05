@@ -1,6 +1,22 @@
 import styled from 'styled-components';
 import Icon from '../Icon';
 
+const iconStatus = {
+  loading: {
+    name: 'Loader',
+    'data-testid': 'pick-loading',
+    className: 'spinner',
+  },
+  error: {
+    name: 'AlertTriangle',
+    'data-testid': 'pick-error',
+  },
+  data: {
+    name: 'CheckSquare',
+    'data-testid': 'picked-team',
+  },
+};
+
 export default function TeamBlock({
   id,
   name,
@@ -9,6 +25,8 @@ export default function TeamBlock({
   isWinner = false,
   isPicked = false,
   makePick,
+  wasClicked,
+  pickStatus,
 }) {
   let Component;
   let WinFlag;
@@ -21,13 +39,33 @@ export default function TeamBlock({
   } else {
     throw new Error(`Unrecognized Team Field: ${field}`);
   }
+
+  const { loading, error } = pickStatus;
+
+  let iconProps;
+  if (isPicked) {
+    iconProps = iconStatus['data'];
+  }
+  if (loading && wasClicked) {
+    iconProps = iconStatus['loading'];
+  }
+  if (error && wasClicked) {
+    iconProps = iconStatus['error'];
+  }
+
+  // show error/loading icon only on the team block that was clicked,
+  // or show picked icon on previously picked team
+  const showIcon = ((error || loading) && wasClicked) || isPicked;
+
   return (
     <>
-      <Component isPicked={isPicked} onClick={() => makePick(id)}>
+      <Component
+        isPicked={isPicked}
+        hasIcon={showIcon}
+        onClick={() => makePick(id)}
+      >
         {isWinner && <WinFlag>Game Winner</WinFlag>}
-        {isPicked && (
-          <PickedIcon name={'CheckSquare'} data-testid="picked-team" />
-        )}
+        {showIcon && <PickedIcon {...iconProps} />}
         <TeamName>
           <span style={{ fontWeight: 'bold' }}>{city}</span>
           <span>{name}</span>
@@ -83,19 +121,19 @@ const BlockBase = styled.button<{ isPicked: boolean }>`
   }
 `;
 
-const HomeBlock = styled(BlockBase)`
-  padding: ${(props) => (props.isPicked ? '0px 24px' : '0px 60px')};
+const HomeBlock = styled(BlockBase)<{ hasIcon: boolean }>`
+  padding: ${(props) => (props.hasIcon ? '0px 24px' : '0px 60px')};
 
   @media ${(props) => props.theme.queries.tabletAndSmaller} {
-    padding: ${(props) => (props.isPicked ? '0px 40px 0px 8px' : '0px 40px')};
+    padding: ${(props) => (props.hasIcon ? '0px 40px 0px 8px' : '0px 40px')};
   }
 `;
 
-const AwayBlock = styled(BlockBase)`
-  padding-left: ${(props) => (props.isPicked ? '74px' : '110px')};
+const AwayBlock = styled(BlockBase)<{ hasIcon: boolean }>`
+  padding-left: ${(props) => (props.hasIcon ? '74px' : '110px')};
 
   @media ${(props) => props.theme.queries.tabletAndSmaller} {
-    padding-left: ${(props) => (props.isPicked ? '50px' : '79px')};
+    padding-left: ${(props) => (props.hasIcon ? '50px' : '79px')};
   }
 `;
 
