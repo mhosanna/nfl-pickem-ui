@@ -217,6 +217,7 @@ const GameListWrapper = styled.div`
   display: flex;
   gap: 32px;
   flex-wrap: wrap;
+  padding-bottom: 32px;
 `;
 
 const GameTile = styled.div`

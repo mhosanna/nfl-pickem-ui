@@ -71,11 +71,11 @@ const PickWrapper = ({ playerId }) => {
     return <p>The season hasn't started yet. Check back soon!</p>;
   }
   return (
-    <div>
+    <>
       {weekSelector}
       <Spacer size={28} />
       <GamesList playerId={playerId} selectedWeek={selectedWeek} />
-    </div>
+    </>
   );
 };
 
