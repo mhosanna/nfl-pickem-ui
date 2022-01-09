@@ -6,6 +6,7 @@ import { fakeGame, fakeWeek } from '../../utils/testData';
 import { GET_WEEKS_BY_SEASON_QUERY } from '../WeekTile';
 import ManageWeeks, { CREATE_WEEK_MUTATION } from '.';
 
+const FIXED_SYSTEM_TIME = '2020-11-18T00:00:00Z';
 const season = '2021';
 
 const game = fakeGame();
@@ -30,7 +31,7 @@ jest.mock('next/router', () => ({
 
 beforeAll(() => {
   jest.useFakeTimers('modern');
-  jest.setSystemTime(new Date('December 17, 1995 03:24:00'));
+  jest.setSystemTime(Date.parse(FIXED_SYSTEM_TIME));
 });
 
 afterAll(() => {
@@ -159,7 +160,7 @@ it('displays an error when error creating new week', async () => {
           season,
           label: 'Week 2',
           slug: 'week-2',
-          createdAt: '1995-12-17T08:24:00.600Z',
+          createdAt: FIXED_SYSTEM_TIME,
         },
       },
       error: new Error('[Network error]: An error occurred'),
@@ -218,7 +219,7 @@ it('creates new week when user fills out form and submits form', async () => {
           season,
           label: 'Week 2',
           slug: 'week-2',
-          createdAt: '1995-12-17T08:24:00.900Z',
+          createdAt: FIXED_SYSTEM_TIME,
         },
       },
       result: {
@@ -226,7 +227,7 @@ it('creates new week when user fills out form and submits form', async () => {
           createWeek: fakeWeek({
             label: 'Week 2',
             slug: 'week-2',
-            createdAt: '1995-12-17T08:24:00.900Z',
+            createdAt: FIXED_SYSTEM_TIME,
           }),
         },
       },

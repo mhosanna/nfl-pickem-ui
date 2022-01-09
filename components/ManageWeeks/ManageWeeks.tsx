@@ -71,14 +71,13 @@ export default function ManageWeeks({ season }) {
   });
 
   async function SubmitNewWeek(data: Inputs) {
-    const now = new Date();
-    const createdAt = now.toISOString();
+    const now = new Date().toISOString().split('.')[0] + 'Z';
     await createWeek({
       variables: {
         label: data.weekLabel,
         slug: string_to_slug(data.weekLabel),
         season,
-        createdAt,
+        createdAt: now,
       },
     })
       .then(() => {
