@@ -4,8 +4,10 @@ const GameListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 35px;
+  padding-bottom: 35px;
   @media ${(props) => props.theme.queries.tabletAndSmaller} {
     gap: 25px;
+    padding-bottom: 25px;
   }
 `;
 

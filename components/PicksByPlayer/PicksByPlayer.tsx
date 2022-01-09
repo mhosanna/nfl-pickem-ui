@@ -218,8 +218,10 @@ const List = styled.ol`
   gap: 8px;
   white-space: nowrap;
   position: relative;
+  padding-bottom: 32px;
   @media ${(props) => props.theme.queries.tabletAndSmaller} {
     position: initial;
+    padding-bottom: 25px;
   }
 `;
 
