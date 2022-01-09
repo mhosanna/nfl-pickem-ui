@@ -59,6 +59,7 @@ const fakeWeek = (overrides = {}) => ({
   gamesCount: 0,
   season: '2021',
   slug: 'week-1',
+  createdAt: '2021-12-01T05:00:00.000Z',
   ...overrides,
 });
 

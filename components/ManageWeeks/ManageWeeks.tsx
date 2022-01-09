@@ -19,8 +19,16 @@ export const CREATE_WEEK_MUTATION = gql`
     $label: String
     $slug: String
     $season: String
+    $createdAt: String
   ) {
-    createWeek(data: { label: $label, slug: $slug, season: $season }) {
+    createWeek(
+      data: {
+        label: $label
+        slug: $slug
+        season: $season
+        createdAt: $createdAt
+      }
+    ) {
       id
       label
       slug
@@ -63,11 +71,14 @@ export default function ManageWeeks({ season }) {
   });
 
   async function SubmitNewWeek(data: Inputs) {
+    const now = new Date();
+    const createdAt = now.toISOString();
     await createWeek({
       variables: {
         label: data.weekLabel,
         slug: string_to_slug(data.weekLabel),
         season,
+        createdAt,
       },
     })
       .then(() => {
