@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
+import _, { orderBy } from 'lodash';
 import { useSeason } from '../../lib/seasonContext';
 
 const gameFragment = gql`
@@ -57,10 +58,17 @@ export function WeekTiles() {
   if (weeksQueryError) return <p>{weeksQueryError.message}</p>;
 
   const { weeks } = weeksInfo;
+  const copyWeeks = [...weeks];
+
+  const sortedWeeks = _.orderBy(
+    copyWeeks,
+    [(o) => (o.createdAt === null ? '' : Date.parse(o.createdAt)), 'label'],
+    ['desc', 'asc']
+  );
 
   return (
     <WeekListWrapper>
-      {weeks.map((week) => {
+      {sortedWeeks.map((week) => {
         return (
           <WeekTile
             key={week.id}
