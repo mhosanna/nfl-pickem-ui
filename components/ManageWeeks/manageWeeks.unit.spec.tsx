@@ -6,6 +6,7 @@ import { fakeGame, fakeWeek } from '../../utils/testData';
 import { GET_WEEKS_BY_SEASON_QUERY } from '../WeekTile';
 import ManageWeeks, { CREATE_WEEK_MUTATION } from '.';
 
+const FIXED_SYSTEM_TIME = '2020-11-18T00:00:00Z';
 const season = '2021';
 
 const game = fakeGame();
@@ -27,6 +28,15 @@ jest.mock('next/router', () => ({
   __esModule: true,
   useRouter: jest.fn(),
 }));
+
+beforeAll(() => {
+  jest.useFakeTimers('modern');
+  jest.setSystemTime(Date.parse(FIXED_SYSTEM_TIME));
+});
+
+afterAll(() => {
+  jest.useRealTimers();
+});
 
 it('tells you where you are', () => {
   render(
@@ -146,7 +156,12 @@ it('displays an error when error creating new week', async () => {
     {
       request: {
         query: CREATE_WEEK_MUTATION,
-        variables: { season, label: 'Week 2', slug: 'week-2' },
+        variables: {
+          season,
+          label: 'Week 2',
+          slug: 'week-2',
+          createdAt: FIXED_SYSTEM_TIME,
+        },
       },
       error: new Error('[Network error]: An error occurred'),
     },
@@ -156,6 +171,9 @@ it('displays an error when error creating new week', async () => {
       <ManageWeeks season="2021" />
     </MockedProvider>
   );
+  await waitFor(() => {
+    expect(screen.getByText('Week 1')).toBeInTheDocument();
+  });
   expect(screen.getByText('Add New Week')).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'Add New Week' }));
 
@@ -173,12 +191,17 @@ it('displays an error when error creating new week', async () => {
   await waitFor(() => {
     fireEvent.click(createBtn);
   });
-  expect(screen.getByText('Oops!')).toBeInTheDocument();
-  expect(
-    screen.getByText('[Network error]: An error occurred')
-  ).toBeInTheDocument();
+
+  await waitFor(() => {
+    expect(screen.getByText('Oops!')).toBeInTheDocument();
+    expect(
+      screen.getByText('[Network error]: An error occurred')
+    ).toBeInTheDocument();
+  });
 });
 it('creates new week when user fills out form and submits form', async () => {
+  const weekOne = fakeWeek({ games: [game], gamesCount: 1 });
+  const weekTwo = fakeWeek({ label: 'Week 2', games: [game], gamesCount: 1 });
   const weeksMockCreateWeek = [
     {
       request: {
@@ -192,15 +215,30 @@ it('creates new week when user fills out form and submits form', async () => {
     {
       request: {
         query: CREATE_WEEK_MUTATION,
-        variables: { season, label: 'Week 2', slug: 'week-2' },
+        variables: {
+          season,
+          label: 'Week 2',
+          slug: 'week-2',
+          createdAt: FIXED_SYSTEM_TIME,
+        },
       },
       result: {
         data: {
           createWeek: fakeWeek({
             label: 'Week 2',
             slug: 'week-2',
+            createdAt: FIXED_SYSTEM_TIME,
           }),
         },
+      },
+    },
+    {
+      request: {
+        query: GET_WEEKS_BY_SEASON_QUERY,
+        variables: { season },
+      },
+      result: {
+        data: { weeks: [weekOne, weekTwo] },
       },
     },
   ];
@@ -209,7 +247,11 @@ it('creates new week when user fills out form and submits form', async () => {
       <ManageWeeks season="2021" />
     </MockedProvider>
   );
-  expect(screen.getByText('Add New Week')).toBeInTheDocument();
+  await waitFor(() => {
+    expect(screen.getByText('Week 1')).toBeInTheDocument();
+    expect(screen.getByText('Add New Week')).toBeInTheDocument();
+  });
+
   fireEvent.click(screen.getByRole('button', { name: 'Add New Week' }));
 
   await waitFor(() => {
@@ -226,5 +268,7 @@ it('creates new week when user fills out form and submits form', async () => {
   await waitFor(() => {
     fireEvent.click(createBtn);
   });
-  expect(screen.getByText('Week 2')).toBeInTheDocument();
+  await waitFor(() => {
+    expect(screen.getByText('Week 2')).toBeInTheDocument();
+  });
 });
