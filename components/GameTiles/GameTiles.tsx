@@ -71,11 +71,23 @@ export function GameTiles() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error.message}</p>;
 
-  const games = data.games;
+  const { games } = data;
+  const sortedGames = [...games];
+  sortedGames.sort((a, b) => {
+    const aGame = a.homeTeam.abbreviation.toUpperCase();
+    const bGame = b.homeTeam.abbreviation.toUpperCase();
+    if (aGame < bGame) {
+      return -1;
+    }
+    if (aGame > bGame) {
+      return 1;
+    }
 
+    return 0;
+  });
   return (
     <GameListWrapper>
-      {games.map((game) => {
+      {sortedGames.map((game) => {
         const isWinner = (teamId) => {
           if (teamId === game.winner?.id) return true;
           return false;
@@ -165,8 +177,10 @@ const EditButton = styled.button`
 `;
 
 const Spread = styled.div`
-  position: absolute;
-  right: 131px;
+  grid-area: 1 / 1 / 3 /3;
+  width: fit-content;
+  margin: auto;
+  z-index: 2;
 `;
 
 const SpreadCircle = styled.div`
@@ -179,15 +193,14 @@ const SpreadCircle = styled.div`
 `;
 
 const BaseTeam = styled.button<{ isWinner: boolean }>`
-  flex: 1;
-  height: 100%;
-  line-height: 80px;
+  grid-area: 1 / 2 / 3 / 3;
   border: none;
   background-color: ${(props) =>
     props.isWinner ? 'var(--secondary)' : 'inherit'};
 `;
 
 const HomeTeam = styled(BaseTeam)`
+  grid-area: 1 / 1 / 3 / 2;
   border-right: 1px solid var(--black);
   &:before {
     content: '@ ';
@@ -214,17 +227,17 @@ const AwayFlag = styled(FlagBase)`
 `;
 
 const GameListWrapper = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
   gap: 32px;
-  flex-wrap: wrap;
   padding-bottom: 32px;
 `;
 
 const GameTile = styled.div`
-  display: flex;
-  flex-basis: 300px;
-  align-items: center;
-  height: 80px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: repeat(2, 40px);
   font-size: 1.6rem;
   background-color: var(--background);
   border: 2px solid var(--black);

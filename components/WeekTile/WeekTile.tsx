@@ -31,6 +31,7 @@ const GET_WEEKS_BY_SEASON_QUERY = gql`
       slug
       season
       gamesCount
+      createdAt
       games {
         id
         slug
@@ -83,18 +84,13 @@ export function WeekTiles() {
 }
 
 const WeekListWrapper = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(175px, 100%), 1fr));
   gap: 32px;
-  flex-wrap: wrap;
   padding-bottom: 32px;
 `;
 
 const WeekTile = styled.button`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 175px;
   height: 75px;
   background-color: var(--background);
   border: 2px solid var(--black);
